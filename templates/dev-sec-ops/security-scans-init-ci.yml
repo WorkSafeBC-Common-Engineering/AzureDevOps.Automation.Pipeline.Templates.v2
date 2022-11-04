@@ -1,0 +1,35 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# 
+# Security Scans Initialization Jobs
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     applicationType
+  type:     string
+- name:     portfolioName
+  type:     string
+- name:     productName
+  type:     string
+- name:     cliSources
+  type:     string
+- name:     verbose
+  type:     boolean
+  default:  false
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+steps:
+
+- ${{ if eq( parameters.verbose, true ) }}: 
+  - script: echo security-scans-init-ci parameters >> ${{parameters.applicationType}}, ${{parameters.portfolioName}}, ${{parameters.productName}}, ${{parameters.cliSources}}
+    displayName: Bootstrap DevSecOpsInit Verbose Logging
+
+# __TODO_REPLACE_CODE_HEREAFTER_WITH_STUFF_THAT_MUST_RUN_BEFORE_THE_BUILD_STEP
+- script: echo 'Security CI pre-Build Initialization Scans Placeholder ****************************************'
+- script: echo modeElite = ${{parameters.modeElite}}
+- bash:   'env | sort'
+  displayName: "Dump env variables"

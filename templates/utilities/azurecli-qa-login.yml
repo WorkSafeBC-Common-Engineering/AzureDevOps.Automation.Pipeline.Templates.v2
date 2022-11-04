@@ -1,0 +1,18 @@
+parameters:
+- name: ServiceConnectionName
+- name: KeyVaultName
+- name: SecretName
+- name: ServicePrincipal
+- name: TenantId
+
+steps:
+- task: AzureKeyVault@1
+  inputs:
+    azureSubscription: '${{ parameters.ServiceConnectionName }}'
+    KeyVaultName: '${{ parameters.KeyVaultName }}'
+    SecretsFilter: '${{ parameters.SecretName }}'
+    RunAsPreJob: false
+  displayName: 'Get ServicePrincipal ClientSecret from KeyVault'
+
+- script: 'az login --service-principal -u ${{ parameters.ServicePrincipal }} -p $(${{ parameters.SecretName }}) --tenant ${{ parameters.TenantId }} --allow-no-subscriptions'
+  displayName: 'AzureCLI Login with ServicePrincipal ClientSecret'

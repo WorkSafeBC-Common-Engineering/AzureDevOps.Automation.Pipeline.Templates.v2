@@ -1,0 +1,178 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+#
+# --------------------------------------------------------------------------
+# FLOW
+#     - Pipeline Initialization
+#     - Job - Build_Solution
+#       - Prerequisites
+#       - *Bootstrap Initialization
+#       - Build
+#       - Publish
+#       - *Bootstrap Validation DevSecOps Only
+#     - Job - Test_Solution
+#       - Test
+#     - Job - Bootstrap_Validation
+#       - *Bootstrap Validation Building Code Only
+#
+#     INFO: Jobs Test_Solution and Bootstrap_Validation are currently set
+#           to run in parallel. Add Test_Solution to the Bootstrap_Validation
+#           dpendsOn list if you want them to run sequentially.
+#
+# TODO
+#     - Look for TODO and update / fine-tune as needed
+#     - Optionally remove this and other headers to remove noise
+#
+# IMPORTANT
+#     - If you remove, comment out, or change the flow sections prefixed 
+#       with an asterix (*) or tagged as SKULL & CROSS-BONES, your
+#       release pipeline validation stage may fail, resulting in your
+#       deployment being blocked by DevSecOps and Engineering Practices.
+# --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
+# PIPELINE INITIALIZATION
+# --------------------------------------------------------------------------
+# batch   - Batch if pipeline is running.
+# '*'     - Trigger on all branches. Artifact filters will be used in CD.
+# paths   - Exclude pipeline/ folder which contains pipeline yml files.
+# --------------------------------------------------------------------------
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+  paths:
+    exclude:
+    - pipelines
+
+# Configure the default agent pool and image to use for your pipeline
+pool:
+  name:                 'Azure Pipelines'
+  vmImage:              'windows-latest'
+
+# Variables
+variables:
+  BuildConfiguration:   Release
+  BuildPlatform:        'Any CPU'
+  portfolioName:        '__TODO_PORTFOLIO__'
+  productName:          '__TODO_PRODUCT__'
+
+# Repository resources
+resources:
+  repositories:
+  # =======================================================================
+  # SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
+  - repository: CeBlueprints
+    type: git
+    name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates.v2'
+  # =======================================================================
+
+# --------------------------------------------------------------------------
+# START OF BUILD and TEST STAGE
+# - GitVersion task looks at your Git history and works out the semantic 
+#   version of the commit being built.
+# --------------------------------------------------------------------------
+stages:
+- stage: ContinuousIntegration
+  displayName: Continuous Integration (CI)
+  jobs:
+  - job: Build_Solution
+    steps:
+    - checkout: self
+      fetchDepth: 0
+    - template: templates/utilities/git-tools-git-version.yml@CeBlueprints
+      parameters:
+        portfolioName:    $(portfolioName)
+        productName:      $(productName)
+
+# --------------------------------------------------------------------------
+# PREREQUISITES
+# - Run steps that have to run before the build here, for example NPM, NuGet
+# --------------------------------------------------------------------------
+#   TODO Insert your scripts, steps, and tasks here and remove this comment
+ 
+# ==========================================================================
+# BOOTSTRAP VALIDATION, STAGE: CI_BOOTSTRAP_INIT
+# SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
+# ==========================================================================
+    - template: templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'init'
+        applicationType:      '__TODO_APP_TYPE__' # dotnet, angular, python, universal artifact
+        applicationBlueprint: 'generic-jobs'
+        portfolioName:        $(portfolioName)
+        productName:          $(productName)
+        sourcesDirectory:     $(Build.SourcesDirectory)
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# CONTINUOUS INTEGRATION BUILD
+# - Run steps/tasks to build your solution here. 
+# - Move initialisations (NPM, NuGet,...) to PREREQUISITES section
+# --------------------------------------------------------------------------
+# EXAMPLE for .NET Core Builds
+    - task: DotNetCoreCLI@2
+      displayName: Build - .Net Core
+      inputs:
+        command: 'build'
+        projects: '**\*.sln'
+        arguments: '--configuration $(BuildConfiguration)'
+
+# --------------------------------------------------------------------------
+# PUBLISH
+# - Publish the build artifacts
+# --------------------------------------------------------------------------
+#   TODO Insert build artifact publication tasks
+
+# ==========================================================================
+# BOOTSTRAP VALIDATION, DEVSECOPS ONLY
+# SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
+# ==========================================================================
+    - template: templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'runDevSecOpsOnly'
+        applicationType:      '__TODO_APP_TYPE__' # dotnet, angular, python
+        applicationBlueprint: 'generic-jobs'
+        portfolioName:        $(portfolioName)
+        productName:          $(productName)
+        sourcesDirectory:     $(Build.SourcesDirectory)
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# CONTINUOUS INTEGRATION TEST
+# - Run steps/tasks to test your solution here
+# --------------------------------------------------------------------------
+  - job: Test_Solution
+    dependsOn: Build_Solution
+    steps:
+    - checkout: self
+      fetchDepth: 0
+    - script: echo TODO PLACEHOLDER - REMOVE
+#   TODO Insert your scripts, steps, and tasks here and remove this comment
+
+# --------------------------------------------------------------------------
+# PUBLISH
+# - Publish the test artifacts
+# --------------------------------------------------------------------------
+#   TODO Insert test artifact publication tasks
+  
+# ==========================================================================
+# BOOTSTRAP VALIDATION, BUILDIGNCODE ONLY
+# SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
+# ==========================================================================
+  - job: Bootstrap_Validation_BuildingCode
+    dependsOn:
+    - Build_Solution
+    steps:
+    - template: templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'runBuildingCodeOnly'
+        applicationType:      '__TODO_APP_TYPE__' # dotnet, other
+        applicationBlueprint: 'generic-jobs'
+        portfolioName:        $(portfolioName)
+        productName:          $(productName)
+        sourcesDirectory:     $(Build.SourcesDirectory)
+# ==========================================================================

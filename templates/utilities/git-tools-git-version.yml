@@ -1,0 +1,92 @@
+# --------------------------------------------------------------------------
+# GitTools GitVersion Template
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# 
+# Special template to enable YAML pipeline users to switch to WhiteSource
+# until they switch to the new blueprint-based templates
+# --------------------------------------------------------------------------
+# IMPORTANT !!! The GitVersion tasks must be the first to run in pipeline.
+# --------------------------------------------------------------------------
+# EXAMPLE USAGE:
+# 
+# resources:
+#   repositories:
+#   - repository: UtilityTemplates
+#     type: git
+#     name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates'
+#       ref: refs/heads/master
+#
+# stages:
+# - stage: ContinuousIntegration
+#   displayName: Continuous Integration
+#   jobs:
+#   - job: ContinuousIntegration
+#     steps:
+#     - template: Templates/Utility/git-tools-git-version.yml@UtilityTemplates
+#       parameters:
+#         versionSpec:                '5.x'
+#         useConfigFile:              true
+#         configFilePath:             '$(Build.SourcesDirectory)\Src\GitVersion.yml'
+#         updateAssemblyInfo:         true
+#         targetPath:                 $(Build.SourcesDirectory)/$(Build.Repository.Name)
+#
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     portfolioName
+  type:     string
+  default:  ''  # TODO: to be removed once this parameter is not optional
+- name:     productName
+  type:     string
+  default:  ''  # TODO: to be removed once this parameter is not optional
+- name:     versionSpec
+  type:     string
+  default:  '5.6.3' #interim hotfix until we fix latest git tools versions
+- name:     useConfigFile
+  type:     boolean
+  default:  false
+- name:     targetPath
+  type:     string
+  default:  $(Build.SourcesDirectory)/$(Build.Repository.Name)
+- name:     configFilePath
+  type:     string
+  default:  ''
+- name:     updateAssemblyInfo
+  type:     boolean
+  default:  false
+- name:     updateAssemblyInfoFilename
+  type:     string
+  default:  ''
+- name:     additionalArguments
+  type:     string
+  default:  ''
+  
+steps:
+  - task: gitversion/setup@0
+    displayName: Install GitVersion
+    inputs:
+      versionSpec: ${{parameters.versionSpec}}
+
+  - task: gitversion/execute@0
+    displayName: Use GitVersion
+    inputs:
+      targetPath:                   ${{parameters.targetPath}}
+      useConfigFile:                ${{parameters.useConfigFile}}
+      configFilePath:               ${{parameters.configFilePath}}
+      updateAssemblyInfo:           ${{parameters.updateAssemblyInfo}}
+      updateAssemblyInfoFilename:   ${{parameters.updateAssemblyInfoFilename}}
+      additionalArguments:          ${{parameters.additionalArguments}}
+
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=semVersion;isOutput=true]$(GitVersion.MajorMinorPatch)"
+    name:         setSemVersion
+    displayName:  Set Semantic Version
+    failOnStderr: true
+
+  - ${{ if and(ne(parameters.portfolioName, ''), ne(parameters.productName, '')) }}: # TODO: to be removed once portfolioName and productName parameters are not optional
+    - powershell: |
+        $BuildNumber = "${{parameters.portfolioName}}_${{parameters.productName}}_$(GitVersion.MajorMinorPatch)_$(Get-Date -format yyyyMMdd).$(Get-Date -format HHmmss).$(Build.SourceBranchName)"
+        Write-Host "##vso[build.updatebuildnumber]$BuildNumber"
+      displayName: Update Build Number
+      failOnStderr: true

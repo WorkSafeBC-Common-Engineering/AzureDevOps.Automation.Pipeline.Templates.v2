@@ -1,0 +1,48 @@
+parameters:
+- name:     name
+  type:     string
+- name:     displayName
+  type:     string
+- name:     vmImage
+  type:     string
+- name:     envName
+  type:     string
+- name:     targetFeed
+  type:     string
+- name:     dependsOn
+  type:     object
+  default:  []
+
+stages:
+
+# -----------------------------------------------------------------------------------------------------
+# STAGE
+# -----------------------------------------------------------------------------------------------------
+
+- stage:         ${{parameters.name}}
+  displayName:   ${{parameters.displayName}}
+  variables:
+      currentVersion: $[ stageDependencies.ContinuousIntegration.ContinuousIntegration.outputs['setSemVersion.semVersion'] ]
+
+  ${{ if ne(length(parameters.dependsOn), 0) }}:
+    dependsOn:
+      - ${{ each stage in parameters.dependsOn }}:
+        - ${{stage}}
+  pool:
+    vmImage:     ${{parameters.vmImage}}
+  jobs:
+  - deployment:  ${{parameters.name}}
+    environment: ${{parameters.envName}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: NuGetCommand@2
+            displayName: Deploy Nuget Package
+            inputs:
+              command:              push
+              packagesToPush:       '$(Pipeline.Workspace)/package/*.nupkg'
+              publishVstsFeed:      '${{parameters.targetFeed}}'
+              allowPackageConflicts:    true
+              verbosityPush:            Detailed
+            

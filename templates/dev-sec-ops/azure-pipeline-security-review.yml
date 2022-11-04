@@ -1,0 +1,35 @@
+parameters:
+- name:     dependsOn
+  type:     object
+  default:  []
+- name:     stageEnvName
+  type:     string
+- name:     applicationBlueprint
+  type:     string
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+stages:
+
+# -----------------------------------------------------------------------------------------------------
+# SECURITY REVIEW STAGE
+# -----------------------------------------------------------------------------------------------------
+- stage:         'SecurityReview'
+  displayName:   'Security Review (SR)'
+  ${{ if ne(length(parameters.dependsOn), 0) }}:
+    dependsOn:
+      - ${{ each stage in parameters.dependsOn }}:
+        - ${{stage}}
+  pool:
+    vmImage:      'ubuntu-latest'
+  jobs:
+  - deployment:   'SecurityReview'
+    environment:  ${{parameters.stageEnvName}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo Welcome to the Security Review stage running in the ${{parameters.stageEnvName}} environment
+          - bash: 'env | sort'
+            displayName: "Dump env variables"

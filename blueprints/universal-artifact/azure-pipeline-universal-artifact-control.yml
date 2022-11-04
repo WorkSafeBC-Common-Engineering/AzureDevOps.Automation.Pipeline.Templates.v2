@@ -1,0 +1,100 @@
+parameters:
+- name:     portfolioName
+  type:     string
+- name:     productName
+  type:     string
+- name:     applicationBlueprint
+  type:     string
+  default:  'universal-artifact'
+- name:     publishFolder
+  type:     string
+- name:     modeElite
+  type:     boolean
+  default:  false
+  # Bootstrap optionals
+- name:     verbose
+  type:     boolean
+  default:  false
+# CI Blueprint optionals
+- name:     versionSpec
+  type:     string
+  default:  '5.6.3' #interim hotfix until we fix latest git tools versions
+# CD Blueprint optionals
+- name:     suppressCD
+  type:     boolean
+  default:  false
+
+# VARIABLES
+variables:
+- ${{ if ne(parameters.suppressCD, true) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+
+stages:
+
+# --------------------------------------------------------------------------
+# START OF PIPELINE
+# --------------------------------------------------------------------------
+- template: /blueprints/universal-artifact/azure-pipeline-universal-artifact-ci.yml@CeBlueprints
+  parameters:
+    portfolioName:        ${{parameters.portfolioName}}
+    productName:          ${{parameters.productName}}
+    applicationBlueprint: ${{parameters.applicationBlueprint}}
+    publishFolder:        ${{parameters.publishFolder}}
+    verbose:              ${{parameters.verbose}}
+    modeElite:            ${{parameters.modeElite}}
+    versionSpec:          ${{parameters.versionSpec}}
+
+# --------------------------------------------------------------------------
+# DEPLOYMENT
+# 2021.10.04 WS Suppress CD on "merge" so that we can use PR validation builds
+# --------------------------------------------------------------------------
+- ${{ if and(ne(parameters.suppressCD, true), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
+  - template: /blueprints/universal-artifact/azure-pipeline-universal-artifact-cd.yml@CeBlueprints
+    parameters:
+      stage:
+        development:
+          name:                           ${{variables.developmentStageName}}
+          vmImage:                        ${{variables.developmentStageVmImage}}
+          envName:                        ${{variables.developmentStageEnvName}}                         
+          feedPublish:                    ${{variables.developmentStageFeedPublish}}
+          packagePublish:                 ${{variables.developmentStagePackagePublish}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        systemTest:
+          name:                           ${{variables.systemTestStageName}}
+          vmImage:                        ${{variables.systemTestStageVmImage}}
+          envName:                        ${{variables.systemTestStageEnvName}}
+          feedPublish:                    ${{variables.systemTestStageFeedPublish}}
+          packagePublish:                 ${{variables.systemTestStagePackagePublish}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        staging:
+          name:                           ${{variables.stagingStageName}}
+          vmImage:                        ${{variables.stagingStageVmImage}}
+          envName:                        ${{variables.stagingStageEnvName}}
+          feedPublish:                    ${{variables.stagingStageFeedPublish}}
+          packagePublish:                 ${{variables.stagingStagePackagePublish}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        production:
+          name:                           ${{variables.productionStageName}}
+          vmImage:                        ${{variables.productionStageVmImage}}
+          envName:                        ${{variables.productionStageEnvName}}
+          feedPublish:                    ${{variables.productionStageFeedPublish}}
+          packagePublish:                 ${{variables.productionStagePackagePublish}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        securityReview:
+          envName:                        ${{variables.securityReviewStageEnvName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        securityScans:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        qaScans:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+
+# --------------------------------------------------------------------------
+# END OF PIPELINE
+# --------------------------------------------------------------------------
