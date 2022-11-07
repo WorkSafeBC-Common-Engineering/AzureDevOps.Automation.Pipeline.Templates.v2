@@ -7,9 +7,11 @@ Review our [pipeline blog series](https://wsbctechnicalblog.github.io/why-pipeli
 > TO GET STARTED
 
 Some of the templates contain a ```__TODO_<ACTION>_``` placeholders to hide our internal implementation but maintain the blueprint template dependencies and integrity. To get started we recommend that you:
-1. Fork the repository
-2. CReate or use a common engineering Azure DevOps project.
+
+1. Fork the repositories if you intend to make changes.
+2. Create or use a common engineering Azure DevOps project.
 2. Clone the repositories to your Azure DevOps project.
 3. Search for ```__TODO_``` placeholders in all repositories and adjust to match your Azure DevOps Project(s) and services.
+4. Remember to contribute your changes back using a pull request.
 
 Contact our team using the [Discussions](https://github.com/orgs/WorkSafeBC-Common-Engineering/discussions) if you have any questions.
