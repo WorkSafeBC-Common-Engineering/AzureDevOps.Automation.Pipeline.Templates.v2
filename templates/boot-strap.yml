@@ -1,0 +1,213 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+#
+# BOOTSTRAP
+# Heart of our pipelines, helping us bootstrap the right templates
+#---------------------------------------------------------------------------
+# MODES
+#   init                  Runs initialisation steps
+#   foundation            Loads keyvault and toolbox
+#   run                   Runs validation steps
+#   rundevsecopsonly      Runs only DevSecOps validation steps
+#   runbuildingcodeonly   Runs only Building Code validation steps
+#---------------------------------------------------------------------------
+
+parameters:
+- name:     bootstrapMode
+  type:     string
+  default:  'invalid'
+- name:     portfolioName
+  type:     string
+  default:  'unknown'
+- name:     productName
+  type:     string
+  default:  'unknown'
+- name:     applicationBlueprint
+  type:     string
+  default:  'generic'
+- name:     applicationGuid # not used - reverse compatibility
+  type:     string
+  default:  'invalid'
+- name:     applicationType
+  type:     string
+  default:  'unknown'
+- name:     sourcesDirectory
+  type:     string
+  default:  '$(Build.SourcesDirectory)'
+- name:     verbose
+  type:     boolean
+  default:  false
+- name:     forceCheck
+  type:     boolean
+  default:  false
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+steps:
+# ===========================================================================
+# BOOTSTRAP VERBOSE
+# ===========================================================================
+- ${{ if eq( lower(parameters.verbose), true ) }}: 
+  - script: echo boot-strap template >> BM=${{parameters.bootstrapMode}}, PO=${{parameters.portfolioName}}, PR=${{parameters.productName}}, AB=${{parameters.applicationBlueprint}}, AT=${{parameters.applicationType}}, AB=${{parameters.applicationBlueprint}}, FC=${{parameters.forceCheck}}, ME=${{parameters.modeElite}}
+    displayName: Bootstrap Verbose Logging
+  - bash: 'env | sort'
+    displayName: Bootstrap Dump env variables
+
+# ===========================================================================
+# BOOTSTRAP KEY VAULT
+# LOADS:
+# - __TODO_LIST_YOUR_SECRET_VARIABLES_THAT_WILL_BE_LOADED_HERE
+# ===========================================================================
+- ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
+  - task: AzureKeyVault@1
+    displayName: Bootstrap Key Vault
+    inputs:
+      azureSubscription: 'CeS Bootstrap Service Endpoint'
+      KeyVaultName:      '__TODO_INSERT_YOUR_KEY_VAULT_NAME_HERE_'
+      RunAsPreJob:       true
+
+# ===========================================================================
+# BOOTSTRAP TOOLBOX
+# ===========================================================================
+# Production Toolbox
+- ${{ if or( eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
+  - checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Toolbox.v2
+
+# ===========================================================================
+# BOOTSTRAP AI LOGGING
+# ===========================================================================
+- ${{ if eq( lower(parameters.bootstrapMode), 'init' ) }}:
+  - task: PowerShell@2
+    displayName: 'Bootstrap Telemetry START'
+    inputs:
+      filePath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/application-insights/log-bootstrap-event-to-ai.ps1'
+      arguments: -OperationId "$(Build.BuildNumber).$(Build.BuildId)" `
+                 -Event  'Bootstrap' `
+                 -Action 'Start' `
+                 -BootstrapMode ${{parameters.bootstrapMode}} ` 
+                 -ApplicationType ${{parameters.applicationType}} `
+                 -ApplicationBlueprint ${{parameters.applicationBlueprint}} `
+                 -PortfolioName ${{parameters.portfolioName}} `
+                 -ProductName ${{parameters.productName}} `
+                 -SourcesDirectory ${{parameters.sourcesDirectory}} `
+                 -VerboseFlag ${{parameters.verbose}} `
+                 -ForceCheck ${{parameters.forceCheck}}
+      failOnStderr: true
+      pwsh: true
+    continueOnError: true
+
+- ${{ if eq( lower(parameters.bootstrapMode), 'foundation' ) }}:
+  - task: PowerShell@2
+    displayName: 'Bootstrap Telemetry Foundation'
+    inputs:
+      filePath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/application-insights/log-bootstrap-event-to-ai.ps1'
+      arguments: -OperationId "$(Build.BuildNumber).$(Build.BuildId)" `
+                 -Event  'Bootstrap' `
+                 -Action 'Foundation' `
+                 -BootstrapMode ${{parameters.bootstrapMode}} ` 
+                 -ApplicationType ${{parameters.applicationType}} `
+                 -ApplicationBlueprint ${{parameters.applicationBlueprint}} `
+                 -PortfolioName ${{parameters.portfolioName}} `
+                 -ProductName ${{parameters.productName}} `
+                 -SourcesDirectory ${{parameters.sourcesDirectory}} `
+                 -VerboseFlag ${{parameters.verbose}} `
+                 -ForceCheck ${{parameters.forceCheck}}
+      failOnStderr: true
+      pwsh: true
+    continueOnError: true
+
+# ===========================================================================
+# BOOTSTRAP INIITIALISATION STAGE
+# ===========================================================================
+- ${{ if eq( lower(parameters.bootstrapMode), 'init' ) }}:
+  - template: dev-sec-ops/security-scans-init-ci.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
+      cliSources:             ${{parameters.sourcesDirectory}}
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+ 
+# ===========================================================================
+# BOOTSTRAP RUN STAGE
+# ===========================================================================
+
+# -----------------------------------------------------------------------
+# DevSecOps Only
+# -----------------------------------------------------------------------
+- ${{ if eq( lower(parameters.bootstrapMode), 'rundevsecopsonly' ) }}:
+  - template: dev-sec-ops/security-scans-ci.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
+      cliSources:             ${{parameters.sourcesDirectory}}
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+
+# -----------------------------------------------------------------------
+# Building Code Only
+# -----------------------------------------------------------------------
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(ne(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
+  - checkout:    self
+  - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimise production builds. 
+    displayName: Bootstrap Building Code Validation Suppression Alert
+
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+  - checkout:    self
+  - template:    building-code/building-code.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
+      buildingCodeMode:       'Validate' # Validate | Enforce
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+
+# -----------------------------------------------------------------------
+# Building Code and DevSecOps
+# -----------------------------------------------------------------------
+- ${{ if eq( lower(parameters.bootstrapMode), 'run' ) }}:
+  - template:    dev-sec-ops/security-scans-ci.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
+      cliSources:             ${{parameters.sourcesDirectory}}
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(ne(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
+  - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
+    displayName: Bootstrap Building Code Validation Suppression Alert
+    
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+  - template:    building-code/building-code.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
+      cliSources:             ${{parameters.sourcesDirectory}}
+      buildingCodeMode:       'Validate' # Validate | Enforce
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+
+# ------------------------------------------------------------------------
+# Switch off the lights
+# ------------------------------------------------------------------------
+- ${{ if or( eq( lower(parameters.bootstrapMode), 'run' ), eq( lower(parameters.bootstrapMode), 'rundevSecopsonly' ),  eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}: 
+  - task: PowerShell@2
+    displayName: 'Bootstrap Telemetry EXIT'
+    inputs:
+      filePath:  '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/application-insights/log-bootstrap-event-to-ai.ps1'
+      arguments: -OperationId "$(Build.BuildNumber).$(Build.BuildId)" `
+                 -Event  'Bootstrap' `
+                 -Action 'Exit' `
+                 -BootstrapMode ${{parameters.bootstrapMode}}
+      failOnStderr: true
+      pwsh: true
+    continueOnError: true

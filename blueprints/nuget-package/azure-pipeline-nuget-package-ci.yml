@@ -1,0 +1,211 @@
+parameters:
+- name:     isDotNetCore
+  type:     boolean
+- name:     netCoreVersion
+  type:     string
+- name:     portfolioName
+  type:     string
+- name:     productName
+  type:     string
+- name:     applicationBlueprint
+  type:     string
+- name:     projectPath
+  type:     string
+- name:     projectFile
+  type:     string
+- name:     nuspecFile
+  type:     string
+- name:     platform
+  type:     string
+# Bootstrap optionals
+- name:     verbose
+  type:     boolean
+  default:  false
+- name:     suppressCD
+  type:     boolean
+  default:  false
+# CI Blueprint optionals
+- name:     versionSpec
+  type:     string
+# CD Blueprint optionals
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+# --------------------------------------------------------------------------
+# START OF BUILD and TEST STAGE
+# --------------------------------------------------------------------------
+stages:
+- stage: ContinuousIntegration
+  displayName: Continuous Integration (CI)
+
+  # Configure the default agent pool and image to use for the pipeline
+  pool:
+    name:     'Azure Pipelines'
+    vmImage:  'windows-latest'
+
+  # Variables
+  variables:
+    buildConfiguration:   'Release'
+    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE'
+  
+  jobs:
+  - job: ContinuousIntegration
+    steps:
+    - checkout: self
+      fetchDepth: 0
+    - template: /templates/utilities/git-tools-git-version.yml@CeBlueprints
+      parameters:
+        portfolioName:              ${{parameters.portfolioName}}
+        productName:                ${{parameters.productName}}
+        updateAssemblyInfo:         true
+        versionSpec:                ${{parameters.versionSpec}}
+
+# --------------------------------------------------------------------------
+# PREREQUISITES
+# --------------------------------------------------------------------------
+    - ${{ if eq(parameters.isDotNetCore, true) }}:
+      - task: UseDotNet@2 
+        displayName:      'Use .NET Core ${{parameters.netCoreVersion}}'
+        inputs:
+          version:        ${{parameters.netCoreVersion}}
+          packageType:    sdk
+
+    - ${{ if eq(parameters.isDotNetCore, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: Restore
+        inputs:
+          command:    restore
+          projects:   '**/*.??proj'
+          vstsFeed:   $(vstsFeed)
+    - ${{ else }}:
+        - task: NuGetToolInstaller@1
+
+    - ${{ if eq(parameters.isDotNetCore, false) }}:
+      - task: NuGetCommand@2  
+        inputs:
+          restoreSolution:    '**/*.sln'
+          vstsFeed:           $(vstsFeed)
+
+# ==========================================================================
+# BOOTSTRAP VALIDATION, STAGE: CI_BOOTSTRAP_INIT
+# SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
+# ==========================================================================
+    - template: /templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'init'
+        applicationType:      'dotnet'
+        applicationBlueprint: ${{parameters.applicationBlueprint}}
+        portfolioName:        ${{parameters.portfolioName}}
+        productName:          ${{parameters.productName}}
+        sourcesDirectory:     $(Build.SourcesDirectory)
+        verbose:              ${{parameters.verbose}}
+        modeElite:            ${{parameters.modeElite}}
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# PERFORM VERSION UPDATE, BUILD AND PACKAGING
+# --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
+# UPDATE VERSION #
+# --------------------------------------------------------------------------
+    - powershell: |
+        $XML = [XML](Get-Content -Path "$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.nuspecFile}}")
+        $XML.package.metadata.version="$(setSemVersion.semVersion)"
+        $XML.Save("$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.nuspecFile}}")
+        # For test and debug purposes
+        Get-Content -Path "$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.nuspecFile}}"
+      displayName: 'Update Nuget package'
+      failOnStderr: true
+
+# --------------------------------------------------------------------------
+# CONTINUOUS INTEGRATION BUILD
+# --------------------------------------------------------------------------
+    - ${{ if eq(parameters.isDotNetCore, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: 'Build'
+        inputs:
+          command:          'build'
+          projects:         '$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.projectFile}}'
+          arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion)"
+    - ${{ else }}:
+      - task: VSBuild@1
+        displayName: 'Build'
+        inputs:
+          solution: '$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.projectFile}}'
+          platform: '${{parameters.platform}}'
+          configuration: '$(buildConfiguration)'
+
+    - ${{ if eq(parameters.isDotNetCore, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: 'Create Nuget package'
+        inputs:
+          command:          'pack'
+          packagesToPack:   $(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.nuspecFile}}
+          packDirectory:    '$(Build.ArtifactStagingDirectory)/package'
+    - ${{ else }}:
+      - task: NuGetCommand@2
+        displayName: 'Create Nuget package'
+        inputs:
+          command:          pack
+          packagesToPack:   $(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.nuspecFile}}
+          configuration:    $(buildConfiguration)
+          versioningScheme: byBuildNumber
+          packDestination:  '$(Build.ArtifactStagingDirectory)/package'
+
+# --------------------------------------------------------------------------
+# CONTINUOUS INTEGRATION TEST
+# --------------------------------------------------------------------------
+    - ${{ if eq(parameters.isDotNetCore, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: 'Run Tests'
+        inputs:
+          command:    'test'
+          projects:   '**/*Tests/*.??proj'
+          arguments:  '--configuration $(buildConfiguration) --no-restore'
+    - ${{ else }}:
+      - task: VSTest@2
+        displayName: 'Run Tests'
+        inputs:
+          platform: ${{parameters.platform}}
+          configuration: $(buildConfiguration)
+          testAssemblyVer2: '**/*Tests/*Test*.dll'
+
+# --------------------------------------------------------------------------
+# PUBLISH
+# --------------------------------------------------------------------------
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifact'
+      inputs:
+        PathtoPublish:  '$(Build.SourcesDirectory)\${{parameters.projectPath}}\bin\$(buildConfiguration)'
+        ArtifactName:   'build'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Package Artifact'
+      inputs:
+        PathtoPublish:  '$(Build.ArtifactStagingDirectory)/package'
+        ArtifactName:   'package'
+
+# ==========================================================================
+# BOOTSTRAP VALIDATION, BUILDIGNCODE ONLY
+# SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
+# ==========================================================================
+    - template: /templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'run'
+        applicationType:      'dotnet'
+        applicationBlueprint: ${{parameters.applicationBlueprint}}
+        portfolioName:        ${{parameters.portfolioName}}
+        productName:          ${{parameters.productName}}
+        sourcesDirectory:     $(Build.SourcesDirectory)
+        verbose:              ${{parameters.verbose}}
+        modeElite:            ${{parameters.modeElite}}
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# END OF BUILD and TEST STAGE
+# --------------------------------------------------------------------------
+    - ${{ if eq(lower(variables['Build.SourceBranchName']), 'merge') }}:
+      - script: echo CD part of the pipeline is suppressed for pull request validation builds! 
+        displayName: PR Validation CD Suppression Alert

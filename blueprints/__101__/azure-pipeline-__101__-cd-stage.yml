@@ -1,0 +1,41 @@
+parameters:
+- name:     name
+  type:     string
+- name:     displayName
+  type:     string
+- name:     vmImage
+  type:     string
+- name:     envName
+  type:     string
+- name:     dependsOn
+  type:     object
+  default:  []
+
+stages:
+
+# -----------------------------------------------------------------------------------------------------
+# STAGE
+# -----------------------------------------------------------------------------------------------------
+
+- stage:         ${{parameters.name}}
+  displayName:   ${{parameters.displayName}}
+  ${{ if ne(length(parameters.dependsOn), 0) }}:
+    dependsOn:
+      - ${{ each stage in parameters.dependsOn }}:
+        - ${{stage}}
+  variables:
+      currentVersion: $[ stageDependencies.ContinuousIntegration.ContinuousIntegration.outputs['setSemVersion.semVersion'] ]
+  pool:
+    vmImage:     ${{parameters.vmImage}}
+  jobs:
+  - deployment:  ${{parameters.name}}
+    environment: ${{parameters.envName}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo Toolkit Version = $(currentVersion)
+          # For release we enforce the toolkit version
+          # TODO Add your deployment steps here
+                
+                

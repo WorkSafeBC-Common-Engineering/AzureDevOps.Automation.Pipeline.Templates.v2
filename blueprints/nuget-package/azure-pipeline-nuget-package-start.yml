@@ -1,0 +1,48 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+#
+# Nuget Package blueprint v2
+# --------------------------------------------------------------------------
+# HOW TO USE
+#   - Name file azure-pipeline-__TODO_PORTFOLIO__-__TODO_PRODUCT__-__101__-start.yml
+#   - Copy file to 'pipelines/' under the root folder of your repo
+#   - Look for TODO and update / fine-tune as needed
+#   - In AzureDevOps.Automation.Pipeline.Configuration.v2 repo, configure
+#     your associated /deploy/__TODO_PORTFOLIO__-__TODO_PRODUCT__-config.yml
+#     configuration file.
+# --------------------------------------------------------------------------
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*' # Trigger on all branches
+  paths:
+    include:
+    # TODO: Replace __token__ and remove this comment
+    - /__TODO_FOLDERNAME__ 
+
+resources:
+  repositories:
+  - repository: CeBlueprints
+    type:       git
+    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates.v2'
+  - repository: CeConfiguration
+    type:       git
+    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Configuration.v2'
+
+extends:
+  template: blueprints/nuget-package/azure-pipeline-nuget-package-control.yml@CeBlueprints
+  parameters:
+    isDotNetCore:           '__TODO_BOOL_ISCORE__'
+    netCoreVersion:         '__TODO_CORE_VERSION__'             # required only if isDotNetCore = true
+    portfolioName:          '__TODO_PORTFOLIO__'
+    productName:            '__TODO_PRODUCT__'
+    projectPath:            '__TODO_PROJECT_PATH__'             # e.g. RepoName\Src\wcbCAPTCHA.Mstr\wcbCAPTCHACtrl
+    projectFile:            '__TODO_PROJECT_FILE__'             # e.g. wcbCAPTCHACtrl.csproj
+    nuspecFile:             '__TODO_NUSPEC_FILE__'              # e.g. wcbCAPTCHACtrl.nuspec
+    suppressCD:             false                               # Allow engineering to do an immediate CI/build while CD is being configured
+    modeElite:              false
+    verbose:                true                                # remove once development is completed

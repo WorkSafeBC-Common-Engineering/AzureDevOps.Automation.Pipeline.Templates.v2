@@ -1,0 +1,35 @@
+variables:
+
+# -----------------------------------------------------------------------------------------------------
+# Security Scans Stage
+# -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Security Review Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  securityReviewStageEnvName
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# System Test Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  systemTestStageName
+  value: 'Staging' # Do not change stage name value
+- name:  systemTestStageEnvName
+  value: '<TBD>'
+- name:  systemTestStageVmImage
+  value: '<TBD>'
+- name:  systemTestTargetFeed
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# Production Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  productionStageName
+  value: 'Production' # Do not change stage name value
+- name:  productionStageEnvName
+  value: '<TBD>'
+- name:  productionStageVmImage
+  value: '<TBD>'
+- name:  productionTargetFeed
+  value: '<TBD>'

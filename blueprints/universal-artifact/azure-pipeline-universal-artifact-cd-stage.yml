@@ -1,0 +1,65 @@
+parameters:
+- name:     name
+  type:     string
+- name:     displayName
+  type:     string
+- name:     vmImage
+  type:     string
+- name:     envName
+  type:     string
+- name:     feedPublish
+  type:     string
+- name:     packagePublish
+  type:     string
+- name:     dependsOn
+  type:     object
+  default:  []
+
+stages:
+
+# -----------------------------------------------------------------------------------------------------
+# STAGE
+# -----------------------------------------------------------------------------------------------------
+
+- stage:         ${{parameters.name}}
+  displayName:   ${{parameters.displayName}}
+  ${{ if ne(length(parameters.dependsOn), 0) }}:
+    dependsOn:
+      - ${{ each stage in parameters.dependsOn }}:
+        - ${{stage}}
+  variables:
+      currentVersion: $[ stageDependencies.ContinuousIntegration.ContinuousIntegration.outputs['setSemVersion.semVersion'] ]
+  pool:
+    vmImage:     ${{parameters.vmImage}}
+  jobs:
+  - deployment:  ${{parameters.name}}
+    environment: ${{parameters.envName}}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - script: echo Toolkit Version = $(currentVersion)
+          # For release we enforce the toolkit version
+          - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+            - task: UniversalPackages@0
+              name: Create_Universal_Package
+              inputs:
+                command: 'publish'
+                publishDirectory:       $(Agent.BuildDirectory)/drop
+                feedsToUsePublish:      'internal'
+                vstsFeedPublish:        ${{parameters.feedPublish}}
+                vstsFeedPackagePublish: ${{parameters.packagePublish}}
+                versionOption:          'custom'
+                versionPublish:         $(currentVersion)
+          # For non-release we increment the minor version so that we do not have to tag for DV feeds
+          - ${{ if not(or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+            - task: UniversalPackages@0
+              name: Create_Universal_Package
+              inputs:
+                command: 'publish'
+                publishDirectory:       $(Agent.BuildDirectory)/drop
+                feedsToUsePublish:      'internal'
+                vstsFeedPublish:        ${{parameters.feedPublish}}
+                vstsFeedPackagePublish: ${{parameters.packagePublish}}
+                
+                

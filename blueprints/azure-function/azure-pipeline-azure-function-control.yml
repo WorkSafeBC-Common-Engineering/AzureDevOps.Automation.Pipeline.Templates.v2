@@ -1,0 +1,105 @@
+parameters:
+- name:     netCoreVersion
+  type:     string
+- name:     portfolioName
+  type:     string
+- name:     productName
+  type:     string
+- name:     applicationBlueprint
+  type:     string
+  default:  'azure-function'
+- name:     azFuncProjectName
+  type:     string
+  default:  '*' # TODO: to be removed once this parameter is not optional
+- name:     modeElite
+  type:     boolean
+  default:  false
+# Bootstrap optionals
+- name:     verbose
+  type:     boolean
+  default:  false
+# CI Blueprint optionals
+- name:     versionSpec
+  type:     string
+  default:  '5.6.3' #interim hotfix until we fix latest git tools versions
+# CD Blueprint optionals
+- name:     suppressCD
+  type:     boolean
+  default:  false
+
+# VARIABLES
+variables:
+- ${{ if ne(parameters.suppressCD, true) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+
+stages:
+
+# --------------------------------------------------------------------------
+# START OF PIPELINE
+# --------------------------------------------------------------------------
+- template: /blueprints/azure-function/azure-pipeline-azure-function-ci.yml@CeBlueprints
+  parameters:
+    netCoreVersion:       ${{parameters.netCoreVersion}}
+    portfolioName:        ${{parameters.portfolioName}}
+    productName:          ${{parameters.productName}}
+    applicationBlueprint: ${{parameters.applicationBlueprint}}
+    azFuncProjectName:    ${{parameters.azFuncProjectName}}
+    verbose:              ${{parameters.verbose}}
+    modeElite:            ${{parameters.modeElite}}
+    versionSpec:          ${{parameters.versionSpec}}
+
+# --------------------------------------------------------------------------
+# DEPLOYMENT
+# 2021.10.04 WS Suppress CD on "merge" so that we can use PR validation builds
+# --------------------------------------------------------------------------
+- ${{ if and(ne(parameters.suppressCD, true), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
+  - template: /blueprints/azure-function/azure-pipeline-azure-function-cd.yml@CeBlueprints
+    parameters:
+      stage:
+        azFuncProjectName:                ${{parameters.azFuncProjectName}}
+        development:
+          name:                           ${{variables.developmentStageName}}
+          vmImage:                        ${{variables.developmentStageVmImage}}
+          envName:                        ${{variables.developmentStageEnvName}}
+          azRmWebDeployAzureSubscription: ${{variables.developmentStageAzRmWebDeployAzureSubscription}}
+          azRmWebDeployWebAppName:        ${{variables.developmentStageAzRmWebDeployWebAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        systemTest:
+          name:                           ${{variables.systemTestStageName}}
+          vmImage:                        ${{variables.systemTestStageVmImage}}
+          envName:                        ${{variables.systemTestStageEnvName}}
+          azRmWebDeployAzureSubscription: ${{variables.systemTestStageAzRmWebDeployAzureSubscription}}
+          azRmWebDeployWebAppName:        ${{variables.systemTestStageAzRmWebDeployWebAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        staging:
+          name:                           ${{variables.stagingStageName}}
+          vmImage:                        ${{variables.stagingStageVmImage}}
+          envName:                        ${{variables.stagingStageEnvName}}
+          azRmWebDeployAzureSubscription: ${{variables.stagingStageAzRmWebDeployAzureSubscription}}
+          azRmWebDeployWebAppName:        ${{variables.stagingStageAzRmWebDeployWebAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        production:
+          name:                           ${{variables.productionStageName}}
+          vmImage:                        ${{variables.productionStageVmImage}}
+          envName:                        ${{variables.productionStageEnvName}}
+          azRmWebDeployAzureSubscription: ${{variables.productionStageAzRmWebDeployAzureSubscription}}
+          azRmWebDeployWebAppName:        ${{variables.productionStageAzRmWebDeployWebAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        securityReview:
+          envName:                        ${{variables.securityReviewStageEnvName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        securityScans:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        qaScans:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+
+# --------------------------------------------------------------------------
+# END OF PIPELINE
+# --------------------------------------------------------------------------

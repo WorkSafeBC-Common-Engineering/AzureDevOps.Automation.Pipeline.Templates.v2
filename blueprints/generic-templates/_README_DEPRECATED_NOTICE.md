@@ -1,0 +1,1 @@
+Use the generic-multiple-jobs or generic-single-job generic template if there are no application-type blueprints that meet your requirements. The generic-templates contained within this folder have been deprecated.

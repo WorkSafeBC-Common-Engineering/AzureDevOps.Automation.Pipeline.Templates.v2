@@ -1,0 +1,76 @@
+variables:
+
+# -----------------------------------------------------------------------------------------------------
+# Blueprint: universal-artifact
+#
+# If you are not going to use all stages, as below, you can suppress them in your *-start.yml template
+# by setting these optional parameters to true:
+#
+# suppressDV - Defaults to false, which does NOT suppress the Development stage deployment
+# suppressPR - Defaults to false, which does NOT suppress the Production stage deployment
+
+# -----------------------------------------------------------------------------------------------------
+# DEVelopment Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  developmentStageName
+  value: 'Development' # Do not change stage name value
+- name:  developmentStageEnvName
+  value: '<TBD>'
+- name:  developmentStageVmImage
+  value: '<TBD>'
+- name:  developmentStageFeedPublish
+  value: '<TBD>'
+- name:  developmentStagePackagePublish
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# System Test Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  systemTestStageName
+  value: 'SystemTest' # Do not change stage name value
+- name:  systemTestStageEnvName
+  value: '<TBD>'
+- name:  systemTestStageVmImage
+  value: '<TBD>'
+- name:  systemTestStageFeedPublish
+  value: '<TBD>'
+- name:  systemTestStagePackagePublish
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# Security Scans Stage
+# -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Security Review Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  securityReviewStageEnvName
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# Staging Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  stagingStageName
+  value: 'Staging' # Do not change stage name value
+- name:  stagingStageEnvName
+  value: '<TBD>'
+- name:  stagingStageVmImage
+  value: '<TBD>'
+- name:  stagingStageFeedPublish
+  value: '<TBD>'
+- name:  stagingStagePackagePublish
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# PRODuction Test Stage
+# -----------------------------------------------------------------------------------------------------
+- name:  productionStageName
+  value: 'Production' # Do not change stage name value
+- name:  productionStageEnvName
+  value: '<TBD>'
+- name:  productionStageVmImage
+  value: '<TBD>'
+- name:  productionStageFeedPublish
+  value: '<TBD>'
+- name:  productionStagePackagePublish
+  value: '<TBD>'

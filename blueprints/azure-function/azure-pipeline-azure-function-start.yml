@@ -1,0 +1,39 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+#
+# Azure Function blueprint v2
+# --------------------------------------------------------------------------
+# HOW TO USE
+#   - Copy the content of this file to 
+#     'pipelines/azure-pipelines-<portfolio>-<program>-start.yml' under the 
+#     root folder of your repo
+#   - Look for TODO and update / fine-tune as needed
+#   - Submit a pull request to add your -config.yml template to the CeS.Automation.Pipelines.Templates repository.
+# --------------------------------------------------------------------------
+
+trigger:
+  batch: true # batch changes if true; start a new build for every push if false
+  branches:
+    include:
+    - '*' # Trigger on all branches
+
+resources:
+  repositories:
+  - repository: CeBlueprints
+    type:       git
+    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates.v2'
+  - repository: CeConfiguration
+    type:       git
+    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Configuration.v2'
+
+extends:
+  template: blueprints/azure-function/azure-pipeline-azure-function-control.yml@CeBlueprints
+  parameters:
+    netCoreVersion:     '6.x' # e.g. 2.x, 3.1.x
+    portfolioName:      '__TODO_PORTFOLIO__'
+    productName:        '__TODO_PRODUCT__'
+    azFuncProjectName:  '__TODO_AZURE_FUNCTION_PROJECT_NAME__' # e.g. CeS.Sample.AzureFunction
+    suppressCD:         true # Allow engineering to do an immediate CI/build while CD is being configured
+    modeElite:          false
