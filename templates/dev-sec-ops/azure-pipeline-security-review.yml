@@ -31,5 +31,4 @@ stages:
         deploy:
           steps:
           - script: echo Welcome to the Security Review stage running in the ${{parameters.stageEnvName}} environment
-          - bash: 'env | sort'
-            displayName: "Dump env variables"
+          - script: echo modeElite = ${{parameters.modeElite}}

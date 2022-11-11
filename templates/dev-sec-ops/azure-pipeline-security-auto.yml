@@ -11,19 +11,19 @@ parameters:
 stages:
 
 # -----------------------------------------------------------------------------------------------------
-# SECURITY SCANS STAGE
+# SECURITY AUTOMATION STAGE
 # -----------------------------------------------------------------------------------------------------
-- stage:         'SecurityScans'
-  displayName:   'Security Scans (SS)'
+- stage:         'SecurityAutomation'
+  displayName:   'Security Automation (SA)'
   dependsOn:
   - ${{ each stage in parameters.dependsOn }}:
     - ${{stage}}
   pool:
     vmImage:      'ubuntu-latest'
   jobs:
-  - job:          'SecurityScans'
+  - job:          'SecurityAutomation'
     steps:
-    - template:   /templates/dev-sec-ops/security-scans-cd.yml@CeBlueprints
+    - template:   /templates/dev-sec-ops/security-scans-auto.yml@CeBlueprints
       parameters:
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         modeElite:            ${{parameters.modeElite}}

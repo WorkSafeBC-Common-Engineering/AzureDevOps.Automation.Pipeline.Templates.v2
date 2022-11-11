@@ -88,7 +88,7 @@ stages:
           envName:                        ${{variables.securityReviewStageEnvName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-        securityScans:
+        securityAutomation:
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         qaScans:

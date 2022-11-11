@@ -7,10 +7,6 @@ parameters:
   
 steps:
   - script: echo 'Quality Assurance CD Scans Placeholder ****************************************'
-  - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
-  - script: echo modeElite = ${{parameters.modeElite}}
-  - bash: 'env | sort'
-    displayName: "Dump env variables"
 
   - ${{ if eq( lower(parameters.applicationBlueprint), 'azure-function' ) }}:
     - script: echo deal with qa scan relevant to azure-function application type
