@@ -35,12 +35,12 @@ stages:
         - Development
 
 # -----------------------------------------------------------------------------------------------------
-# QA SCANS STAGE
+# SECURITY AUTOMATION STAGE
 # -----------------------------------------------------------------------------------------------------
-- template: /templates/qa/azure-pipeline-qa-scans.yml@CeBlueprints
+- template: /templates/dev-sec-ops/azure-pipeline-security-auto.yml@CeBlueprints
   parameters:
-    applicationBlueprint: ${{parameters.stage.qaScans.applicationBlueprint}}
-    modeElite:            ${{parameters.stage.qaScans.modeElite}}
+    applicationBlueprint: ${{parameters.stage.securityAutomation.applicationBlueprint}}
+    modeElite:            ${{parameters.stage.securityAutomation.modeElite}}
     dependsOn:
     - ContinuousIntegration
     - ${{ if eq(parameters.stage.development.name, 'Development') }}:
@@ -49,12 +49,12 @@ stages:
       - SystemTest
 
 # -----------------------------------------------------------------------------------------------------
-# SECURITY SCANS STAGE
+# QA SCANS STAGE
 # -----------------------------------------------------------------------------------------------------
-- template: /templates/dev-sec-ops/azure-pipeline-security-scans.yml@CeBlueprints
+- template: /templates/qa/azure-pipeline-qa-scans.yml@CeBlueprints
   parameters:
-    applicationBlueprint: ${{parameters.stage.securityScans.applicationBlueprint}}
-    modeElite:            ${{parameters.stage.securityScans.modeElite}}
+    applicationBlueprint: ${{parameters.stage.qaScans.applicationBlueprint}}
+    modeElite:            ${{parameters.stage.qaScans.modeElite}}
     dependsOn:
     - ContinuousIntegration
     - ${{ if eq(parameters.stage.development.name, 'Development') }}:
@@ -76,6 +76,7 @@ stages:
         - Development
       - ${{ if eq(parameters.stage.systemTest.name, 'SystemTest') }}:
         - SystemTest
+      - SecurityAutomation
 
 # -----------------------------------------------------------------------------------------------------
 # STAGING STAGE
@@ -95,7 +96,7 @@ stages:
       - ${{ if eq(parameters.stage.systemTest.name, 'SystemTest') }}:
         - SystemTest
       - QAScans
-      - SecurityScans
+      - SecurityAutomation
       - SecurityReview
 
 # -----------------------------------------------------------------------------------------------------
@@ -116,7 +117,7 @@ stages:
       - ${{ if eq(parameters.stage.systemTest.name, 'SystemTest') }}:
         - SystemTest
       - QAScans
-      - SecurityScans
+      - SecurityAutomation
       - SecurityReview
       - ${{ if eq(parameters.stage.staging.name, 'Staging') }}:
         - Staging

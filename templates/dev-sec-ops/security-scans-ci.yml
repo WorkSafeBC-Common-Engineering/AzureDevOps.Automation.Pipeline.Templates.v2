@@ -1,11 +1,3 @@
-# --------------------------------------------------------------------------
-# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
-# --------------------------------------------------------------------------
-# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
-# 
-# Security Scans Jobs
-# --------------------------------------------------------------------------
-
 parameters:
 - name:     applicationType
   type:     string

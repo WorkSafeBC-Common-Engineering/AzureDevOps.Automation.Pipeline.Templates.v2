@@ -8,10 +8,11 @@ parameters:
 - name:     applicationBlueprint
   type:     string
   default:  '__101__'
+# Mode Elite - if true we tolerate no errors!
 - name:     modeElite
   type:     boolean
   default:  false
-  # Bootstrap optionals
+# Bootstrap optionals
 - name:     verbose
   type:     boolean
   default:  false
@@ -83,11 +84,11 @@ stages:
           envName:                        ${{variables.securityReviewStageEnvName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-        securityScans:
+        securityAutomation:
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         qaScans:
-          applicationBlueprint:            ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------

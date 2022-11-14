@@ -6,11 +6,33 @@ parameters:
   default:  false
   
 steps:
-  - script: echo 'Quality Assurance CD Scans Placeholder ****************************************'
+# -----------------------------------------------------------------------------------------------------
+# QA AUTOMATION FOR LOWER (NON-PROD) ENVIRONMENTS STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if not(or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - script: echo 'QA CD Lower Environment Automation Placeholder ****************************************'
   - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
   - script: echo modeElite = ${{parameters.modeElite}}
-  - bash: 'env | sort'
-    displayName: "Dump env variables"
+  
+  - ${{ if eq( lower(parameters.applicationBlueprint), 'azure-function' ) }}:
+    - script: echo deal with qa scan relevant to azure-function application type
+
+  - ${{ if eq( lower(parameters.applicationBlueprint), 'nuget-package' ) }}:
+    - script: echo deal with qa scan relevant to nuget-package application type
+
+  - ${{ if eq( lower(parameters.applicationBlueprint), 'universal-artifact' ) }}:
+    - script: echo deal with qa scan relevant to universal-artifact application type
+
+  - ${{ if and(ne(lower(parameters.applicationBlueprint),'universal-artifact'), ne(lower(parameters.applicationBlueprint),'nuget-package'), ne(lower(parameters.applicationBlueprint),'azure-function')) }}:
+    - script: echo UNKNOWN application type
+
+# -----------------------------------------------------------------------------------------------------
+# QA AUTOMATION FOR HIGHER (PROD) ENVIRONMENTS STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+  - script: echo 'QA CD Higher Environment Automation Placeholder ****************************************'
+  - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
+  - script: echo modeElite = ${{parameters.modeElite}}
 
   - ${{ if eq( lower(parameters.applicationBlueprint), 'azure-function' ) }}:
     - script: echo deal with qa scan relevant to azure-function application type

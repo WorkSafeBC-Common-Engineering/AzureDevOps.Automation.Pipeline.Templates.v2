@@ -1,0 +1,23 @@
+parameters:
+- name:     applicationBlueprint
+  type:     string
+- name:     modeElite
+  type:     boolean
+  default:  false
+  
+steps:
+# -----------------------------------------------------------------------------------------------------
+# SECURITY AUTOMATION FOR LOWER (NON-PROD) ENVIRONMENTS STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if not(or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - script: echo 'Security CD Lower Environment Automation Placeholder ****************************************'
+  - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
+  - script: echo modeElite = ${{parameters.modeElite}}
+
+# -----------------------------------------------------------------------------------------------------
+# SECURITY AUTOMATION FOR HIGHER (PROD) ENVIRONMENTS STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+  - script: echo 'Security CD Higher Environment Automation Placeholder ****************************************'
+  - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
+  - script: echo modeElite = ${{parameters.modeElite}}
