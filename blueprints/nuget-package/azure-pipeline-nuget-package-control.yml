@@ -31,6 +31,9 @@ parameters:
 - name:     versionSpec
   type:     string
   default:  '5.6.3' #interim hotfix until we fix latest git tools versions
+- name:     useDefaultConfig
+  type:     boolean
+  default:  false
 # CD Blueprint optionals
 - name:     suppressCD
   type:     boolean
@@ -38,8 +41,10 @@ parameters:
 
 # VARIABLES
 variables:
-- ${{ if ne(parameters.suppressCD, true) }}:
+- ${{ if and( ne(parameters.suppressCD, true), ne(parameters.useDefaultConfig, true) ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+- ${{ if and( ne(parameters.suppressCD, true), eq(parameters.useDefaultConfig, true) ) }}:
+  - template: /deploy/default.config/nuget-package-config.yml@CeConfiguration
 
 stages:
 
