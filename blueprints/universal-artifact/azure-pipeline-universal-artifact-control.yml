@@ -18,7 +18,7 @@ parameters:
 # CI Blueprint optionals
 - name:     versionSpec
   type:     string
-  default:  '5.6.3' #interim hotfix until we fix latest git tools versions
+  default:  '5.11.x' # change default from 5.6.3 to 5.11.x 
 # CD Blueprint optionals
 - name:     suppressCD
   type:     boolean
