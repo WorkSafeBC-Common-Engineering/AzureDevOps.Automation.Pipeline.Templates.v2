@@ -20,8 +20,10 @@ stages:
   pool:
     vmImage:      'ubuntu-latest'
   jobs:
-  - job:          'SecurityScans'
+  - job:          'QAScans'
     steps:
+    - bash: 'env | sort'
+      displayName: Bootstrap Dump env variables
     - template:   /templates/qa/qa-scans-cd.yml@CeBlueprints
       parameters:
         applicationBlueprint: ${{parameters.applicationBlueprint}}
