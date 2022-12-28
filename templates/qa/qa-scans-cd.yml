@@ -45,3 +45,20 @@ steps:
 
   - ${{ if and(ne(lower(parameters.applicationBlueprint),'universal-artifact'), ne(lower(parameters.applicationBlueprint),'nuget-package'), ne(lower(parameters.applicationBlueprint),'azure-function')) }}:
     - script: echo UNKNOWN application type
+
+# -----------------------------------------------------------------------------------------------------
+# QA AUTOMATION FOR LOWER AND HIGHER (PROD) ENVIRONMENTS STAGE
+# -----------------------------------------------------------------------------------------------------
+- script: echo 'QA CD Lower and Higher Environment Automation Placeholder ***********************************'
+
+- ${{ if eq( lower(parameters.applicationlueprint), 'azure-function' ) }}:
+  - script: echo deal with qa scan relevant to azure-function application type
+
+- ${{ if eq( lower(parameters.applicationBlueprint), 'nuget-package' ) }}:
+  - script: echo deal with qa scan relevant to nuget-package application type
+
+- ${{ if eq( lower(parameters.applicationBlueprint), 'universal-artifact' ) }}:
+  - script: echo deal with qa scan relevant to universal-artifact application type
+
+- ${{ if and(ne(lower(parameters.applicationBlueprint),'universal-artifact'), ne(lower(parameters.applicationBlueprint),'nuget-package'), ne(lower(parameters.applicationBlueprint),'azure-function')) }}:
+  - script: echo UNKNOWN application type

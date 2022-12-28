@@ -21,3 +21,8 @@ steps:
   - script: echo 'Security CD Higher Environment Automation Placeholder ****************************************'
   - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
   - script: echo modeElite = ${{parameters.modeElite}}
+
+# -----------------------------------------------------------------------------------------------------
+# SECURITY AUTOMATION FOR LOWER AND HIGHER (PROD) ENVIRONMENTS STAGE
+# -----------------------------------------------------------------------------------------------------
+- script: echo 'Security CD Lower and Higher Environment Automation Placeholder ***********************************'
