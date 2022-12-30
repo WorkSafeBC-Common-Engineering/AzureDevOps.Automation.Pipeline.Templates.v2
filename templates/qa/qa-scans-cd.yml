@@ -51,7 +51,7 @@ steps:
 # -----------------------------------------------------------------------------------------------------
 - script: echo 'QA CD Lower and Higher Environment Automation Placeholder ***********************************'
 
-- ${{ if eq( lower(parameters.applicationlueprint), 'azure-function' ) }}:
+- ${{ if eq( lower(parameters.applicationBlueprint), 'azure-function' ) }}:
   - script: echo deal with qa scan relevant to azure-function application type
 
 - ${{ if eq( lower(parameters.applicationBlueprint), 'nuget-package' ) }}:
