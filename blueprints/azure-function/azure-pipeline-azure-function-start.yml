@@ -10,7 +10,9 @@
 #     'pipelines/azure-pipelines-<portfolio>-<program>-start.yml' under the 
 #     root folder of your repo
 #   - Look for TODO and update / fine-tune as needed
-#   - Submit a pull request to add your -config.yml template to the CeS.Automation.Pipelines.Templates repository.
+#   - In AzureDevOps.Automation.Pipeline.Configuration.v2 repo, configure
+#     your associated /deploy/__TODO_PORTFOLIO__-__TODO_PRODUCT__-config.yml
+#     configuration file.
 # --------------------------------------------------------------------------
 
 trigger:
