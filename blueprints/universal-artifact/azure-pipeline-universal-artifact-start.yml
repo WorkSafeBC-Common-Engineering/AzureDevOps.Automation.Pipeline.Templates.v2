@@ -37,4 +37,3 @@ extends:
     productName:     '__TODO_PRODUCT__'
     publishFolder:   '__TODO_FOLDERNAME__'
     suppressCD:      true # Allow engineering to do an immediate CI/build while CD is being configured
-    modeElite:       false
