@@ -44,5 +44,4 @@ extends:
     projectFile:            '__TODO_PROJECT_FILE__'             # e.g. wcbCAPTCHACtrl.csproj
     nuspecFile:             '__TODO_NUSPEC_FILE__'              # e.g. wcbCAPTCHACtrl.nuspec
     suppressCD:             false                               # Allow engineering to do an immediate CI/build while CD is being configured
-    modeElite:              false
     verbose:                true                                # remove once development is completed

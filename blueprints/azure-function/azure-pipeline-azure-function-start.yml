@@ -36,4 +36,3 @@ extends:
     productName:        '__TODO_PRODUCT__'
     azFuncProjectName:  '__TODO_AZURE_FUNCTION_PROJECT_NAME__' # e.g. CeS.Sample.AzureFunction
     suppressCD:         true # Allow engineering to do an immediate CI/build while CD is being configured
-    modeElite:          false
