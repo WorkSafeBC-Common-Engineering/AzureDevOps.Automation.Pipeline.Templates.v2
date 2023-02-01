@@ -152,7 +152,7 @@ steps:
 # -----------------------------------------------------------------------
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(ne(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
   - checkout:    self
-  - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimise production builds. 
+  - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
     displayName: Bootstrap Building Code Validation Suppression Alert
 
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
@@ -163,6 +163,7 @@ steps:
       portfolioName:          ${{parameters.portfolioName}}
       productName:            ${{parameters.productName}}
       buildingCodeMode:       'Validate' # Validate | Enforce
+      applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
 
@@ -191,6 +192,7 @@ steps:
       productName:            ${{parameters.productName}}
       cliSources:             ${{parameters.sourcesDirectory}}
       buildingCodeMode:       'Validate' # Validate | Enforce
+      applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
 

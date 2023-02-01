@@ -18,6 +18,9 @@ parameters:
 - name:     buildingCodeMode
   type:     string
   default:  'Validate' # Validate | Enforce
+- name:     applicationBlueprint
+  type:     string
+  default:  'generic'
 - name:     verbose
   type:     boolean
   default:  false
@@ -27,7 +30,7 @@ parameters:
   
 steps:
 - ${{ if eq( parameters.verbose, true ) }}: 
-  - script: echo BuildingCode parameters >> AT = ${{parameters.applicationType}}, PON = ${{parameters.portfolioName}}, PRN = ${{parameters.productName}}, BCM = ${{parameters.buildingCodeMode}}, ME = ${{parameters.modeElite}}
+  - script: echo BuildingCode parameters >> AT = ${{parameters.applicationType}}, PON = ${{parameters.portfolioName}}, PRN = ${{parameters.productName}}, BCM = ${{parameters.buildingCodeMode}}, ME = ${{parameters.modeElite}}, BC = ${{parameters.applicationBlueprint}}
     displayName: Bootstrap Building Code Verbose Logging
 
 # ======================================================================
