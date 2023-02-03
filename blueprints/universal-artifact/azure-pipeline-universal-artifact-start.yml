@@ -8,7 +8,9 @@
 # HOW TO USE
 #   - Copy this file to 'pipelines/*.yml' under the root folder of your repo
 #   - Look for TODO and update / fine-tune as needed
-#   - Configure /Operations/Config/<portfolio>-<product>-config.yml for CD
+#   - In AzureDevOps.Automation.Pipeline.Configuration.v2 repo, configure
+#     your associated /deploy/__TODO_PORTFOLIO__-__TODO_PRODUCT__-config.yml
+#     configuration file.
 # --------------------------------------------------------------------------
 
 trigger:
