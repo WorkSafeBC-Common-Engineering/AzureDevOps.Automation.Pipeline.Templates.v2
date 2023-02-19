@@ -21,7 +21,7 @@ parameters:
 # CI Blueprint optionals
 - name:     versionSpec
   type:     string
-  default:  '5.11.x' # change default from 5.6.3 to 5.11.x 
+  default:  '5.11.x' # switch from 5.6.3 to 5.11.x as default
 # CD Blueprint optionals
 - name:     suppressCD
   type:     boolean
@@ -97,6 +97,9 @@ stages:
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         qaScans:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        preProdAutomation:
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
 
