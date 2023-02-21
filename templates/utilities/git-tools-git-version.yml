@@ -42,7 +42,7 @@ parameters:
   default:  ''  # TODO: to be removed once this parameter is not optional
 - name:     versionSpec
   type:     string
-  default:  '5.11.x' # change default from 5.6.3 to 5.11.x 
+  default:  '5.11.x' # switch from 5.6.3 to 5.11.x as default
 - name:     useConfigFile
   type:     boolean
   default:  false
@@ -80,6 +80,7 @@ steps:
 
   - powershell: |
       Write-Host "##vso[task.setvariable variable=semVersion;isOutput=true]$(GitVersion.MajorMinorPatch)"
+      Write-Host "##vso[task.setvariable variable=patchVersion;isOutput=true]$(GitVersion.Patch)"
     name:         setSemVersion
     displayName:  Set Semantic Version
     failOnStderr: true
