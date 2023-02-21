@@ -1,0 +1,13 @@
+parameters:
+- name:     applicationBlueprint
+  type:     string
+- name:     modeElite
+  type:     boolean
+  default:  false
+  
+steps:
+
+# -----------------------------------------------------------------------------------------------------
+# PRE-PRODUCTION AUTOMATION STAGE
+# -----------------------------------------------------------------------------------------------------
+- script: echo 'Pre-Production Automation Placeholder ***********************************'

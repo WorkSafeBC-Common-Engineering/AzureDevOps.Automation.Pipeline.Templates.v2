@@ -99,6 +99,26 @@ stages:
       - SecurityReview
 
 # -----------------------------------------------------------------------------------------------------
+# PRE-PROD AUTOMATION SCANS STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if and(eq(parameters.stage.production.name, 'Production'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - template: /templates/pre-prod/azure-pipeline-pre-prod-automation.yml@CeBlueprints
+    parameters:
+      applicationBlueprint: ${{parameters.stage.preProdAutomation.applicationBlueprint}}
+      modeElite:            ${{parameters.stage.preProdAutomation.modeElite}}
+      dependsOn:
+        - ContinuousIntegration
+        - ${{ if eq(parameters.stage.development.name, 'Development') }}:
+          - Development
+        - ${{ if eq(parameters.stage.systemTest.name, 'SystemTest') }}:
+          - SystemTest
+        - QAScans
+        - SecurityAutomation
+        - SecurityReview
+        - ${{ if eq(parameters.stage.staging.name, 'Staging') }}:
+          - Staging
+
+# -----------------------------------------------------------------------------------------------------
 # PRODUCTION STAGE
 # -----------------------------------------------------------------------------------------------------
 - ${{ if and(eq(parameters.stage.production.name, 'Production'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
@@ -119,3 +139,4 @@ stages:
       - SecurityReview
       - ${{ if eq(parameters.stage.staging.name, 'Staging') }}:
         - Staging
+      - PreProdAutomation

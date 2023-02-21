@@ -1,0 +1,33 @@
+parameters:
+- name:     dependsOn
+  type:     object
+  default:  []
+- name:     applicationBlueprint
+  type:     string
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+stages:
+# -----------------------------------------------------------------------------------------------------
+# QUALITY ASSURANCE SCANS STAGE
+# -----------------------------------------------------------------------------------------------------
+- stage:         'PreProdAutomation'
+  displayName:   'Pre-Prod Automation (PPA)'
+  dependsOn:
+  - ${{ each stage in parameters.dependsOn }}:
+    - ${{stage}}
+  pool:
+    vmImage:      'ubuntu-latest'
+  jobs:
+  - job:          'PreProdAutomation'
+    steps:
+    # List all environment variables within this agent
+    - bash: 'env | sort'
+      displayName: Bootstrap Dump env variables
+    
+    # Inject the QA scans template into the pipeline
+    - template:   /templates/pre-prod/pre-prod-automation.yml@CeBlueprints
+      parameters:
+        applicationBlueprint: ${{parameters.applicationBlueprint}}
+        modeElite:            ${{parameters.modeElite}}
