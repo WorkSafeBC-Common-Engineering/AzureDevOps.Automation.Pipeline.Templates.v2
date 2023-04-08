@@ -34,6 +34,9 @@ parameters:
 - name:     useDefaultConfig
   type:     boolean
   default:  false
+- name:     usePortfolioConfig
+  type:     boolean
+  default:  false
 # CD Blueprint optionals
 - name:     suppressCD
   type:     boolean
@@ -41,10 +44,14 @@ parameters:
 
 # VARIABLES
 variables:
-- ${{ if and( ne(parameters.suppressCD, true), ne(parameters.useDefaultConfig, true) ) }}:
-  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
-- ${{ if and( ne(parameters.suppressCD, true), eq(parameters.useDefaultConfig, true) ) }}:
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, true) ) }}:
   - template: /deploy/default.config/nuget-package-config.yml@CeConfiguration
+
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, true) ) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}/nuget-package-config.yml@CeConfiguration
+
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false) ) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
 
 stages:
 
