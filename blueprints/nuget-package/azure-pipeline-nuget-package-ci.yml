@@ -128,7 +128,7 @@ stages:
         inputs:
           command:          'build'
           projects:         '$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.projectFile}}'
-          arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion)"
+          arguments:        "--configuration $(buildConfiguration) --arch ${{parameters.platform}} --no-restore /p:Version=$(setSemVersion.semVersion)"
     - ${{ else }}:
       - task: VSBuild@1
         displayName: 'Build'
