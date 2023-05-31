@@ -154,11 +154,11 @@ steps:
 # -----------------------------------------------------------------------
 # Building Code Only
 # -----------------------------------------------------------------------
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(ne(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
   - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
     displayName: Bootstrap Building Code Validation Suppression Alert
 
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
   - template:    building-code/building-code.yml@CeBlueprints
     parameters:
       applicationType:        ${{parameters.applicationType}}
@@ -182,11 +182,11 @@ steps:
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
 
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(ne(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
   - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
     displayName: Bootstrap Building Code Validation Suppression Alert
     
-# - ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
   - template:    building-code/building-code.yml@CeBlueprints
     parameters:
       applicationType:        ${{parameters.applicationType}}
