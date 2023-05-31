@@ -70,6 +70,10 @@ steps:
 # ===========================================================================
 # BOOTSTRAP TOOLBOX
 # ===========================================================================
+# For Building code only checkout self first to force same sequence
+- ${{ if eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ) }}:
+  - checkout:    self
+    fetchDepth:  0
 # Production Toolbox
 - ${{ if or( eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
   - checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Toolbox.v2
@@ -151,12 +155,10 @@ steps:
 # Building Code Only
 # -----------------------------------------------------------------------
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(ne(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
-  - checkout:    self
   - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
     displayName: Bootstrap Building Code Validation Suppression Alert
 
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
-  - checkout:    self
   - template:    building-code/building-code.yml@CeBlueprints
     parameters:
       applicationType:        ${{parameters.applicationType}}
@@ -184,7 +186,7 @@ steps:
   - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
     displayName: Bootstrap Building Code Validation Suppression Alert
     
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+# - ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), or(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
   - template:    building-code/building-code.yml@CeBlueprints
     parameters:
       applicationType:        ${{parameters.applicationType}}
