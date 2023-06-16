@@ -27,6 +27,9 @@ parameters:
 # CI Blueprint optionals
 - name:     versionSpec
   type:     string
+- name:     runAzurite
+  type:     boolean
+  default:  false
 # CD Blueprint optionals
 - name:     modeElite
   type:     boolean
@@ -101,6 +104,8 @@ stages:
         sourcesDirectory:     $(Build.SourcesDirectory)
         verbose:              ${{parameters.verbose}}
         modeElite:            ${{parameters.modeElite}}
+        runAzurite:           ${{parameters.runAzurite}}
+
 # ==========================================================================
 
 # --------------------------------------------------------------------------
@@ -201,6 +206,7 @@ stages:
         sourcesDirectory:     $(Build.SourcesDirectory)
         verbose:              ${{parameters.verbose}}
         modeElite:            ${{parameters.modeElite}}
+
 # ==========================================================================
 
 # --------------------------------------------------------------------------
