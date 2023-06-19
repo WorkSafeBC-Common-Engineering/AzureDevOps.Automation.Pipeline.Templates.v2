@@ -49,3 +49,4 @@ extends:
     usePortfolioConfig:     false                               # If true (and useDefaultConfig = false), will use a *-config.yml file with
                                                                 # default values specific to the portfolio
     verbose:                true                                # remove once development is completed
+    runAzurite:             false                               # if true, will run the Azurite emulator, used by unit tests.

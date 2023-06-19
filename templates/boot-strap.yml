@@ -43,6 +43,9 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
+- name:     runAzurite
+  type:     boolean
+  default:  false
 
 steps:
 # ===========================================================================
@@ -122,7 +125,7 @@ steps:
     continueOnError: true
 
 # ===========================================================================
-# BOOTSTRAP INIITIALISATION STAGE
+# BOOTSTRAP INITIALISATION STAGE
 # ===========================================================================
 - ${{ if eq( lower(parameters.bootstrapMode), 'init' ) }}:
   - template: dev-sec-ops/security-scans-init-ci.yml@CeBlueprints
@@ -133,7 +136,13 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
- 
+
+# ===========================================================================
+# BOOTSTRAP - OPTIONAL START - AZURITE (Azure Storage Emulator)
+# ===========================================================================
+- ${{ if and( eq( lower( parameters.bootstrapMode ), 'init' ), eq( parameters.runAzurite, true )) }}:
+  - template: emulators/azurite.yml@CeBlueprints
+   
 # ===========================================================================
 # BOOTSTRAP RUN STAGE
 # ===========================================================================

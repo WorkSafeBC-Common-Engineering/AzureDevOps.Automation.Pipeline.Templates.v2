@@ -37,6 +37,9 @@ parameters:
 - name:     usePortfolioConfig
   type:     boolean
   default:  false
+- name:     runAzurite
+  type:     boolean
+  default:  false
 # CD Blueprint optionals
 - name:     suppressCD
   type:     boolean

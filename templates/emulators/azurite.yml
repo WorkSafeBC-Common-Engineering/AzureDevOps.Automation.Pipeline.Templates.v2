@@ -1,0 +1,7 @@
+steps:
+# Install and run Azurite to emulate Azure Storage. Required for testing purposes.
+  - bash: |
+      npm install -g azurite
+      mkdir azurite
+      azurite --silent --location azurite --debug azurite\debug.log &
+    displayName: 'Install and Run Azurite'
