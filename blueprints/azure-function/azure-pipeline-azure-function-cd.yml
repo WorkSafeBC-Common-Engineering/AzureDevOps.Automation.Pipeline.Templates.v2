@@ -16,6 +16,8 @@ stages:
       azRmWebDeployAzureSubscription: ${{parameters.stage.development.azRmWebDeployAzureSubscription}}
       azRmWebDeployWebAppName:        ${{parameters.stage.development.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
+      azureFunctionType:              ${{parameters.stage.azureFunctionType}}
+      runtimeStack:                   ${{parameters.stage.runtimeStack}}
       dependsOn:
       - ContinuousIntegration
 
@@ -32,6 +34,8 @@ stages:
       azRmWebDeployAzureSubscription: ${{parameters.stage.systemTest.azRmWebDeployAzureSubscription}}
       azRmWebDeployWebAppName:        ${{parameters.stage.systemTest.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
+      azureFunctionType:              ${{parameters.stage.azureFunctionType}}
+      runtimeStack:                   ${{parameters.stage.runtimeStack}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.name, 'Development') }}:
@@ -94,6 +98,8 @@ stages:
       azRmWebDeployAzureSubscription: ${{parameters.stage.staging.azRmWebDeployAzureSubscription}}
       azRmWebDeployWebAppName:        ${{parameters.stage.staging.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
+      azureFunctionType:              ${{parameters.stage.azureFunctionType}}
+      runtimeStack:                   ${{parameters.stage.runtimeStack}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.name, 'Development') }}:
@@ -137,6 +143,8 @@ stages:
       azRmWebDeployAzureSubscription: ${{parameters.stage.production.azRmWebDeployAzureSubscription}}
       azRmWebDeployWebAppName:        ${{parameters.stage.production.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
+      azureFunctionType:              ${{parameters.stage.azureFunctionType}}
+      runtimeStack:                   ${{parameters.stage.runtimeStack}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.name, 'Development') }}:
