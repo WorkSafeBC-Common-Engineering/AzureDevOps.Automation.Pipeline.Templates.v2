@@ -15,6 +15,10 @@ parameters:
   type:     string
 - name:     dependsOn
   type:     object
+- name:     azureFunctionType
+  type:     string
+- name:     runtimeStack
+  type:     string
   default:  []
 
 stages:
@@ -38,10 +42,11 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: AzureRmWebAppDeployment@4
+          - task: AzureFunctionApp@2
             displayName: Deploy Azure Function
             inputs:
               azureSubscription:  ${{parameters.azRmWebDeployAzureSubscription}}
-              appType:            functionApp
-              WebAppName:         ${{parameters.azRmWebDeployWebAppName}}
-              package:            '$(Pipeline.Workspace)/**/${{parameters.azFuncProjectName}}.zip'
+              azureType: ${{parameters.azureFunctionType}}
+              appName: ${{parameters.azRmWebDeployWebAppName}}
+              package: '$(Pipeline.Workspace)/**/${{parameters.azFuncProjectName}}.zip'
+              runtimeStack: ${{parameters.runtimeStack}}

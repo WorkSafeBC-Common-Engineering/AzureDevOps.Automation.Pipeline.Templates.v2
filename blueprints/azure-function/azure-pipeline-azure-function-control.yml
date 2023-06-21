@@ -11,6 +11,12 @@ parameters:
 - name:     azFuncProjectName
   type:     string
   default:  '*' # TODO: to be removed once this parameter is not optional
+- name:     azureFunctionType
+  type:     string
+  default:  'functionAppLinux'
+- name:     runtimeStack
+  type:     string
+  default:  'DOTNET|6.0'
 - name:     modeElite
   type:     boolean
   default:  false
@@ -57,6 +63,8 @@ stages:
     parameters:
       stage:
         azFuncProjectName:                ${{parameters.azFuncProjectName}}
+        azureFunctionType:                ${{parameters.azureFunctionType}}
+        runtimeStack:                     ${{parameters.runtimeStack}}
         development:
           name:                           ${{variables.developmentStageName}}
           vmImage:                        ${{variables.developmentStageVmImage}}
