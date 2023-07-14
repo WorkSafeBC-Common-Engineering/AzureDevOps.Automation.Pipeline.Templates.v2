@@ -1,0 +1,36 @@
+# --------------------------------------------------------------------------
+# info-version Template
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# 
+# --------------------------------------------------------------------------
+
+parameters:
+# mandatory parameters
+- name:     modeElite
+  type:     boolean
+- name:     applicationBlueprint
+  type:     string
+- name:     applicationType
+  type:     string
+# default parameters
+- name:     vGuid
+  type:     string
+  default:  '_TODO_ADD_UNIQUE_GUID_'
+- name:     vVersion
+  type:     string
+  default:  '2.0'
+  
+steps:
+    - script: echo "${{parameters.modeElite}}:${{parameters.applicationBlueprint}}:${{parameters.applicationType}}:${{parameters.vGuid}}:${{parameters.vVersion}}"
+      name:         BootstrapInfo
+      displayName:  Bootstrap Info
+    - powershell: |
+        Write-Host "##vso[task.setvariable variable=bootStrapModeElite;isOutput=true]${{parameters.modeElite}}"
+        Write-Host "##vso[task.setvariable variable=bootStrapBlueprint;isOutput=true]${{parameters.applicationBlueprint}}"
+        Write-Host "##vso[task.setvariable variable=bootStrapType;isOutput=true]${{parameters.applicationType}}"
+        Write-Host "##vso[task.setvariable variable=bootStrapGuid;isOutput=true]${{parameters.vGuid}}"
+        Write-Host "##vso[task.setvariable variable=bootStrapVersion;isOutput=true]${{parameters.vVersion}}"
+      name:         BootstrapVars
+      displayName:  Bootstrap Vars
+      failOnStderr: true
