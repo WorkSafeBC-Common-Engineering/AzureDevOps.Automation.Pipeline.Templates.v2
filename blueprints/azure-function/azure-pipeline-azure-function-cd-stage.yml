@@ -9,18 +9,23 @@ parameters:
   type:     string
 - name:     azRmWebDeployAzureSubscription
   type:     string
+- name:     azResourceGroup
+  type:     string
 - name:     azRmWebDeployWebAppName
   type:     string
 - name:     azFuncProjectName
   type:     string
-- name:     dependsOn
-  type:     object
 - name:     azureFunctionType
   type:     string
-- name:     runtimeStack
+- name:     functionExtensionVersion
   type:     string
+- name:     windowsRuntimeStack
+  type:     string
+- name:     linuxRuntimeStack
+  type:     string
+- name:     dependsOn
+  type:     object
   default:  []
-
 stages:
 
 # -----------------------------------------------------------------------------------------------------
@@ -45,8 +50,34 @@ stages:
           - task: AzureFunctionApp@2
             displayName: Deploy Azure Function
             inputs:
-              azureSubscription:  ${{parameters.azRmWebDeployAzureSubscription}}
-              azureType: ${{parameters.azureFunctionType}}
+              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              appType: ${{parameters.azureFunctionType}}
               appName: ${{parameters.azRmWebDeployWebAppName}}
               package: '$(Pipeline.Workspace)/**/${{parameters.azFuncProjectName}}.zip'
-              runtimeStack: ${{parameters.runtimeStack}}
+              runtimeStack: ${{parameters.linuxRuntimeStack}}
+          - task: AzureCLI@2
+            displayName: Set Azure Function Runtime
+            inputs:
+              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az functionapp config appsettings set --settings FUNCTIONS_EXTENSION_VERSION=${{parameters.functionExtensionVersion}} -g ${{parameters.azResourceGroup}} -n ${{parameters.azRmWebDeployWebAppName}}
+          - task: AzureCLI@2
+            displayName: Set Azure Function .Net Version - Windows
+            condition: eq( '${{ parameters.azureFunctionType }}', 'functionApp')
+            inputs:
+              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az functionapp config set --net-framework-version ${{parameters.windowsRuntimeStack}} -g ${{parameters.azResourceGroup}} -n ${{parameters.azRmWebDeployWebAppName}}
+          - task: AzureCLI@2
+            displayName: Set Azure Function .Net Version - Linux
+            condition: eq('${{ parameters.azureFunctionType }}', 'functionAppLinux')
+            inputs:
+              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az functionapp config set --name ${{parameters.azRmWebDeployWebAppName}} --resource-group ${{parameters.azResourceGroup}} --linux-fx-version "${{parameters.linuxRuntimeStack}}"
