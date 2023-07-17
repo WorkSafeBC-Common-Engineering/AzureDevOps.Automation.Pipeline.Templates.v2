@@ -20,6 +20,8 @@ variables:
   value: 'ubuntu-latest'
 - name:  developmentStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
+- name:  developmentStageAzResourceGroup
+  value: '<TBD>'
 - name:  developmentStageAzRmWebDeployWebAppName
   value: '<TBD>'
 
@@ -33,6 +35,8 @@ variables:
 - name:  systemTestStageVmImage
   value: 'ubuntu-latest'
 - name:  systemTestStageAzRmWebDeployAzureSubscription
+  value: '<TBD>'
+- name:  systemTestStageAzResourceGroup
   value: '<TBD>'
 - name:  systemTestStageAzRmWebDeployWebAppName
   value: '<TBD>'
@@ -54,6 +58,8 @@ variables:
   value: 'ubuntu-latest'
 - name:  stagingStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
+- name:  systemTestStageAzResourceGroup
+  value: '<TBD>'
 - name:  stagingStageAzRmWebDeployWebAppName
   value: '<TBD>'
 
@@ -67,6 +73,8 @@ variables:
 - name:  productionStageVmImage
   value: 'ubuntu-latest'
 - name:  productionStageAzRmWebDeployAzureSubscription
+  value: '<TBD>'
+- name:  systemTestStageAzResourceGroup
   value: '<TBD>'
 - name:  productionStageAzRmWebDeployWebAppName
   value: '<TBD>'

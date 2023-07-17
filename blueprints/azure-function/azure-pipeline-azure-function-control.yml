@@ -14,9 +14,6 @@ parameters:
 - name:     azureFunctionType
   type:     string
   default:  'functionAppLinux'
-- name:     runtimeStack
-  type:     string
-  default:  'DOTNET|6.0'
 - name:     modeElite
   type:     boolean
   default:  false
@@ -37,6 +34,20 @@ parameters:
 variables:
 - ${{ if ne(parameters.suppressCD, true) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+
+# -----------------------------------------------------------------------------------------------------
+# Azure Function App Settings
+# These are set for the current LTS supported versions of .Net and current Azure Function Runtime.
+# NOTE: when we move to .Net 8 (LTS) and possibly running the function in isolation mode,
+#       we will need to adjust these settings. At that point we will probably need to add a
+#       parameter for in-process vs. isolated worker process (preferred)
+# -----------------------------------------------------------------------------------------------------
+- name:  fxnExtensionVersion
+  value: '~4'
+- name:  windowsDotNetVersion
+  value: 'v6.0'
+- name:  linuxDotNetVersion
+  value: 'DOTNET|6.0'
 
 stages:
 
@@ -64,12 +75,15 @@ stages:
       stage:
         azFuncProjectName:                ${{parameters.azFuncProjectName}}
         azureFunctionType:                ${{parameters.azureFunctionType}}
-        runtimeStack:                     ${{parameters.runtimeStack}}
+        functionExtensionVersion:         ${{variables.fxnExtensionVersion}}
+        linuxRuntimeStack:                ${{variables.linuxDotNetVersion}}
+        windowsRuntimeStack:              ${{variables.windowsDotNetVersion}}
         development:
           name:                           ${{variables.developmentStageName}}
           vmImage:                        ${{variables.developmentStageVmImage}}
           envName:                        ${{variables.developmentStageEnvName}}
           azRmWebDeployAzureSubscription: ${{variables.developmentStageAzRmWebDeployAzureSubscription}}
+          azResourceGroup:                ${{variables.developmentStageAzResourceGroup}}
           azRmWebDeployWebAppName:        ${{variables.developmentStageAzRmWebDeployWebAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
@@ -78,6 +92,7 @@ stages:
           vmImage:                        ${{variables.systemTestStageVmImage}}
           envName:                        ${{variables.systemTestStageEnvName}}
           azRmWebDeployAzureSubscription: ${{variables.systemTestStageAzRmWebDeployAzureSubscription}}
+          azResourceGroup:                ${{variables.systemTestStageAzResourceGroup}}
           azRmWebDeployWebAppName:        ${{variables.systemTestStageAzRmWebDeployWebAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
@@ -86,6 +101,7 @@ stages:
           vmImage:                        ${{variables.stagingStageVmImage}}
           envName:                        ${{variables.stagingStageEnvName}}
           azRmWebDeployAzureSubscription: ${{variables.stagingStageAzRmWebDeployAzureSubscription}}
+          azResourceGroup:                ${{variables.stagingStageAzResourceGroup}}
           azRmWebDeployWebAppName:        ${{variables.stagingStageAzRmWebDeployWebAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
@@ -94,6 +110,7 @@ stages:
           vmImage:                        ${{variables.productionStageVmImage}}
           envName:                        ${{variables.productionStageEnvName}}
           azRmWebDeployAzureSubscription: ${{variables.productionStageAzRmWebDeployAzureSubscription}}
+          azResourceGroup:                ${{variables.productionStageAzResourceGroup}}
           azRmWebDeployWebAppName:        ${{variables.productionStageAzRmWebDeployWebAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
