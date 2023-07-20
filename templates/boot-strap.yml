@@ -56,6 +56,12 @@ steps:
     displayName: Bootstrap Verbose Logging
   - bash: 'env | sort'
     displayName: Bootstrap Dump env variables
+- ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
+  - template:    utilities/info-version.yml@CeBlueprints
+    parameters:
+      modeElite:            ${{parameters.modeElite}}
+      applicationBlueprint: ${{parameters.applicationBluePrint}}
+      applicationType:      ${{parameters.applicationType}}
 
 # ===========================================================================
 # BOOTSTRAP KEY VAULT
