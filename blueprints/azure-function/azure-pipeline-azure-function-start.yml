@@ -38,5 +38,4 @@ extends:
     productName:        '__TODO_PRODUCT__'
     azFuncProjectName:  '__TODO_AZURE_FUNCTION_PROJECT_NAME__' # e.g. CeS.Sample.AzureFunction
     azureFunctionType:  '__TODO_AZURE_FUNCTION_TYPE__'         # either 'functionApp' or 'functionAppLinux'
-    runtimeStack:       '__TODO_AZURE_FUNCTION_RUNTIME__'      # defaults to 'DOTNET|6.0'
     suppressCD:         true # Allow engineering to do an immediate CI/build while CD is being configured

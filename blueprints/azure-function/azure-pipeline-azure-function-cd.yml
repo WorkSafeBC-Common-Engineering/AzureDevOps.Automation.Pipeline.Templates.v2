@@ -14,10 +14,13 @@ stages:
       vmImage:                        ${{parameters.stage.development.vmImage}}
       envName:                        ${{parameters.stage.development.envName}}
       azRmWebDeployAzureSubscription: ${{parameters.stage.development.azRmWebDeployAzureSubscription}}
+      azResourceGroup:                ${{parameters.stage.development.azResourceGroup}}
       azRmWebDeployWebAppName:        ${{parameters.stage.development.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
       azureFunctionType:              ${{parameters.stage.azureFunctionType}}
-      runtimeStack:                   ${{parameters.stage.runtimeStack}}
+      functionExtensionVersion:       ${{parameters.stage.functionExtensionVersion}}
+      windowsRuntimeStack:            ${{parameters.stage.windowsRuntimeStack}}
+      linuxRuntimeStack:              ${{parameters.stage.linuxRuntimeStack}}
       dependsOn:
       - ContinuousIntegration
 
@@ -32,10 +35,13 @@ stages:
       vmImage:                        ${{parameters.stage.systemTest.vmImage}}
       envName:                        ${{parameters.stage.systemTest.envName}}
       azRmWebDeployAzureSubscription: ${{parameters.stage.systemTest.azRmWebDeployAzureSubscription}}
+      azResourceGroup:                ${{parameters.stage.systemTest.azResourceGroup}}
       azRmWebDeployWebAppName:        ${{parameters.stage.systemTest.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
       azureFunctionType:              ${{parameters.stage.azureFunctionType}}
-      runtimeStack:                   ${{parameters.stage.runtimeStack}}
+      functionExtensionVersion:       ${{parameters.stage.functionExtensionVersion}}
+      windowsRuntimeStack:            ${{parameters.stage.windowsRuntimeStack}}
+      linuxRuntimeStack:              ${{parameters.stage.linuxRuntimeStack}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.name, 'Development') }}:
@@ -96,10 +102,13 @@ stages:
       vmImage:                        ${{parameters.stage.staging.vmImage}}
       envName:                        ${{parameters.stage.staging.envName}}
       azRmWebDeployAzureSubscription: ${{parameters.stage.staging.azRmWebDeployAzureSubscription}}
+      azResourceGroup:                ${{parameters.stage.staging.azResourceGroup}}
       azRmWebDeployWebAppName:        ${{parameters.stage.staging.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
       azureFunctionType:              ${{parameters.stage.azureFunctionType}}
-      runtimeStack:                   ${{parameters.stage.runtimeStack}}
+      functionExtensionVersion:       ${{parameters.stage.functionExtensionVersion}}
+      windowsRuntimeStack:            ${{parameters.stage.windowsRuntimeStack}}
+      linuxRuntimeStack:              ${{parameters.stage.linuxRuntimeStack}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.name, 'Development') }}:
@@ -141,10 +150,13 @@ stages:
       vmImage:                        ${{parameters.stage.production.vmImage}}
       envName:                        ${{parameters.stage.production.envName}}
       azRmWebDeployAzureSubscription: ${{parameters.stage.production.azRmWebDeployAzureSubscription}}
+      azResourceGroup:                ${{parameters.stage.production.azResourceGroup}}
       azRmWebDeployWebAppName:        ${{parameters.stage.production.azRmWebDeployWebAppName}}
       azFuncProjectName:              ${{parameters.stage.azFuncProjectName}}
       azureFunctionType:              ${{parameters.stage.azureFunctionType}}
-      runtimeStack:                   ${{parameters.stage.runtimeStack}}
+      functionExtensionVersion:       ${{parameters.stage.functionExtensionVersion}}
+      windowsRuntimeStack:            ${{parameters.stage.windowsRuntimeStack}}
+      linuxRuntimeStack:              ${{parameters.stage.linuxRuntimeStack}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.name, 'Development') }}:
