@@ -3,10 +3,9 @@ parameters:
   type:     string
 - name:     displayName
   type:     string
-- name:     vmImage
-  type:     string
-- name:     envName
-  type:     string
+- name:     config
+  type:     object
+  default:  []
 - name:     dependsOn
   type:     object
   default:  []
@@ -26,16 +25,15 @@ stages:
   variables:
       currentVersion: $[ stageDependencies.ContinuousIntegration.ContinuousIntegration.outputs['setSemVersion.semVersion'] ]
   pool:
-    vmImage:     ${{parameters.vmImage}}
+    vmImage:     ${{parameters.config.nameVM}}
   jobs:
   - deployment:  ${{parameters.name}}
-    environment: ${{parameters.envName}}
+    environment: ${{parameters.config.nameEnv}}
     strategy:
       runOnce:
         deploy:
           steps:
-          - script: echo Toolkit Version = $(currentVersion)
-          # For release we enforce the toolkit version
-          # TODO Add your deployment steps here
+          - script: echo name = ${{parameters.name}}
+          - script: echo testData = ${{parameters.config.testData}}
                 
                 
