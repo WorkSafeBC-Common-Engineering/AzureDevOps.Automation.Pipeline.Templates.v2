@@ -13,6 +13,9 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
+- name:     modeAILog
+  type:     boolean
+  default:  true
 # Local parameters as we cannot have vars at this stage
 - name:     urlUnifiedAgent
   type:     string
