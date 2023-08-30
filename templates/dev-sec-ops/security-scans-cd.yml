@@ -4,6 +4,9 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
+- name:     modeAILog
+  type:     boolean
+  default:  true
   
 steps:
   - script: echo 'Security CD Scans Placeholder ****************************************'

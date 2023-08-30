@@ -46,6 +46,9 @@ parameters:
 - name:     runAzurite
   type:     boolean
   default:  false
+- name:     modeAILog
+  type:     boolean
+  default:  true
 
 steps:
 # ===========================================================================
@@ -62,7 +65,7 @@ steps:
       modeElite:            ${{parameters.modeElite}}
       applicationBlueprint: ${{parameters.applicationBluePrint}}
       applicationType:      ${{parameters.applicationType}}
-
+      
 # ===========================================================================
 # BOOTSTRAP KEY VAULT
 # LOADS:
@@ -90,7 +93,7 @@ steps:
 # ===========================================================================
 # BOOTSTRAP AI LOGGING
 # ===========================================================================
-- ${{ if eq( lower(parameters.bootstrapMode), 'init' ) }}:
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'init' ), eq(parameters.modeAILog, true)) }}:
   - task: PowerShell@2
     displayName: 'Bootstrap Telemetry START'
     inputs:
@@ -110,7 +113,7 @@ steps:
       pwsh: true
     continueOnError: true
 
-- ${{ if eq( lower(parameters.bootstrapMode), 'foundation' ) }}:
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'foundation' ), eq(parameters.modeAILog, true)) }}:
   - task: PowerShell@2
     displayName: 'Bootstrap Telemetry Foundation'
     inputs:
@@ -142,13 +145,14 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
 
 # ===========================================================================
 # BOOTSTRAP - OPTIONAL START - AZURITE (Azure Storage Emulator)
 # ===========================================================================
 - ${{ if and( eq( lower( parameters.bootstrapMode ), 'init' ), eq( parameters.runAzurite, true )) }}:
   - template: emulators/azurite.yml@CeBlueprints
-   
+
 # ===========================================================================
 # BOOTSTRAP RUN STAGE
 # ===========================================================================
@@ -165,6 +169,7 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
 
 # -----------------------------------------------------------------------
 # Building Code Only
@@ -183,6 +188,7 @@ steps:
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
 
 # -----------------------------------------------------------------------
 # Building Code and DevSecOps
@@ -196,6 +202,7 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
 
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
   - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
@@ -212,11 +219,12 @@ steps:
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
 
 # ------------------------------------------------------------------------
 # Switch off the lights
 # ------------------------------------------------------------------------
-- ${{ if or( eq( lower(parameters.bootstrapMode), 'run' ), eq( lower(parameters.bootstrapMode), 'rundevSecopsonly' ),  eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}: 
+- ${{ if eq(parameters.modeAILog, true) }}: 
   - task: PowerShell@2
     displayName: 'Bootstrap Telemetry EXIT'
     inputs:
