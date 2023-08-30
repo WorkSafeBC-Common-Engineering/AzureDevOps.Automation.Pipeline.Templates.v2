@@ -53,33 +53,42 @@ stages:
     parameters:
       stage:
         development:
-          name:                           ${{variables.developmentStageName}}
-          vmImage:                        ${{variables.developmentStageVmImage}}
-          envName:                        ${{variables.developmentStageEnvName}}
+          config:
+            active:                       ${{variables.developmentStageActive}}
+            nameEnv:                      ${{variables.developmentStageEnvName}}
+            nameVM:                       ${{variables.developmentStageVmImage}}
+            testData:                     ${{variables.developmentStageTestData}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}                         
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         systemTest:
-          name:                           ${{variables.systemTestStageName}}
-          vmImage:                        ${{variables.systemTestStageVmImage}}
-          envName:                        ${{variables.systemTestStageEnvName}}
+          config:                       
+            active:                       ${{variables.systemTestStageActive}}
+            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            nameVM:                       ${{variables.systemTestStageVmImage}}
+            testData:                     ${{variables.systemTestStageTestData}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         staging:
-          name:                           ${{variables.stagingStageName}}
-          vmImage:                        ${{variables.stagingStageVmImage}}
-          envName:                        ${{variables.stagingStageEnvName}}
+          config:                       
+            active:                       ${{variables.stagingStageActive}}
+            nameEnv:                      ${{variables.stagingStageEnvName}}
+            nameVM:                       ${{variables.stagingStageVmImage}}
+            testData:                     ${{variables.stagingStageTestData}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         production:
-          name:                           ${{variables.productionStageName}}
-          vmImage:                        ${{variables.productionStageVmImage}}
-          envName:                        ${{variables.productionStageEnvName}}
+          config:                       
+            active:                       ${{variables.productionStageActive}}
+            nameEnv:                      ${{variables.productionStageEnvName}}
+            nameVM:                       ${{variables.productionStageVmImage}}
+            testData:                     ${{variables.productionStageTestData}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here 
+# TODO pass your configuration variables here
+        # Embedded non-negotiable stages ------------------------------------ 
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
