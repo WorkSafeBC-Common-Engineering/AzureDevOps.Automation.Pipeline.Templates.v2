@@ -3,16 +3,12 @@ parameters:
   type:     string
 - name:     displayName
   type:     string
-- name:     vmImage
-  type:     string
-- name:     envName
-  type:     string
-- name:     azRmWebDeployAzureSubscription
-  type:     string
-- name:     azResourceGroup
-  type:     string
-- name:     azRmWebDeployWebAppName
-  type:     string
+- name:     config
+  type:     object
+  default:  []
+- name:     dependsOn
+  type:     object
+  default:  []
 - name:     azFuncProjectName
   type:     string
 - name:     azureFunctionType
@@ -23,9 +19,7 @@ parameters:
   type:     string
 - name:     linuxRuntimeStack
   type:     string
-- name:     dependsOn
-  type:     object
-  default:  []
+
 stages:
 
 # -----------------------------------------------------------------------------------------------------
@@ -39,45 +33,49 @@ stages:
       - ${{ each stage in parameters.dependsOn }}:
         - ${{stage}}
   pool:
-    vmImage:     ${{parameters.vmImage}}
+    vmImage:     ${{parameters.config.nameVM}}
   jobs:
   - deployment:  ${{parameters.name}}
-    environment: ${{parameters.envName}}
+    environment: ${{parameters.config.nameEnv}}
     strategy:
       runOnce:
         deploy:
           steps:
+
           - task: AzureFunctionApp@2
             displayName: Deploy Azure Function
             inputs:
-              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              azureSubscription: ${{parameters.config.azureSubscription}}
               appType: ${{parameters.azureFunctionType}}
-              appName: ${{parameters.azRmWebDeployWebAppName}}
+              appName: ${{parameters.config.azureAppName}}
               package: '$(Pipeline.Workspace)/**/${{parameters.azFuncProjectName}}.zip'
               runtimeStack: ${{parameters.linuxRuntimeStack}}
+
           - task: AzureCLI@2
             displayName: Set Azure Function Runtime
             inputs:
-              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              azureSubscription: ${{parameters.config.azureSubscription}}
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                az functionapp config appsettings set --settings FUNCTIONS_EXTENSION_VERSION=${{parameters.functionExtensionVersion}} -g ${{parameters.azResourceGroup}} -n ${{parameters.azRmWebDeployWebAppName}}
+                az functionapp config appsettings set --settings FUNCTIONS_EXTENSION_VERSION=${{parameters.functionExtensionVersion}} -g ${{parameters.config.azureResourceGroup}} -n ${{parameters.config.azureAppName}}
+
           - task: AzureCLI@2
             displayName: Set Azure Function .Net Version - Windows
             condition: eq( '${{ parameters.azureFunctionType }}', 'functionApp')
             inputs:
-              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              azureSubscription: ${{parameters.config.azureSubscription}}
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                az functionapp config set --net-framework-version ${{parameters.windowsRuntimeStack}} -g ${{parameters.azResourceGroup}} -n ${{parameters.azRmWebDeployWebAppName}}
+                az functionapp config set --net-framework-version ${{parameters.windowsRuntimeStack}} -g ${{parameters.config.azureResourceGroup}} -n ${{parameters.config.azureAppName}}
+
           - task: AzureCLI@2
             displayName: Set Azure Function .Net Version - Linux
             condition: eq('${{ parameters.azureFunctionType }}', 'functionAppLinux')
             inputs:
-              azureSubscription: ${{parameters.azRmWebDeployAzureSubscription}}
+              azureSubscription: ${{parameters.config.azureSubscription}}
               scriptType: pscore
               scriptLocation: inlineScript
               inlineScript: |
-                az functionapp config set --name ${{parameters.azRmWebDeployWebAppName}} --resource-group ${{parameters.azResourceGroup}} --linux-fx-version "${{parameters.linuxRuntimeStack}}"
+                az functionapp config set --name ${{parameters.config.azureAppName}} --resource-group ${{parameters.config.azureResourceGroup}} --linux-fx-version "${{parameters.linuxRuntimeStack}}"

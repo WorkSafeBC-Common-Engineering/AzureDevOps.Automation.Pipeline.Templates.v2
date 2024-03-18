@@ -12,8 +12,8 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # DEVelopment Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  developmentStageName
-  value: 'Development' # Do not change stage name value
+- name:  developmentStageActive
+  value: true
 - name:  developmentStageEnvName
   value: '<TBD>'
 - name:  developmentStageVmImage
@@ -26,8 +26,8 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # System Test Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  systemTestStageName
-  value: 'SystemTest' # Do not change stage name value
+- name:  systemTestStageActive
+  value: true
 - name:  systemTestStageEnvName
   value: '<TBD>'
 - name:  systemTestStageVmImage
@@ -46,8 +46,8 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # Staging Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  stagingStageName
-  value: 'Staging' # Do not change stage name value
+- name:  stagingStageActive
+  value: true
 - name:  stagingStageEnvName
   value: '<TBD>'
 - name:  stagingStageVmImage
@@ -60,8 +60,8 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # PRODuction Test Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  productionStageName
-  value: 'Production' # Do not change stage name value
+- name:  productionStageActive
+  value: true
 - name:  productionStageEnvName
   value: '<TBD>'
 - name:  productionStageVmImage

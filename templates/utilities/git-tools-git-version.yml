@@ -14,7 +14,7 @@
 #   repositories:
 #   - repository: UtilityTemplates
 #     type: git
-#     name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates'
+#     name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Templates'
 #       ref: refs/heads/master
 #
 # stages:

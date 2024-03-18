@@ -50,7 +50,7 @@ stages:
   # Variables
   variables:
     buildConfiguration:   'Release'
-    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE'
+    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE_' # WSBC_Cloud_NuGet feed
   
   jobs:
   - job: ContinuousIntegration
@@ -105,7 +105,6 @@ stages:
         verbose:              ${{parameters.verbose}}
         modeElite:            ${{parameters.modeElite}}
         runAzurite:           ${{parameters.runAzurite}}
-
 # ==========================================================================
 
 # --------------------------------------------------------------------------
@@ -133,7 +132,7 @@ stages:
         inputs:
           command:          'build'
           projects:         '$(Build.SourcesDirectory)\${{parameters.projectPath}}\${{parameters.projectFile}}'
-          arguments:        "--configuration $(buildConfiguration) --arch ${{parameters.platform}} --no-restore /p:Version=$(setSemVersion.semVersion)"
+          arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion)"
     - ${{ else }}:
       - task: VSBuild@1
         displayName: 'Build'
@@ -162,20 +161,12 @@ stages:
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION TEST
 # --------------------------------------------------------------------------
-    - ${{ if eq(parameters.isDotNetCore, true) }}:
-      - task: DotNetCoreCLI@2
-        displayName: 'Run Tests'
-        inputs:
-          command:    'test'
-          projects:   '**/*Tests/*.??proj'
-          arguments:  '--configuration $(buildConfiguration) --no-restore'
-    - ${{ else }}:
-      - task: VSTest@2
-        displayName: 'Run Tests'
-        inputs:
-          platform: ${{parameters.platform}}
-          configuration: $(buildConfiguration)
-          testAssemblyVer2: '**/*Tests/*Test*.dll'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Tests'
+      inputs:
+        command:    'test'
+        projects:   '**/*Tests/*.??proj'
+        arguments:  '--configuration $(buildConfiguration) --no-restore'
 
 # --------------------------------------------------------------------------
 # PUBLISH

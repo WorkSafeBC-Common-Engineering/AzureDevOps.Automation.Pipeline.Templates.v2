@@ -11,13 +11,14 @@ variables:
 
 # -----------------------------------------------------------------------------------------------------
 # Development Stage
-# -----------------------------------------------------------------------------------------------------
-- name:  developmentStageName
-  value: 'Development' # Do not change stage name value
+- name:  developmentStageActive
+  value: true
 - name:  developmentStageEnvName
-  value: '<TBD>'
+  value: '<tbd>'
 - name:  developmentStageVmImage
-  value: 'ubuntu-latest'
+  value: '<tbd>'
+- name:  developmentStageTestData
+  value: 'Development Stage Test Data'
 - name:  developmentStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  developmentStageAzResourceGroup
@@ -27,13 +28,14 @@ variables:
 
 # -----------------------------------------------------------------------------------------------------
 # System Test Stage
-# -----------------------------------------------------------------------------------------------------
-- name:  systemTestStageName
-  value: 'SystemTest' # Do not change stage name value
+- name:  systemTestStageActive
+  value: true
 - name:  systemTestStageEnvName
-  value: '<TBD>'
+  value: '<tbd>'
 - name:  systemTestStageVmImage
-  value: 'ubuntu-latest'
+  value: '<tbd>'
+- name:  systemTestStageTestData
+  value: 'System Test Stage Test Data'
 - name:  systemTestStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  systemTestStageAzResourceGroup
@@ -43,19 +45,21 @@ variables:
 
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
-# -----------------------------------------------------------------------------------------------------
 - name:  securityReviewStageEnvName
-  value: '<TBD>'
+  value: 'common-engineering-security-review-sr'
 
 # -----------------------------------------------------------------------------------------------------
 # Staging Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  stagingStageName
-  value: 'Staging' # Do not change stage name value
+# Staging Stage
+- name:  stagingStageActive
+  value: true
 - name:  stagingStageEnvName
-  value: '<TBD>'
+  value: '<tbd>'
 - name:  stagingStageVmImage
-  value: 'ubuntu-latest'
+  value: '<tbd>'
+- name:  stagingStageTestData
+  value: 'Staging Stage Test Data'
 - name:  stagingStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  systemTestStageAzResourceGroup
@@ -64,14 +68,15 @@ variables:
   value: '<TBD>'
 
 # -----------------------------------------------------------------------------------------------------
-# Production Stage
-# -----------------------------------------------------------------------------------------------------
-- name:  productionStageName
-  value: 'Production' # Do not change stage name value
+# Production Stage-
+- name:  productionStageActive
+  value: true
 - name:  productionStageEnvName
-  value: '<TBD>'
+  value: '<tbd>'
 - name:  productionStageVmImage
-  value: 'ubuntu-latest'
+  value: '<tbd>'
+- name:  productionStageTestData
+  value: 'Production Stage Test Data'
 - name:  productionStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  systemTestStageAzResourceGroup
