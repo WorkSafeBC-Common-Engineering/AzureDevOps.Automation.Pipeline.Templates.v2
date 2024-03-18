@@ -27,10 +27,10 @@ resources:
   repositories:
   - repository: CeBlueprints
     type:       git
-    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates.v2'
+    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Templates.v2'
   - repository: CeConfiguration
     type:       git
-    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Configuration.v2'
+    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Configuration.v2'
 
 extends:
   template: blueprints/universal-artifact/azure-pipeline-universal-artifact-control.yml@CeBlueprints

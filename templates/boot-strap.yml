@@ -48,7 +48,7 @@ parameters:
   default:  false
 - name:     modeAILog
   type:     boolean
-  default:  true
+  default:  false
 
 steps:
 # ===========================================================================
@@ -63,7 +63,7 @@ steps:
   - template:    utilities/info-version.yml@CeBlueprints
     parameters:
       modeElite:            ${{parameters.modeElite}}
-      applicationBlueprint: ${{parameters.applicationBluePrint}}
+      applicationBlueprint: ${{parameters.applicationBlueprint}}
       applicationType:      ${{parameters.applicationType}}
       
 # ===========================================================================
@@ -76,7 +76,7 @@ steps:
     displayName: Bootstrap Key Vault
     inputs:
       azureSubscription: 'CeS Bootstrap Service Endpoint'
-      KeyVaultName:      '__TODO_INSERT_YOUR_KEY_VAULT_NAME_HERE_'
+      KeyVaultName:      '__TODO_LIST_YOUR_SECRET_VARIABLES_THAT_WILL_BE_LOADED_HERE__'
       RunAsPreJob:       true
 
 # ===========================================================================
@@ -88,7 +88,7 @@ steps:
     fetchDepth:  0
 # Production Toolbox
 - ${{ if or( eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
-  - checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Toolbox.v2
+  - checkout: git://_TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
 
 # ===========================================================================
 # BOOTSTRAP AI LOGGING

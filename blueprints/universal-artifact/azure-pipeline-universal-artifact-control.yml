@@ -53,35 +53,43 @@ stages:
     parameters:
       stage:
         development:
-          name:                           ${{variables.developmentStageName}}
-          vmImage:                        ${{variables.developmentStageVmImage}}
-          envName:                        ${{variables.developmentStageEnvName}}                         
-          feedPublish:                    ${{variables.developmentStageFeedPublish}}
-          packagePublish:                 ${{variables.developmentStagePackagePublish}}
+          config:
+            active:                       ${{variables.developmentStageActive}}
+            nameEnv:                      ${{variables.developmentStageEnvName}}
+            nameVM:                       ${{variables.developmentStageVmImage}}
+            testData:                     ${{variables.developmentStageTestData}}
+            feedPublish:                  ${{variables.developmentStageFeedPublish}}
+            packagePublish:               ${{variables.developmentStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         systemTest:
-          name:                           ${{variables.systemTestStageName}}
-          vmImage:                        ${{variables.systemTestStageVmImage}}
-          envName:                        ${{variables.systemTestStageEnvName}}
-          feedPublish:                    ${{variables.systemTestStageFeedPublish}}
-          packagePublish:                 ${{variables.systemTestStagePackagePublish}}
+          config:
+            active:                       ${{variables.systemTestStageActive}}
+            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            nameVM:                       ${{variables.systemTestStageVmImage}}
+            testData:                     ${{variables.systemTestStageTestData}}
+            feedPublish:                  ${{variables.systemTestStageFeedPublish}}
+            packagePublish:               ${{variables.systemTestStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         staging:
-          name:                           ${{variables.stagingStageName}}
-          vmImage:                        ${{variables.stagingStageVmImage}}
-          envName:                        ${{variables.stagingStageEnvName}}
-          feedPublish:                    ${{variables.stagingStageFeedPublish}}
-          packagePublish:                 ${{variables.stagingStagePackagePublish}}
+          config:
+            active:                       ${{variables.stagingStageActive}}
+            nameEnv:                      ${{variables.stagingStageEnvName}}
+            nameVM:                       ${{variables.stagingStageVmImage}}
+            testData:                     ${{variables.stagingStageTestData}}
+            feedPublish:                  ${{variables.stagingStageFeedPublish}}
+            packagePublish:               ${{variables.stagingStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         production:
-          name:                           ${{variables.productionStageName}}
-          vmImage:                        ${{variables.productionStageVmImage}}
-          envName:                        ${{variables.productionStageEnvName}}
-          feedPublish:                    ${{variables.productionStageFeedPublish}}
-          packagePublish:                 ${{variables.productionStagePackagePublish}}
+          config:
+            active:                       ${{variables.productionStageActive}}
+            nameEnv:                      ${{variables.productionStageEnvName}}
+            nameVM:                       ${{variables.productionStageVmImage}}
+            testData:                     ${{variables.productionStageTestData}}
+            feedPublish:                  ${{variables.productionStageFeedPublish}}
+            packagePublish:               ${{variables.productionStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
         securityReview:

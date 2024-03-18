@@ -16,7 +16,7 @@ parameters:
 # default parameters
 - name:     vGuid
   type:     string
-  default:  '_TODO_ADD_UNIQUE_GUID_'
+  default:  '__TODO_ADD_UNIQUE_GUID__HERE__'
 - name:     vVersion
   type:     string
   default:  '2.0'
