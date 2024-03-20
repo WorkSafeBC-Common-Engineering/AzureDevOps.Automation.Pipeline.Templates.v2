@@ -20,7 +20,6 @@ parameters:
   type:     boolean
   default:  false
 
-
 # --------------------------------------------------------------------------
 # START OF BUILD and TEST STAGE
 # --------------------------------------------------------------------------
@@ -36,7 +35,7 @@ stages:
   # Variables
   variables:
     buildConfiguration:   'Release'
-    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE'
+    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HER__' # WSBC_Cloud_NuGet feed
   
   jobs:
   - job: ContinuousIntegration
@@ -100,7 +99,8 @@ stages:
       inputs:
         command:    'test'
         projects:   '**/*Tests/*.csproj'
-        arguments:  '--configuration $(buildConfiguration) --no-restore'
+        arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage"'
+        publishTestResults: true
 
 # --------------------------------------------------------------------------
 # PUBLISH

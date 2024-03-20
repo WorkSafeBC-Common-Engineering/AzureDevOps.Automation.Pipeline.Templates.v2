@@ -67,7 +67,7 @@ resources:
   # SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
   - repository: CeBlueprints
     type: git
-    name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE_/AzureDevOps.Automation.Pipeline.Templates.v2'
+    name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Templates.v2'
   # =======================================================================
 
 # --------------------------------------------------------------------------

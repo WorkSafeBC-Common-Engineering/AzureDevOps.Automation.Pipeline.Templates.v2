@@ -32,22 +32,30 @@ parameters:
 
 # VARIABLES
 variables:
+
 - ${{ if ne(parameters.suppressCD, true) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
 
 # -----------------------------------------------------------------------------------------------------
 # Azure Function App Settings
 # These are set for the current LTS supported versions of .Net and current Azure Function Runtime.
-# NOTE: when we move to .Net 8 (LTS) and possibly running the function in isolation mode,
-#       we will need to adjust these settings. At that point we will probably need to add a
-#       parameter for in-process vs. isolated worker process (preferred)
+# NOTE: when we move to .Net 8 (LTS) and running the function in isolation mode,
+#       we will need to adjust these settings. .Net 8 only supports isolated mode.
 # -----------------------------------------------------------------------------------------------------
 - name:  fxnExtensionVersion
   value: '~4'
-- name:  windowsDotNetVersion
-  value: 'v6.0'
-- name:  linuxDotNetVersion
-  value: 'DOTNET|6.0'
+
+- ${{ if or(eq(parameters.netCoreVersion, '6.x'), eq(parameters.netCoreVersion, '6.0.x')) }}:
+  - name:  windowsDotNetVersion
+    value: 'v6.0'
+  - name:  linuxDotNetVersion
+    value: 'DOTNET|6.0'
+
+- ${{ if or(eq(parameters.netCoreVersion, '8.x'), eq(parameters.netCoreVersion, '8.0.x')) }}:
+  - name:  windowsDotNetVersion
+    value: 'v8.0'
+  - name:  linuxDotNetVersion
+    value: 'DOTNET-ISOLATED|8.0'
 
 stages:
 
@@ -64,7 +72,6 @@ stages:
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
-
 # --------------------------------------------------------------------------
 # DEPLOYMENT
 # 2021.10.04 WS Suppress CD on "merge" so that we can use PR validation builds
@@ -72,48 +79,61 @@ stages:
 - ${{ if and(ne(parameters.suppressCD, true), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
   - template: /blueprints/azure-function/azure-pipeline-azure-function-cd.yml@CeBlueprints
     parameters:
+      azFuncProjectName:                  ${{parameters.azFuncProjectName}}
+      azureFunctionType:                  ${{parameters.azureFunctionType}}
+      functionExtensionVersion:           ${{variables.fxnExtensionVersion}}
+      linuxRuntimeStack:                  ${{variables.linuxDotNetVersion}}
+      windowsRuntimeStack:                ${{variables.windowsDotNetVersion}}
+
       stage:
-        azFuncProjectName:                ${{parameters.azFuncProjectName}}
-        azureFunctionType:                ${{parameters.azureFunctionType}}
-        functionExtensionVersion:         ${{variables.fxnExtensionVersion}}
-        linuxRuntimeStack:                ${{variables.linuxDotNetVersion}}
-        windowsRuntimeStack:              ${{variables.windowsDotNetVersion}}
         development:
-          name:                           ${{variables.developmentStageName}}
-          vmImage:                        ${{variables.developmentStageVmImage}}
-          envName:                        ${{variables.developmentStageEnvName}}
-          azRmWebDeployAzureSubscription: ${{variables.developmentStageAzRmWebDeployAzureSubscription}}
-          azResourceGroup:                ${{variables.developmentStageAzResourceGroup}}
-          azRmWebDeployWebAppName:        ${{variables.developmentStageAzRmWebDeployWebAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
-          modeElite:                      ${{parameters.modeElite}}
+          config:
+            active:                       ${{variables.developmentStageActive}}
+            nameEnv:                      ${{variables.developmentStageEnvName}}
+            nameVM:                       ${{variables.developmentStageVmImage}}
+            testData:                     ${{variables.developmentStageTestData}}
+            azureSubscription:            ${{variables.developmentStageAzRmWebDeployAzureSubscription}}
+            azureResourceGroup:           ${{variables.developmentStageAzResourceGroup}}
+            azureAppName:                 ${{variables.developmentStageAzRmWebDeployWebAppName}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            modeElite:                    ${{parameters.modeElite}}
+
         systemTest:
-          name:                           ${{variables.systemTestStageName}}
-          vmImage:                        ${{variables.systemTestStageVmImage}}
-          envName:                        ${{variables.systemTestStageEnvName}}
-          azRmWebDeployAzureSubscription: ${{variables.systemTestStageAzRmWebDeployAzureSubscription}}
-          azResourceGroup:                ${{variables.systemTestStageAzResourceGroup}}
-          azRmWebDeployWebAppName:        ${{variables.systemTestStageAzRmWebDeployWebAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
-          modeElite:                      ${{parameters.modeElite}}
+          config:
+            active:                       ${{variables.systemTestStageActive}}
+            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            nameVM:                       ${{variables.systemTestStageVmImage}}
+            testData:                     ${{variables.systemTesttStageTestData}}
+            azureSubscription:            ${{variables.systemTestStageAzRmWebDeployAzureSubscription}}
+            azureResourceGroup:           ${{variables.systemTestStageAzResourceGroup}}
+            azureAppName:                 ${{variables.systemTestStageAzRmWebDeployWebAppName}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            modeElite:                    ${{parameters.modeElite}}
+
         staging:
-          name:                           ${{variables.stagingStageName}}
-          vmImage:                        ${{variables.stagingStageVmImage}}
-          envName:                        ${{variables.stagingStageEnvName}}
-          azRmWebDeployAzureSubscription: ${{variables.stagingStageAzRmWebDeployAzureSubscription}}
-          azResourceGroup:                ${{variables.stagingStageAzResourceGroup}}
-          azRmWebDeployWebAppName:        ${{variables.stagingStageAzRmWebDeployWebAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
-          modeElite:                      ${{parameters.modeElite}}
+          config:
+            active:                       ${{variables.stagingStageActive}}
+            nameEnv:                      ${{variables.stagingStageEnvName}}
+            nameVM:                       ${{variables.stagingStageVmImage}}
+            testData:                     ${{variables.stagingStageTestData}}
+            azureSubscription:            ${{variables.stagingStageAzRmWebDeployAzureSubscription}}
+            azureResourceGroup:           ${{variables.stagingStageAzResourceGroup}}
+            azureAppName:                 ${{variables.stagingStageAzRmWebDeployWebAppName}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            modeElite:                    ${{parameters.modeElite}}
+
         production:
-          name:                           ${{variables.productionStageName}}
-          vmImage:                        ${{variables.productionStageVmImage}}
-          envName:                        ${{variables.productionStageEnvName}}
-          azRmWebDeployAzureSubscription: ${{variables.productionStageAzRmWebDeployAzureSubscription}}
-          azResourceGroup:                ${{variables.productionStageAzResourceGroup}}
-          azRmWebDeployWebAppName:        ${{variables.productionStageAzRmWebDeployWebAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
-          modeElite:                      ${{parameters.modeElite}}
+          config:
+            active:                       ${{variables.productionStageActive}}
+            nameEnv:                      ${{variables.productionStageEnvName}}
+            nameVM:                       ${{variables.productionStageVmImage}}
+            testData:                     ${{variables.productionStageTestData}}
+            azureSubscription:            ${{variables.productionStageAzRmWebDeployAzureSubscription}}
+            azureResourceGroup:           ${{variables.productionStageAzResourceGroup}}
+            azureAppName:                 ${{variables.productionStageAzRmWebDeployWebAppName}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            modeElite:                    ${{parameters.modeElite}}
+
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}

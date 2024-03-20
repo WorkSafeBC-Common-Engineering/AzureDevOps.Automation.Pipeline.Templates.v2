@@ -76,6 +76,7 @@ stages:
     verbose:                ${{parameters.verbose}}
     suppressCD:             ${{parameters.suppressCD}}
     versionSpec:            ${{parameters.versionSpec}}
+    runAzurite:             ${{parameters.runAzurite}}
 
 # --------------------------------------------------------------------------
 # DEPLOYMENT

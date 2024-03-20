@@ -3,14 +3,9 @@ parameters:
   type:     string
 - name:     displayName
   type:     string
-- name:     vmImage
-  type:     string
-- name:     envName
-  type:     string
-- name:     feedPublish
-  type:     string
-- name:     packagePublish
-  type:     string
+- name:     config
+  type:     object
+  default:  []
 - name:     dependsOn
   type:     object
   default:  []
@@ -30,10 +25,10 @@ stages:
   variables:
       currentVersion: $[ stageDependencies.ContinuousIntegration.ContinuousIntegration.outputs['setSemVersion.semVersion'] ]
   pool:
-    vmImage:     ${{parameters.vmImage}}
+    vmImage:     ${{parameters.config.vmImage}}
   jobs:
   - deployment:  ${{parameters.name}}
-    environment: ${{parameters.envName}}
+    environment: ${{parameters.config.nameEnv}}
     strategy:
       runOnce:
         deploy:
@@ -47,8 +42,8 @@ stages:
                 command: 'publish'
                 publishDirectory:       $(Agent.BuildDirectory)/drop
                 feedsToUsePublish:      'internal'
-                vstsFeedPublish:        ${{parameters.feedPublish}}
-                vstsFeedPackagePublish: ${{parameters.packagePublish}}
+                vstsFeedPublish:        ${{parameters.config.feedPublish}}
+                vstsFeedPackagePublish: ${{parameters.config.packagePublish}}
                 versionOption:          'custom'
                 versionPublish:         $(currentVersion)
           # For non-release we increment the minor version so that we do not have to tag for DV feeds
@@ -59,7 +54,7 @@ stages:
                 command: 'publish'
                 publishDirectory:       $(Agent.BuildDirectory)/drop
                 feedsToUsePublish:      'internal'
-                vstsFeedPublish:        ${{parameters.feedPublish}}
-                vstsFeedPackagePublish: ${{parameters.packagePublish}}
+                vstsFeedPublish:        ${{parameters.config.feedPublish}}
+                vstsFeedPackagePublish: ${{parameters.config.packagePublish}}
                 
                 
