@@ -3,12 +3,9 @@ parameters:
   type:     string
 - name:     displayName
   type:     string
-- name:     vmImage
-  type:     string
-- name:     envName
-  type:     string
-- name:     targetFeed
-  type:     string
+- name:     config
+  type:     object
+  default:  []
 - name:     dependsOn
   type:     object
   default:  []
@@ -29,10 +26,10 @@ stages:
       - ${{ each stage in parameters.dependsOn }}:
         - ${{stage}}
   pool:
-    vmImage:     ${{parameters.vmImage}}
+    vmImage:     ${{parameters.config.nameVM}}
   jobs:
   - deployment:  ${{parameters.name}}
-    environment: ${{parameters.envName}}
+    environment: ${{parameters.config.nameEnv}}
     strategy:
       runOnce:
         deploy:
@@ -40,9 +37,9 @@ stages:
           - task: NuGetCommand@2
             displayName: Deploy Nuget Package
             inputs:
-              command:              push
-              packagesToPush:       '$(Pipeline.Workspace)/package/*.nupkg'
-              publishVstsFeed:      '${{parameters.targetFeed}}'
+              command:                  push
+              packagesToPush:           '$(Pipeline.Workspace)/package/*.nupkg'
+              publishVstsFeed:          '${{parameters.config.targetFeed}}'
               allowPackageConflicts:    true
               verbosityPush:            Detailed
             
