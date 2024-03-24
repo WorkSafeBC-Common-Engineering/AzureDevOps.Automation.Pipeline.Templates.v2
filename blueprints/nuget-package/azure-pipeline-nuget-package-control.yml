@@ -44,10 +44,6 @@ parameters:
 - name:     suppressCD
   type:     boolean
   default:  false
-# SonarQube
-- name:     sonarExclusion
-  type:     string
-  default:  ''
 
 # VARIABLES
 variables:
@@ -81,7 +77,6 @@ stages:
     suppressCD:             ${{parameters.suppressCD}}
     versionSpec:            ${{parameters.versionSpec}}
     runAzurite:             ${{parameters.runAzurite}}
-    sonarExclusion:         ${{parameters.sonarExclusion}}
 
 # --------------------------------------------------------------------------
 # DEPLOYMENT
