@@ -43,7 +43,7 @@ extends:
     projectPath:            '__TODO_PROJECT_PATH__'             # e.g. RepoName\Src\wcbCAPTCHA.Mstr\wcbCAPTCHACtrl
     projectFile:            '__TODO_PROJECT_FILE__'             # e.g. wcbCAPTCHACtrl.csproj
     nuspecFile:             '__TODO_NUSPEC_FILE__'              # e.g. wcbCAPTCHACtrl.nuspec
-    suppressCD:             false                               # Allow engineering to do an immediate CI/build while CD is being configured
+    suppressCD:             true                               # Allow engineering to do an immediate CI/build while CD is being configured
     useDefaultConfig:       true                                # If set to false (default), will require a custom *-config file to be created
                                                                 # Else a global *-config.yml file will be used instead with default settings
     usePortfolioConfig:     false                               # If true (and useDefaultConfig = false), will use a *-config.yml file with
