@@ -87,33 +87,37 @@ stages:
     parameters:
       stage:
         development:
-          name:                           ${{variables.developmentStageName}}
-          vmImage:                        ${{variables.developmentStageVmImage}}
-          envName:                        ${{variables.developmentStageEnvName}}
+          config:
+            active:                       ${{variables.developmentStageActive}}
+            nameEnv:                      ${{variables.developmentStageEnvName}}
+            nameVM:                       ${{variables.developmentStageVmImage}}
+            targetFeed:                   ${{variables.developmentTargetFeed}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-          targetFeed:                     ${{variables.developmentTargetFeed}}
         systemTest:
-          name:                           ${{variables.systemTestStageName}}
-          vmImage:                        ${{variables.systemTestStageVmImage}}
-          envName:                        ${{variables.systemTestStageEnvName}}
+          config:                       
+            active:                       ${{variables.systemTestStageActive}}
+            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            nameVM:                       ${{variables.systemTestStageVmImage}}
+            targetFeed:                   ${{variables.systemTestTargetFeed}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-          targetFeed:                     ${{variables.systemTestTargetFeed}}
         staging:
-          name:                           ${{variables.stagingStageName}}
-          vmImage:                        ${{variables.stagingStageVmImage}}
-          envName:                        ${{variables.stagingStageEnvName}}
+          config:                       
+            active:                       ${{variables.stagingStageActive}}
+            nameEnv:                      ${{variables.stagingStageEnvName}}
+            nameVM:                       ${{variables.stagingStageVmImage}}
+            targetFeed:                   ${{variables.stagingTargetFeed}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-          targetFeed:                     ${{variables.stagingTargetFeed}}
         production:
-          name:                           ${{variables.productionStageName}}
-          vmImage:                        ${{variables.productionStageVmImage}}
-          envName:                        ${{variables.productionStageEnvName}}
+          config:                       
+            active:                       ${{variables.productionStageActive}}
+            nameEnv:                      ${{variables.productionStageEnvName}}
+            nameVM:                       ${{variables.productionStageVmImage}}
+            targetFeed:                   ${{variables.productionTargetFeed}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           modeElite:                      ${{parameters.modeElite}}
-          targetFeed:                     ${{variables.productionTargetFeed}}
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}

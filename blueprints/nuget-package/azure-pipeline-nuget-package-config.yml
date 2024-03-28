@@ -9,8 +9,8 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # System Test Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  systemTestStageName
-  value: 'Staging' # Do not change stage name value
+- name:  systemTestStageActive
+  value: true
 - name:  systemTestStageEnvName
   value: '<TBD>'
 - name:  systemTestStageVmImage
@@ -21,8 +21,8 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # Production Stage
 # -----------------------------------------------------------------------------------------------------
-- name:  productionStageName
-  value: 'Production' # Do not change stage name value
+- name:  productionStageActive
+  value: true
 - name:  productionStageEnvName
   value: '<TBD>'
 - name:  productionStageVmImage
