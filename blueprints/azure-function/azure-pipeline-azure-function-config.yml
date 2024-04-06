@@ -46,7 +46,7 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
 - name:  securityReviewStageEnvName
-  value: 'common-engineering-security-review-sr'
+  value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
 # Staging Stage
