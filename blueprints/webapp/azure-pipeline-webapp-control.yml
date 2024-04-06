@@ -1,0 +1,125 @@
+parameters:
+- name:     portfolioName
+  type:     string
+- name:     productName
+  type:     string
+- name:     publishFolder
+  type:     string
+- name:     applicationBlueprint
+  type:     string
+  default:  'webapp'
+- name:     netCoreVersion
+  type:     string
+  default:  '8.x'
+# Mode Elite - if true we tolerate no errors!
+- name:     modeElite
+  type:     boolean
+  default:  false
+# Bootstrap optionals
+- name:     verbose
+  type:     boolean
+  default:  false
+# CI Blueprint optionals
+- name:     versionSpec
+  type:     string
+  default:  '5.11.x' # switch from 5.6.3 to 5.11.x as default
+# CD Blueprint optionals
+- name:     suppressCD
+  type:     boolean
+  default:  false
+
+# VARIABLES
+variables:
+- ${{ if ne(parameters.suppressCD, true) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+
+stages:
+
+# --------------------------------------------------------------------------
+# START OF PIPELINE
+# --------------------------------------------------------------------------
+- template: /blueprints/webapp/azure-pipeline-webapp-ci.yml@CeBlueprints
+  parameters:
+    portfolioName:        ${{parameters.portfolioName}}
+    productName:          ${{parameters.productName}}
+    applicationBlueprint: ${{parameters.applicationBlueprint}}
+    netCoreVersion:       ${{parameters.netCoreVersion}}
+    publishFolder:        ${{parameters.publishFolder}}
+    verbose:              ${{parameters.verbose}}
+    modeElite:            ${{parameters.modeElite}}
+    versionSpec:          ${{parameters.versionSpec}}
+
+# --------------------------------------------------------------------------
+# DEPLOYMENT
+# 2021.10.04 WS Suppress CD on "merge" so that we can use PR validation builds
+# --------------------------------------------------------------------------
+- ${{ if and(ne(parameters.suppressCD, true), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
+  - template: /blueprints/webapp/azure-pipeline-webapp-cd.yml@CeBlueprints
+    parameters:
+      stage:
+        development:
+          config:
+            active:                       ${{variables.developmentStageActive}}
+            nameEnv:                      ${{variables.developmentStageEnvName}}
+            nameVM:                       ${{variables.developmentStageVmImage}}
+            testData:                     ${{variables.developmentStageTestData}}
+            azureSubscription:            ${{variables.developmentAzureSubscription}}
+            appType:                      ${{variables.developmentAppType}}
+            appName:                      ${{variables.developmentAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}                         
+          modeElite:                      ${{parameters.modeElite}}
+# TODO pass your configuration variables here
+        systemTest:
+          config:                       
+            active:                       ${{variables.systemTestStageActive}}
+            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            nameVM:                       ${{variables.systemTestStageVmImage}}
+            testData:                     ${{variables.systemTestStageTestData}}
+            azureSubscription:            ${{variables.systemTestAzureSubscription}}
+            appType:                      ${{variables.systemTestAppType}}
+            appName:                      ${{variables.systemTestAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+# TODO pass your configuration variables here
+        staging:
+          config:                       
+            active:                       ${{variables.stagingStageActive}}
+            nameEnv:                      ${{variables.stagingStageEnvName}}
+            nameVM:                       ${{variables.stagingStageVmImage}}
+            testData:                     ${{variables.stagingStageTestData}}
+            azureSubscription:            ${{variables.stagingAzureSubscription}}
+            appType:                      ${{variables.stagingAppType}}
+            appName:                      ${{variables.stagingAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+# TODO pass your configuration variables here
+        production:
+          config:                       
+            active:                       ${{variables.productionStageActive}}
+            nameEnv:                      ${{variables.productionStageEnvName}}
+            nameVM:                       ${{variables.productionStageVmImage}}
+            testData:                     ${{variables.productionStageTestData}}
+            azureSubscription:            ${{variables.productionAzureSubscription}}
+            appType:                      ${{variables.productionAppType}}
+            appName:                      ${{variables.productionAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+# TODO pass your configuration variables here
+        # Embedded non-negotiable stages ------------------------------------ 
+        securityReview:
+          envName:                        ${{variables.securityReviewStageEnvName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        securityAutomation:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        qaScans:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+        preProdAutomation:
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          modeElite:                      ${{parameters.modeElite}}
+
+# --------------------------------------------------------------------------
+# END OF PIPELINE
+# --------------------------------------------------------------------------

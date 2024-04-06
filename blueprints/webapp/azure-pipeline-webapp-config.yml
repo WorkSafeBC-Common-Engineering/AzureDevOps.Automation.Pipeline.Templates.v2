@@ -1,0 +1,81 @@
+variables:
+
+# -----------------------------------------------------------------------------------------------------
+# Blueprint:    webapp
+# AzDO Project: <TODO Azure DevOps project name housing the associated Azure Pipeline>
+#
+# If you are not going to use all stages, as below, you can suppress them by setting active to false.
+# -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Development Stage
+- name:  developmentStageActive
+  value: true
+- name:  developmentStageEnvName
+  value: '<tbd>'
+- name:  developmentStageVmImage
+  value: '<tbd>'
+- name:  developmentStageTestData
+  value: 'Development Stage Test Data'
+- name:  developmentAzureSubscription
+  value: '<tbd>'
+- name:  developmentAppType
+  value: '<tbd>'
+- name:  developmentAppName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# System Test Stage
+- name:  systemTestStageActive
+  value: true
+- name:  systemTestStageEnvName
+  value: '<tbd>'
+- name:  systemTestStageVmImage
+  value: '<tbd>'
+- name:  systemTestStageTestData
+  value: 'System Test Stage Test Data'
+- name:  systemTestAzureSubscription
+  value: '<tbd>'
+- name:  systemTestAppType
+  value: '<tbd>'
+- name:  systemTestAppName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# Security Review Stage
+- name:  securityReviewStageEnvName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# Staging Stage
+- name:  stagingStageActive
+  value: true
+- name:  stagingStageEnvName
+  value: '<tbd>'
+- name:  stagingStageVmImage
+  value: '<tbd>'
+- name:  stagingStageTestData
+  value: 'Staging Stage Test Data'
+- name:  stagingAzureSubscription
+  value: '<tbd>'
+- name:  stagingAppType
+  value: '<tbd>'
+- name:  stagingAppName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# Production Stage-
+- name:  productionStageActive
+  value: true
+- name:  productionStageEnvName
+  value: '<tbd>'
+- name:  productionStageVmImage
+  value: '<tbd>'
+- name:  productionStageTestData
+  value: 'Production Stage Test Data'
+- name:  productionAzureSubscription
+  value: '<tbd>'
+- name:  productionAppType
+  value: '<tbd>'
+- name:  productionAppName
+  value: '<tbd>'
