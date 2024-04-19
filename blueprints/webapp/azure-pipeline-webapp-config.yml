@@ -1,7 +1,7 @@
 variables:
 
 # -----------------------------------------------------------------------------------------------------
-# Blueprint:    __101__
+# Blueprint:    webapp
 # AzDO Project: <TODO Azure DevOps project name housing the associated Azure Pipeline>
 #
 # If you are not going to use all stages, as below, you can suppress them by setting active to false.
@@ -17,6 +17,12 @@ variables:
   value: '<tbd>'
 - name:  developmentStageTestData
   value: 'Development Stage Test Data'
+- name:  developmentAzureSubscription
+  value: '<tbd>'
+- name:  developmentAppType
+  value: '<tbd>'
+- name:  developmentAppName
+  value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
 # System Test Stage
@@ -28,6 +34,12 @@ variables:
   value: '<tbd>'
 - name:  systemTestStageTestData
   value: 'System Test Stage Test Data'
+- name:  systemTestAzureSubscription
+  value: '<tbd>'
+- name:  systemTestAppType
+  value: '<tbd>'
+- name:  systemTestAppName
+  value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
@@ -44,6 +56,12 @@ variables:
   value: '<tbd>'
 - name:  stagingStageTestData
   value: 'Staging Stage Test Data'
+- name:  stagingAzureSubscription
+  value: '<tbd>'
+- name:  stagingAppType
+  value: '<tbd>'
+- name:  stagingAppName
+  value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
 # Production Stage-
@@ -55,3 +73,9 @@ variables:
   value: '<tbd>'
 - name:  productionStageTestData
   value: 'Production Stage Test Data'
+- name:  productionAzureSubscription
+  value: '<tbd>'
+- name:  productionAppType
+  value: '<tbd>'
+- name:  productionAppName
+  value: '<tbd>'

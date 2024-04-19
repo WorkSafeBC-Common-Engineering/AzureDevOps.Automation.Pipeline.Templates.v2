@@ -50,7 +50,7 @@ stages:
   # Variables
   variables:
     buildConfiguration:   'Release'
-    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE_' # WSBC_Cloud_NuGet feed
+    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE__' # WSBC_Cloud_NuGet feed
   
   jobs:
   - job: ContinuousIntegration

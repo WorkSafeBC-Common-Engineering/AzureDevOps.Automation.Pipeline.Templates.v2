@@ -1,0 +1,143 @@
+parameters:
+- name:     portfolioName
+  type:     string
+- name:     productName
+  type:     string
+- name:     applicationBlueprint
+  type:     string
+- name:     netCoreVersion
+  type:     string
+- name:     publishFolder
+  type:     string
+# Bootstrap optionals
+- name:     verbose
+  type:     boolean
+  default:  false
+# CI Blueprint optionals
+- name:     versionSpec
+  type:     string
+# CD Blueprint optionals
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+# --------------------------------------------------------------------------
+# START OF BUILD and TEST STAGE
+# --------------------------------------------------------------------------
+stages:
+- stage: ContinuousIntegration
+  displayName: Continuous Integration (CI)
+
+  # Configure the default agent pool and image to use for the pipeline
+  pool:
+    name:     'Azure Pipelines'
+    vmImage:  'Windows-latest'
+  
+  # Variables
+  variables:
+    buildConfiguration:   'Release'
+    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE__' # WSBC_Cloud_NuGet feed
+
+  jobs:
+  - job: ContinuousIntegration
+    steps:
+    - checkout: self
+      fetchDepth: 0
+    - template: /templates/utilities/git-tools-git-version.yml@CeBlueprints
+      parameters:
+        portfolioName:    ${{parameters.portfolioName}}
+        productName:      ${{parameters.productName}}
+        versionSpec:      ${{parameters.versionSpec}}
+
+# --------------------------------------------------------------------------
+# PREREQUISITES
+# --------------------------------------------------------------------------
+    - task: UseDotNet@2 
+      displayName:      'Use .NET Core ${{parameters.netCoreVersion}}'
+      inputs:
+        version:        ${{parameters.netCoreVersion}}
+        packageType:    sdk
+
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command:    restore
+        projects:   '**/${{parameters.publishFolder}}/**/*.??proj'
+        vstsFeed:   $(vstsFeed)
+
+# ==========================================================================
+# BOOTSTRAP VALIDATION
+# ==========================================================================
+    - template: /templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'init'
+        applicationType:      'other' #TODO specify dotnet or other
+        applicationBlueprint: ${{parameters.applicationBlueprint}}
+        portfolioName:        ${{parameters.portfolioName}}
+        productName:          ${{parameters.productName}}
+        sourcesDirectory:     $(Build.SourcesDirectory)
+        verbose:              ${{parameters.verbose}}
+        modeElite:            ${{parameters.modeElite}}
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# CONTINUOUS INTEGRATION BUILD
+# --------------------------------------------------------------------------
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command:          'build'
+        projects:         '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/*.sln'
+        arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion)"
+
+# --------------------------------------------------------------------------
+# CONTINUOUS INTEGRATION TEST
+# --------------------------------------------------------------------------
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Tests'
+      inputs:
+        command:    'test'
+        projects:   '**/${{parameters.publishFolder}}/*Tests/*.??proj'
+        arguments:  '--configuration $(buildConfiguration) --no-restore'
+
+
+# --------------------------------------------------------------------------
+# PUBLISH
+# --------------------------------------------------------------------------
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command:           'publish'
+        publishWebProjects: false
+        projects:           '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/*.sln'
+        arguments:          '-o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) -v diag'
+        zipAfterPublish:    true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish:  "$(Build.ArtifactStagingDirectory)"
+        ArtifactName:   'drop'
+
+# ==========================================================================
+# BOOTSTRAP VALIDATION
+# ==========================================================================
+    - template: /templates/boot-strap.yml@CeBlueprints
+      parameters:
+        bootstrapMode:        'run'
+        applicationType:      'other' #TODO specify dotnet or other
+        applicationBlueprint: ${{parameters.applicationBlueprint}}
+        portfolioName:        ${{parameters.portfolioName}}
+        productName:          ${{parameters.productName}}
+        sourcesDirectory:     $(Build.SourcesDirectory)
+        verbose:              ${{parameters.verbose}}
+        modeElite:            ${{parameters.modeElite}}
+# ==========================================================================
+      
+# --------------------------------------------------------------------------
+# END BUILD AND TEST STAGE
+# --------------------------------------------------------------------------
+
+    - ${{ if eq(lower(variables['Build.SourceBranchName']), 'merge') }}:
+      - script: echo CD part of the pipeline is suppressed for pull request validation builds! 
+        displayName: PR Validation CD Suppression Alert
