@@ -5,6 +5,10 @@ parameters:
   type:     string
 - name:     publishFolder
   type:     string
+  default:  '**/src'
+- name:     solutionFile
+  type:     string
+  default:  '*.sln'
 - name:     applicationBlueprint
   type:     string
   default:  'webapp'
@@ -31,7 +35,7 @@ parameters:
 # VARIABLES
 variables:
 - ${{ if ne(parameters.suppressCD, true) }}:
-  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+  - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
 
 stages:
 
@@ -45,6 +49,7 @@ stages:
     applicationBlueprint: ${{parameters.applicationBlueprint}}
     netCoreVersion:       ${{parameters.netCoreVersion}}
     publishFolder:        ${{parameters.publishFolder}}
+    solutionFile:         ${{parameters.solutionFile}}
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}

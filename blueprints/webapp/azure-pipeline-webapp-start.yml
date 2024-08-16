@@ -23,6 +23,10 @@ trigger:
     include:
     # TODO: Replace __token__ and remove this comment
     - /__TODO_FOLDERNAME__ 
+    exclude:
+    - ReadMe.md     # Excluding changes to the Readme.me file (case dependent?)
+    - README.md
+    - readme.md
     
 resources:
   repositories:
@@ -38,5 +42,6 @@ extends:
   parameters:
     portfolioName:   '__TODO_PORTFOLIO__'
     productName:     '__TODO_PRODUCT__'
-    publishFolder:   '__TODO_PUBLISH_FOLDER__'
-    suppressCD:      true # Allow engineering to do an immediate CI/build while CD is being configured
+    publishFolder:   '__TODO_PUBLISH_FOLDER__'      # path to project (if multiple projects in repo)
+    solutionFile:    '__TODO_SOLUTION_FILE'         # path to project or solution file to be built. Defaults to '*.sln'
+    suppressCD:      true                           # Allow engineering to do an immediate CI/build while CD is being configured

@@ -20,6 +20,11 @@ trigger:
   branches:
     include:
     - '*' # Trigger on all branches
+  paths:
+    exclude:    # Excluding changes to the Readme.me file (case dependent?)
+    - '/ReadMe.md'
+    - '/README.md'
+    - '/readme.md'
 
 resources:
   repositories:

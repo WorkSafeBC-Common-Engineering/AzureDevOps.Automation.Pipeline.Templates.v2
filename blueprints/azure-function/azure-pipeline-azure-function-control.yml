@@ -32,9 +32,8 @@ parameters:
 
 # VARIABLES
 variables:
-
 - ${{ if ne(parameters.suppressCD, true) }}:
-  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+  - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
 
 # -----------------------------------------------------------------------------------------------------
 # Azure Function App Settings
@@ -72,6 +71,7 @@ stages:
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
+
 # --------------------------------------------------------------------------
 # DEPLOYMENT
 # 2021.10.04 WS Suppress CD on "merge" so that we can use PR validation builds

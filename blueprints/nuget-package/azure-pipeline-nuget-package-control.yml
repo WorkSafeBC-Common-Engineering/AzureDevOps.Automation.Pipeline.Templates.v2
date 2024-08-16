@@ -44,6 +44,14 @@ parameters:
 - name:     suppressCD
   type:     boolean
   default:  false
+# Path of pre-build powershell script
+- name:     prebuildPsScript  
+  type:     string
+  default:  ''
+# nodeJs version for the build
+- name:     nodeToolVersion
+  type:     string
+  default:  ''
 
 # VARIABLES
 variables:
@@ -54,7 +62,7 @@ variables:
   - template: /deploy/${{ lower(parameters.portfolioName) }}/nuget-package-config.yml@CeConfiguration
 
 - ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false) ) }}:
-  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+  - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
 
 stages:
 
@@ -77,6 +85,8 @@ stages:
     suppressCD:             ${{parameters.suppressCD}}
     versionSpec:            ${{parameters.versionSpec}}
     runAzurite:             ${{parameters.runAzurite}}
+    prebuildPsScript:       ${{parameters.prebuildPsScript}}
+    nodeToolVersion:        ${{parameters.nodeToolVersion}}
 
 # --------------------------------------------------------------------------
 # DEPLOYMENT
