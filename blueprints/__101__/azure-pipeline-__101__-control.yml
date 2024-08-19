@@ -28,7 +28,7 @@ parameters:
 # VARIABLES
 variables:
 - ${{ if ne(parameters.suppressCD, true) }}:
-  - template: /deploy/${{ lower(parameters.portfolioName) }}/${{ lower(parameters.productName) }}-config.yml@CeConfiguration
+  - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
 
 stages:
 

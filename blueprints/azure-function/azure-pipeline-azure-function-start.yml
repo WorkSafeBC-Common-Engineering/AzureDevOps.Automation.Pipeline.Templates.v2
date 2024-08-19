@@ -20,15 +20,17 @@ trigger:
   branches:
     include:
     - '*' # Trigger on all branches
+  paths:
+    exclude:    # Excluding changes to the Readme.me file (case dependent?)
+    - '/ReadMe.md'
+    - '/README.md'
+    - '/readme.md'
 
 resources:
   repositories:
   - repository: CeBlueprints
     type:       git
     name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Templates.v2'
-  - repository: CeConfiguration
-    type:       git
-    name:       '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Configuration.v2'
 
 extends:
   template: blueprints/azure-function/azure-pipeline-azure-function-control.yml@CeBlueprints
