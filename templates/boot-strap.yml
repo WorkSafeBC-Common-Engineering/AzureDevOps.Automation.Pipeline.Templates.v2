@@ -174,17 +174,31 @@ steps:
 # -----------------------------------------------------------------------
 # Building Code Only
 # -----------------------------------------------------------------------
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
-  - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
+
+# By default we do NOT run the building code if we are within the context of a pull request
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( parameters.forceCheck, false))) }}:
+  - script:      echo Building Code Validations are suppressed by default to optimize pull request builds.  Set parameters.forceCheck = true to force the building code to run in the pull request.
     displayName: Bootstrap Building Code Validation Suppression Alert
 
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+# User can force the building code to run within the context of a pull request
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( parameters.forceCheck, true))) }}:
   - template:    building-code/building-code.yml@CeBlueprints
     parameters:
       applicationType:        ${{parameters.applicationType}}
       portfolioName:          ${{parameters.portfolioName}}
       productName:            ${{parameters.productName}}
-      buildingCodeMode:       'Validate' # Validate | Enforce
+      applicationBlueprint:   ${{parameters.applicationBlueprint}}
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
+
+# If we are not within the context of a pull request (brach <> merge) then we run the building code
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
+  - template:    building-code/building-code.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
@@ -204,18 +218,32 @@ steps:
       modeElite:              ${{parameters.modeElite}}
       modeAILog:              ${{parameters.modeAILog}}
 
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), false))) }}:
-  - script:      echo Building Code Validations are suppressed! Only pull request validation builds are validated to optimize production builds. 
+# By default we do NOT run the building code if we are within the context of a pull request
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( parameters.forceCheck, false))) }}:
+  - script:      echo Building Code Validations are suppressed by default to optimize pull request builds. Set parameters.forceCheck = true to force the building code to run in the pull request.
     displayName: Bootstrap Building Code Validation Suppression Alert
     
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( lower(parameters.forceCheck), true))) }}:
+# User can force the building code to run within the context of a pull request
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( parameters.forceCheck, true))) }}:
   - template:    building-code/building-code.yml@CeBlueprints
     parameters:
       applicationType:        ${{parameters.applicationType}}
       portfolioName:          ${{parameters.portfolioName}}
       productName:            ${{parameters.productName}}
       cliSources:             ${{parameters.sourcesDirectory}}
-      buildingCodeMode:       'Validate' # Validate | Enforce
+      applicationBlueprint:   ${{parameters.applicationBlueprint}}
+      verbose:                ${{parameters.verbose}}
+      modeElite:              ${{parameters.modeElite}}
+      modeAILog:              ${{parameters.modeAILog}}
+
+# If we are not within the context of a pull request (brach <> merge) then we run the building code
+- ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
+  - template:    building-code/building-code.yml@CeBlueprints
+    parameters:
+      applicationType:        ${{parameters.applicationType}}
+      portfolioName:          ${{parameters.portfolioName}}
+      productName:            ${{parameters.productName}}
+      cliSources:             ${{parameters.sourcesDirectory}}
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
