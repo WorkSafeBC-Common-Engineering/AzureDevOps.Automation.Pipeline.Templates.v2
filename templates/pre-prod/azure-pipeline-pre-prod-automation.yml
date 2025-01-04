@@ -10,7 +10,7 @@ parameters:
 
 stages:
 # -----------------------------------------------------------------------------------------------------
-# QUALITY ASSURANCE SCANS STAGE
+# PRE-PROD AUTOMATION STAGE (PPA)
 # -----------------------------------------------------------------------------------------------------
 - stage:         'PreProdAutomation'
   displayName:   'Pre-Prod Automation (PPA)'
@@ -26,7 +26,7 @@ stages:
     - bash: 'env | sort'
       displayName: Bootstrap Dump env variables
     
-    # Inject the QA scans template into the pipeline
+    # Inject the PPA template into the pipeline
     - template:   /templates/pre-prod/pre-prod-automation.yml@CeBlueprints
       parameters:
         applicationBlueprint: ${{parameters.applicationBlueprint}}

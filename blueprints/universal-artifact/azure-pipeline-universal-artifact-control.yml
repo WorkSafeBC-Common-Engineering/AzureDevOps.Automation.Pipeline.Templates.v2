@@ -10,7 +10,7 @@ parameters:
   type:     string
 - name:     modeElite
   type:     boolean
-  default:  false
+  default:  true
   # Bootstrap optionals
 - name:     verbose
   type:     boolean
@@ -43,6 +43,7 @@ stages:
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
+
 
 # --------------------------------------------------------------------------
 # DEPLOYMENT

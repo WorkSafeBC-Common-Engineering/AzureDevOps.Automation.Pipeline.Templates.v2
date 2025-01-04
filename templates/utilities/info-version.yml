@@ -22,15 +22,48 @@ parameters:
   default:  '2.0'
   
 steps:
-    - script: echo "${{parameters.modeElite}}:${{parameters.applicationBlueprint}}:${{parameters.applicationType}}:${{parameters.vGuid}}:${{parameters.vVersion}}"
+    - script: echo "${{parameters.modeElite}}:${{parameters.applicationBlueprint}}:${{parameters.applicationType}}:${{parameters.vGuid}}:${{parameters.vVersion}}
       name:         BootstrapInfo
       displayName:  Bootstrap Info
-    - powershell: |
-        Write-Host "##vso[task.setvariable variable=bootStrapModeElite;isOutput=true]${{parameters.modeElite}}"
-        Write-Host "##vso[task.setvariable variable=bootStrapBlueprint;isOutput=true]${{parameters.applicationBlueprint}}"
-        Write-Host "##vso[task.setvariable variable=bootStrapType;isOutput=true]${{parameters.applicationType}}"
-        Write-Host "##vso[task.setvariable variable=bootStrapGuid;isOutput=true]${{parameters.vGuid}}"
-        Write-Host "##vso[task.setvariable variable=bootStrapVersion;isOutput=true]${{parameters.vVersion}}"
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "##vso[task.setvariable variable=bootStrapModeElite;isOutput=true]${{parameters.modeElite}}"
+          Write-Host "##vso[task.setvariable variable=bootStrapBlueprint;isOutput=true]${{parameters.applicationBlueprint}}"
+          Write-Host "##vso[task.setvariable variable=bootStrapType;isOutput=true]${{parameters.applicationType}}"
+          Write-Host "##vso[task.setvariable variable=bootStrapGuid;isOutput=true]${{parameters.vGuid}}"
+          Write-Host "##vso[task.setvariable variable=bootStrapVersion;isOutput=true]${{parameters.vVersion}}"
+        failOnStderr: true
+        pwsh: true
       name:         BootstrapVars
       displayName:  Bootstrap Vars
-      failOnStderr: true
+
+# --------------------------------------------------------------------------
+# Generate pipeline info and save it to a JSON file
+# --------------------------------------------------------------------------
+    - task: PowerShell@2
+      displayName:  Bootstrap generate pipeline info
+      inputs:
+        targetType: 'inline'
+        pwsh: true
+        script: |
+          $variablesData = [PSCustomObject]@{
+              bootStrapModeElite = "${{parameters.modeElite}}"
+              bootStrapBlueprint = "${{parameters.applicationBlueprint}}"
+              bootStrapType = "${{parameters.applicationType}}"
+              bootStrapGuid = "${{parameters.vGuid}}"
+              bootStrapVersion = "${{parameters.vVersion}}"
+          }
+
+          $json = $variablesData | ConvertTo-Json
+          $jsonFilePath = "$(Agent.TempDirectory)/pipe-info.json"
+          $json | Out-File -FilePath $jsonFilePath
+          Write-Host "JSON file saved to $jsonFilePath"
+          
+    # Publish pipeline info
+    - task: PublishBuildArtifacts@1
+      displayName: Bootstrap publish pipeline info
+      inputs:
+        PathtoPublish: "$(Agent.TempDirectory)/pipe-info.json"
+        ArtifactName: 'pipe-info'

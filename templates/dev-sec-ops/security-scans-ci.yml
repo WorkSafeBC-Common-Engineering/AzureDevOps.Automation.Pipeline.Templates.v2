@@ -13,19 +13,6 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-- name:     modeAILog
-  type:     boolean
-  default:  true
-# Local parameters as we cannot have vars at this stage
-- name:     urlUnifiedAgent
-  type:     string
-  default:  'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
-- name:     apiKeyAPI
-  type:     string
-  default:  $(WhiteSource-ApiKeyAPI)
-- name:     wsConfigFile
-  type:     string
-  default:  'wss-unified-agent.config'
 
 steps:
 

@@ -15,9 +15,7 @@ parameters:
   type:     string
 - name:     cliSources
   type:     string
-- name:     buildingCodeMode
-  type:     string
-  default:  'Validate' # Validate | Enforce
+  default:  $(Build.SourcesDirectory)
 - name:     applicationBlueprint
   type:     string
   default:  'generic'
@@ -27,22 +25,101 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-- name:     modeAILog
-  type:     boolean
-  default:  true
   
 steps:
 - ${{ if eq( parameters.verbose, true ) }}: 
-  - script: echo BuildingCode parameters >> AT = ${{parameters.applicationType}}, PON = ${{parameters.portfolioName}}, PRN = ${{parameters.productName}}, BCM = ${{parameters.buildingCodeMode}}, ME = ${{parameters.modeElite}}, BC = ${{parameters.applicationBlueprint}}
+  - script: echo BuildingCode parameters >> AT = ${{parameters.applicationType}}, PON = ${{parameters.portfolioName}}, PRN = ${{parameters.productName}}, ME = ${{parameters.modeElite}}
     displayName: Bootstrap Building Code Verbose Logging
+  - bash: 'env | sort'
+    displayName: Bootstrap Dump env variables
 
 # ======================================================================
-# DEMO PLACEHOLDER 
+# VALIDATE THE UNIT TEST RUN
+#   status: success | warning | failure   for the minimum unit test run
+#       unitTestValid variable message is set in the tests-unit-run.yml
 # ======================================================================
+
+#-----------------------------------------------------------------------
+# This condition executes when variable 'unitTestsValid' is set by the
+#   task 'setUnitTestsValidity' in the same job.
+#-----------------------------------------------------------------------
 - task: PowerShell@2
-  displayName: 'Bootstrap Building Code Placeholder Script'
+  displayName: 'Unit Test Compliance Check - Generic and Blueprint'
   inputs:
-    filePath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/building-code/building-code-placeholder.ps1'
-    failOnStderr:  true
-    pwsh:          true
-  continueOnError: true
+    targetType: 'inline'
+    pwsh: true
+    script: |
+
+      $isModeElite = "${{parameters.modeElite}}"
+      $status = "$(setUnitTestsValidity.unitTestsValid)"
+      if ($status.ToLower() -eq "success") 
+      {
+        Write-Host "success: unit test compliance check passed."
+      } 
+      elseif ($status.ToLower() -eq "warning") 
+      {
+        Write-Host "warning: unit tests do not exist or are failing."
+        Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+      } 
+      else 
+      {
+          Write-Host "failed: unit test compliance check failed."
+          if( $isModeElite.ToLower() -eq "true" ) 
+          {
+            exit 1
+          }
+          Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+      } 
+  condition: and(succeeded(), ne(variables['setUnitTestsValidity.unitTestsValid'], ''))
+
+#-----------------------------------------------------------------------
+# This condition executes when variable 'unitTestsValid' is set by the
+#   task 'setUnitTestsValidity' in the the job Test_Solution.
+#-----------------------------------------------------------------------
+- task: PowerShell@2
+  displayName: 'Unit Test Compliance Check - Generic'
+  inputs:
+    targetType: 'inline'
+    pwsh: true
+    script: |
+     
+      $isModeElite = "${{parameters.modeElite}}"
+      $status = "$(unitTestsValid)"
+
+      if ($status.ToLower() -eq "success") 
+      {
+        Write-Host "success: unit test compliance check passed."
+      } 
+      elseif ($status.ToLower() -eq "warning") 
+      {
+        Write-Host "warning: unit tests do not exist or are failing."
+        Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+      } 
+      else 
+      {
+          Write-Host "failed: unit test compliance check failed."
+          if( $isModeElite.ToLower() -eq "true" ) 
+          {
+            exit 1
+          }
+          Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+      } 
+  condition: and(succeeded(), ne(variables['unitTestsValid'], ''))
+
+#-----------------------------------------------------------------------
+# This condition executes when variable 'unitTestsValid' is not set or found
+#-----------------------------------------------------------------------
+- task: PowerShell@2
+  displayName: 'Unit Test Compliance Check - No unit tests'
+  inputs:
+    targetType: 'inline'
+    pwsh: true
+    script: |
+      $isModeElite = "${{parameters.modeElite}}"
+      Write-Host "failed: unit test compliance check failed."
+      if( $isModeElite.ToLower() -eq "true" ) 
+      {
+        exit 1
+      }
+      Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+  condition: and(eq(variables['setUnitTestsValidity.unitTestsValid'], ''), eq(variables['unitTestsValid'], ''))

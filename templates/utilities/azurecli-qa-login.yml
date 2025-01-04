@@ -6,7 +6,7 @@ parameters:
 - name: TenantId
 
 steps:
-- task: AzureKeyVault@1
+- task: AzureKeyVault@2
   inputs:
     azureSubscription: '${{ parameters.ServiceConnectionName }}'
     KeyVaultName: '${{ parameters.KeyVaultName }}'

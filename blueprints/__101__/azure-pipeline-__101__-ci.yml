@@ -61,9 +61,43 @@ stages:
 # TODO Add your build steps here
 
 # --------------------------------------------------------------------------
-# CONTINUOUS INTEGRATION TEST
+# CONTINUOUS INTEGRATION: TEST
+# -- All the test projects should be placed inside 
+#    the respective folders e.g. src/Tests/UnitTests etc.
 # --------------------------------------------------------------------------
-# TODO Add your test steps here
+# Use the template to run the tests e.g.
+#   - template: templates/qa/tests/tests-ci-all.yml@CeBlueprints
+#     parameters:
+#       isDotNetCore: true  # true for .net core, false for .net framework
+#
+# OR 
+#
+# Write your own tests and follow the steps for test results in the template
+#  templates/qa/tests/tests-ci-all.yml to ensure they are validated
+#
+# Sample test steps below, please adjust as needed
+# - ${{ if eq(parameters.isDotNetCore, true) }}:
+#   - task: DotNetCoreCLI@2
+#     displayName: 'Run Unit Tests'
+#     inputs:
+#       command:    'test'
+#       projects:   '**/Tests/UnitTests/**/*.??proj'
+#       arguments:  '--no-build --no-restore --configuration $(buildConfiguration) '
+#       publishTestResults: true
+#     #continueOnError: true    # uncomment this line to continue on error
+# - ${{ else }}:
+#   - task: VSTest@3
+#     displayName: 'Run unit tests with minimum required tests'
+#     inputs:
+#       testSelector: 'testAssemblies'
+#       testAssemblyVer2: '**\Tests\UnitTests\**\bin\**\*.dll'
+#       searchFolder: '$(System.DefaultWorkingDirectory)'
+#       resultsFolder: '$(Agent.TempDirectory)\TestResults'
+#       failOnMinTestsNotRun: true
+#       #codeCoverageEnabled: true
+#       minimumExpectedTests: 1
+#     #continueOnError: true   # uncomment this line to continue on error 
+
 
 # --------------------------------------------------------------------------
 # PUBLISH

@@ -70,7 +70,7 @@ resources:
   # SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
   - repository: CeBlueprints
     type: git
-    name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__AzureDevOps.Automation.Pipeline.Templates.v2'
+    name: '__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Templates.v2'
   # =======================================================================
 
 # --------------------------------------------------------------------------
@@ -145,16 +145,31 @@ stages:
 # ==========================================================================
 
 # --------------------------------------------------------------------------
-# CONTINUOUS INTEGRATION TEST
+# CONTINUOUS INTEGRATION: TEST
 # - Run steps/tasks to test your solution here
+# -- All the test projects should be placed inside 
+#    the respective folders e.g. src/Tests/UnitTests etc.
+# TODO Insert your necessary steps here to run the tests
 # --------------------------------------------------------------------------
   - job: Test_Solution
     dependsOn: Build_Solution
     steps:
     - checkout: self
       fetchDepth: 0
-    - script: echo TODO PLACEHOLDER - REMOVE
-#   TODO Insert your scripts, steps, and tasks here and remove this comment
+
+    # Restore test projects as per requirements before executing tests 
+    # Uncomment the below task if you need to restore the test projects
+    #- task: DotNetCoreCLI@2
+    #  displayName: 'Restore Test Projects'
+    #  inputs:
+    #    command: 'restore'
+    #    projects: '**/Tests/UnitTests/**/*.??proj'
+
+    - template: templates/qa/tests/tests-ci-all.yml@CeBlueprints
+      #parameters:
+        #isDotNetCore:    false  # true for .NET, false for .net framework
+                                 # default is true
+
 
 # --------------------------------------------------------------------------
 # PUBLISH
@@ -168,7 +183,9 @@ stages:
 # ==========================================================================
   - job: Bootstrap_Validation_BuildingCode
     dependsOn:
-    - Build_Solution
+    - Test_Solution
+    variables:
+      unitTestsValid: $[dependencies.Test_Solution.outputs['setUnitTestsValidity.unitTestsValid']]
     steps:
     - template: templates/boot-strap.yml@CeBlueprints
       parameters:

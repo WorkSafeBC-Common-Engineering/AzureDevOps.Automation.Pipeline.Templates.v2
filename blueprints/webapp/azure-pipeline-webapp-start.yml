@@ -39,6 +39,6 @@ extends:
   parameters:
     portfolioName:   '__TODO_PORTFOLIO__'
     productName:     '__TODO_PRODUCT__'
-    publishFolder:   '__TODO_PUBLISH_FOLDER__'      # path to project (if multiple projects in repo)
-    solutionFile:    '__TODO_SOLUTION_FILE'         # path to project or solution file to be built. Defaults to '*.sln'
-    suppressCD:      true                           # Allow engineering to do an immediate CI/build while CD is being configured
+    publishFolder:   '__TODO_PUBLISH_FOLDER__'  # path to project (if multiple projects in repo)
+    # solutionFile:    '__TODO_SOLUTION__'      # path to project or solution file to be built. Defaults to '*.sln' Set to your specific project or solution if necessary.
+    suppressCD:      true                       # Allow engineering to do an immediate CI/build while CD is being configured

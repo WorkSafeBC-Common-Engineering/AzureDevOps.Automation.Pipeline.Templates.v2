@@ -16,7 +16,7 @@ parameters:
   default:  'functionAppLinux'
 - name:     modeElite
   type:     boolean
-  default:  false
+  default:  true
 # Bootstrap optionals
 - name:     verbose
   type:     boolean

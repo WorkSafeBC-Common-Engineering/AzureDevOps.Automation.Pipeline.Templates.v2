@@ -1,6 +1,7 @@
 parameters:
 - name:     isDotNetCore
   type:     boolean
+  default:  true
 - name:     netCoreVersion
   type:     string
   default:  ''
@@ -22,7 +23,7 @@ parameters:
   default:  'AnyCPU'
 - name:     modeElite
   type:     boolean
-  default:  false
+  default:  true
 # Bootstrap optionals
 - name:     verbose
   type:     boolean

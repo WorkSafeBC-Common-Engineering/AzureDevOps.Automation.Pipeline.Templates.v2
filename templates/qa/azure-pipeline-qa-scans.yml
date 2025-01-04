@@ -22,8 +22,11 @@ stages:
   jobs:
   - job:          'QAScans'
     steps:
+    # List all environment variables within this agent
     - bash: 'env | sort'
       displayName: Bootstrap Dump env variables
+    
+    # Inject the QA scans template into the pipeline
     - template:   /templates/qa/qa-scans-cd.yml@CeBlueprints
       parameters:
         applicationBlueprint: ${{parameters.applicationBlueprint}}

@@ -9,6 +9,9 @@ parameters:
   type:     string
 - name:     publishFolder
   type:     string
+- name:     solutionFile
+  type:     string
+  default:  '*.sln'
 # Bootstrap optionals
 - name:     verbose
   type:     boolean
@@ -20,6 +23,10 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
+# Is application dotnet core or dotnet  
+- name:     isDotNetCore
+  type:     boolean  
+  default:  true
 
 # --------------------------------------------------------------------------
 # START OF BUILD and TEST STAGE
@@ -36,7 +43,6 @@ stages:
   # Variables
   variables:
     buildConfiguration:   'Release'
-    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE__' # WSBC_Cloud_NuGet feed
 
   jobs:
   - job: ContinuousIntegration
@@ -58,20 +64,13 @@ stages:
         version:        ${{parameters.netCoreVersion}}
         packageType:    sdk
 
-    - task: DotNetCoreCLI@2
-      displayName: Restore
-      inputs:
-        command:    restore
-        projects:   '**/${{parameters.publishFolder}}/**/*.??proj'
-        vstsFeed:   $(vstsFeed)
-
 # ==========================================================================
 # BOOTSTRAP VALIDATION
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
         bootstrapMode:        'init'
-        applicationType:      'other' #TODO specify dotnet or other
+        applicationType:      'dotnet'
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         portfolioName:        ${{parameters.portfolioName}}
         productName:          ${{parameters.productName}}
@@ -80,6 +79,16 @@ stages:
         modeElite:            ${{parameters.modeElite}}
 # ==========================================================================
 
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      env:
+        Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+      inputs:
+        command:    restore
+        projects:   '**/${{parameters.publishFolder}}/**/*.??proj'
+        feedsToUse:      'config'
+        nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
+
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION BUILD
 # --------------------------------------------------------------------------
@@ -87,19 +96,18 @@ stages:
       displayName: 'Build'
       inputs:
         command:          'build'
-        projects:         '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/*.sln'
+        projects:         '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/**/${{parameters.solutionFile}}'
         arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion)"
 
 # --------------------------------------------------------------------------
-# CONTINUOUS INTEGRATION TEST
+# CONTINUOUS INTEGRATION: TEST
+# -- All the test projects should be placed inside 
+#    the respective folders e.g. src/Tests/UnitTests etc.
 # --------------------------------------------------------------------------
-    - task: DotNetCoreCLI@2
-      displayName: 'Run Tests'
-      inputs:
-        command:    'test'
-        projects:   '**/${{parameters.publishFolder}}/*Tests/*.??proj'
-        arguments:  '--configuration $(buildConfiguration) --no-restore'
-
+    - template: /templates/qa/tests/tests-ci-all.yml@CeBlueprints
+      parameters:
+        isDotNetCore:       ${{parameters.isDotNetCore}}
+        modeElite:            ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------
 # PUBLISH
@@ -109,7 +117,7 @@ stages:
       inputs:
         command:           'publish'
         publishWebProjects: false
-        projects:           '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/*.sln'
+        projects:           '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/**/${{parameters.solutionFile}}'
         arguments:          '-o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) -v diag'
         zipAfterPublish:    true
 
@@ -125,7 +133,7 @@ stages:
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
         bootstrapMode:        'run'
-        applicationType:      'other' #TODO specify dotnet or other
+        applicationType:      'dotnet'
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         portfolioName:        ${{parameters.portfolioName}}
         productName:          ${{parameters.productName}}

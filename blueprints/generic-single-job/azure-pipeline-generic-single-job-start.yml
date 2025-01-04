@@ -118,10 +118,16 @@ stages:
         arguments: '--configuration $(BuildConfiguration)'
 
 # --------------------------------------------------------------------------
-# CONTINUOUS INTEGRATION TEST
+# CONTINUOUS INTEGRATION: TEST
 # - Run steps/tasks to test your solution here
+# -- All the test projects should be placed inside 
+#    the respective folders e.g. src/Tests/UnitTests etc.
+# TODO Insert your necessary steps here to run the tests
 # --------------------------------------------------------------------------
-#   TODO Insert your scripts, steps, and tasks here and remove this comment
+    - template: templates/qa/tests/tests-ci-all.yml@CeBlueprints
+#      parameters:
+#        isDotNetCore:    false  # true for .NET, false for .net framework
+                                 # default is true
 
 # --------------------------------------------------------------------------
 # PUBLISH

@@ -23,8 +23,11 @@ stages:
   jobs:
   - job:          'SecurityAutomation'
     steps:
+    # List all environment variables within this agent
     - bash: 'env | sort'
       displayName: Bootstrap Dump env variables
+
+    # Inject the security scans automation template
     - template:   /templates/dev-sec-ops/security-scans-auto.yml@CeBlueprints
       parameters:
         applicationBlueprint: ${{parameters.applicationBlueprint}}
