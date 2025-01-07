@@ -42,11 +42,8 @@ parameters:
   default:  false
 - name:     modeElite
   type:     boolean
-  default:  false
+  default:  true
 - name:     runAzurite
-  type:     boolean
-  default:  false
-- name:     modeAILog
   type:     boolean
   default:  false
 
@@ -54,29 +51,32 @@ steps:
 # ===========================================================================
 # BOOTSTRAP VERBOSE
 # ===========================================================================
-- ${{ if eq( lower(parameters.verbose), true ) }}: 
+- ${{ if eq( parameters.verbose, true ) }}: 
   - script: echo boot-strap template >> BM=${{parameters.bootstrapMode}}, PO=${{parameters.portfolioName}}, PR=${{parameters.productName}}, AB=${{parameters.applicationBlueprint}}, AT=${{parameters.applicationType}}, AB=${{parameters.applicationBlueprint}}, FC=${{parameters.forceCheck}}, ME=${{parameters.modeElite}}
     displayName: Bootstrap Verbose Logging
-  - bash: 'env | sort'
-    displayName: Bootstrap Dump env variables
+
 - ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
   - template:    utilities/info-version.yml@CeBlueprints
     parameters:
       modeElite:            ${{parameters.modeElite}}
       applicationBlueprint: ${{parameters.applicationBlueprint}}
       applicationType:      ${{parameters.applicationType}}
-      
+
+- ${{ if eq( parameters.verbose, true ) }}: 
+  - bash: 'env | sort'
+    displayName: Bootstrap Dump env variables
+
 # ===========================================================================
 # BOOTSTRAP KEY VAULT
 # LOADS:
 # - __TODO_LIST_YOUR_SECRET_VARIABLES_THAT_WILL_BE_LOADED_HERE
 # ===========================================================================
 - ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
-  - task: AzureKeyVault@1
+  - task: AzureKeyVault@2
     displayName: Bootstrap Key Vault
     inputs:
       azureSubscription: 'CeS Bootstrap Service Endpoint'
-      KeyVaultName:      '__TODO_LIST_YOUR_SECRET_VARIABLES_THAT_WILL_BE_LOADED_HERE__'
+      KeyVaultName:      'AS-PR-CeSPipelines-KV'
       RunAsPreJob:       true
 
 # ===========================================================================
@@ -88,50 +88,7 @@ steps:
     fetchDepth:  0
 # Production Toolbox
 - ${{ if or( eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
-  - checkout: git://_TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
-
-# ===========================================================================
-# BOOTSTRAP AI LOGGING
-# ===========================================================================
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'init' ), eq(parameters.modeAILog, true)) }}:
-  - task: PowerShell@2
-    displayName: 'Bootstrap Telemetry START'
-    inputs:
-      filePath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/application-insights/log-bootstrap-event-to-ai.ps1'
-      arguments: -OperationId "$(Build.BuildNumber).$(Build.BuildId)" `
-                 -Event  'Bootstrap' `
-                 -Action 'Start' `
-                 -BootstrapMode ${{parameters.bootstrapMode}} ` 
-                 -ApplicationType ${{parameters.applicationType}} `
-                 -ApplicationBlueprint ${{parameters.applicationBlueprint}} `
-                 -PortfolioName ${{parameters.portfolioName}} `
-                 -ProductName ${{parameters.productName}} `
-                 -SourcesDirectory ${{parameters.sourcesDirectory}} `
-                 -VerboseFlag ${{parameters.verbose}} `
-                 -ForceCheck ${{parameters.forceCheck}}
-      failOnStderr: true
-      pwsh: true
-    continueOnError: true
-
-- ${{ if and(eq( lower(parameters.bootstrapMode), 'foundation' ), eq(parameters.modeAILog, true)) }}:
-  - task: PowerShell@2
-    displayName: 'Bootstrap Telemetry Foundation'
-    inputs:
-      filePath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/application-insights/log-bootstrap-event-to-ai.ps1'
-      arguments: -OperationId "$(Build.BuildNumber).$(Build.BuildId)" `
-                 -Event  'Bootstrap' `
-                 -Action 'Foundation' `
-                 -BootstrapMode ${{parameters.bootstrapMode}} ` 
-                 -ApplicationType ${{parameters.applicationType}} `
-                 -ApplicationBlueprint ${{parameters.applicationBlueprint}} `
-                 -PortfolioName ${{parameters.portfolioName}} `
-                 -ProductName ${{parameters.productName}} `
-                 -SourcesDirectory ${{parameters.sourcesDirectory}} `
-                 -VerboseFlag ${{parameters.verbose}} `
-                 -ForceCheck ${{parameters.forceCheck}}
-      failOnStderr: true
-      pwsh: true
-    continueOnError: true
+  - checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
 
 # ===========================================================================
 # BOOTSTRAP INITIALISATION STAGE
@@ -145,7 +102,6 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
 
 # ===========================================================================
 # BOOTSTRAP - OPTIONAL START - AZURITE (Azure Storage Emulator)
@@ -169,7 +125,6 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
 
 # -----------------------------------------------------------------------
 # Building Code Only
@@ -190,7 +145,6 @@ steps:
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
 
 # If we are not within the context of a pull request (brach <> merge) then we run the building code
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
@@ -202,7 +156,6 @@ steps:
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
 
 # -----------------------------------------------------------------------
 # Building Code and DevSecOps
@@ -216,7 +169,6 @@ steps:
       cliSources:             ${{parameters.sourcesDirectory}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
 
 # By default we do NOT run the building code if we are within the context of a pull request
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), and(eq(lower(variables['Build.SourceBranchName']), 'merge'), eq( parameters.forceCheck, false))) }}:
@@ -234,7 +186,6 @@ steps:
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
 
 # If we are not within the context of a pull request (brach <> merge) then we run the building code
 - ${{ if and(eq( lower(parameters.bootstrapMode), 'run' ), ne(lower(variables['Build.SourceBranchName']), 'merge')) }}:
@@ -247,20 +198,3 @@ steps:
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
-      modeAILog:              ${{parameters.modeAILog}}
-
-# ------------------------------------------------------------------------
-# Switch off the lights
-# ------------------------------------------------------------------------
-- ${{ if eq(parameters.modeAILog, true) }}: 
-  - task: PowerShell@2
-    displayName: 'Bootstrap Telemetry EXIT'
-    inputs:
-      filePath:  '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/application-insights/log-bootstrap-event-to-ai.ps1'
-      arguments: -OperationId "$(Build.BuildNumber).$(Build.BuildId)" `
-                 -Event  'Bootstrap' `
-                 -Action 'Exit' `
-                 -BootstrapMode ${{parameters.bootstrapMode}}
-      failOnStderr: true
-      pwsh: true
-    continueOnError: true

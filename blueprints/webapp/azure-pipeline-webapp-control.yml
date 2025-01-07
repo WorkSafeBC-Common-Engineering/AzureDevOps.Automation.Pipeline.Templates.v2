@@ -18,7 +18,7 @@ parameters:
 # Mode Elite - if true we tolerate no errors!
 - name:     modeElite
   type:     boolean
-  default:  false
+  default:  true
 # Bootstrap optionals
 - name:     verbose
   type:     boolean
@@ -31,6 +31,10 @@ parameters:
 - name:     suppressCD
   type:     boolean
   default:  false
+# Is application dotnet core or dotnet  
+- name:     isDotNetCore
+  type:     boolean  
+  default:  true
 
 # VARIABLES
 variables:
@@ -53,6 +57,7 @@ stages:
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
+    isDotNetCore:         ${{parameters.isDotNetCore}}    
 
 # --------------------------------------------------------------------------
 # DEPLOYMENT

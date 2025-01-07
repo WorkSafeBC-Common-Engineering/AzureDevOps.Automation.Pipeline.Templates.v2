@@ -63,12 +63,12 @@ parameters:
   default:  ''
   
 steps:
-  - task: gitversion/setup@0
+  - task: gitversion/setup@3 
     displayName: Install GitVersion
     inputs:
       versionSpec: ${{parameters.versionSpec}}
 
-  - task: gitversion/execute@0
+  - task: gitversion/execute@3
     displayName: Use GitVersion
     inputs:
       targetPath:                   ${{parameters.targetPath}}

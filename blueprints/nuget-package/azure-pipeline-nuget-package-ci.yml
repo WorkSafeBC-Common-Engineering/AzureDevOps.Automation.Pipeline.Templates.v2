@@ -1,6 +1,7 @@
 parameters:
 - name:     isDotNetCore
   type:     boolean
+  default:  true  
 - name:     netCoreVersion
   type:     string
 - name:     portfolioName
@@ -34,6 +35,14 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
+# Path of pre-build powershell script
+- name:     prebuildPsScript  
+  type:     string
+  default:  ''
+# nodeJs version for the build
+- name:     nodeToolVersion
+  type:     string
+  default:  ''
 
 # --------------------------------------------------------------------------
 # START OF BUILD and TEST STAGE
@@ -50,7 +59,6 @@ stages:
   # Variables
   variables:
     buildConfiguration:   'Release'
-    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HERE__' # WSBC_Cloud_NuGet feed
   
   jobs:
   - job: ContinuousIntegration
@@ -74,21 +82,13 @@ stages:
           version:        ${{parameters.netCoreVersion}}
           packageType:    sdk
 
-    - ${{ if eq(parameters.isDotNetCore, true) }}:
-      - task: DotNetCoreCLI@2
-        displayName: Restore
-        inputs:
-          command:    restore
-          projects:   '**/*.??proj'
-          vstsFeed:   $(vstsFeed)
-    - ${{ else }}:
+    - ${{ if eq(parameters.isDotNetCore, false) }}:
         - task: NuGetToolInstaller@1
 
-    - ${{ if eq(parameters.isDotNetCore, false) }}:
-      - task: NuGetCommand@2  
+    - ${{ if ne(parameters.nodeToolVersion, '') }}:
+      - task: NodeTool@0
         inputs:
-          restoreSolution:    '**/*.sln'
-          vstsFeed:           $(vstsFeed)
+          versionSpec:  ${{parameters.nodeToolVersion}}   
 
 # ==========================================================================
 # BOOTSTRAP VALIDATION, STAGE: CI_BOOTSTRAP_INIT
@@ -106,6 +106,26 @@ stages:
         modeElite:            ${{parameters.modeElite}}
         runAzurite:           ${{parameters.runAzurite}}
 # ==========================================================================
+
+    - ${{ if eq(parameters.isDotNetCore, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: Restore
+        env:
+          Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+        inputs:
+          command:    restore
+          projects:   '**/*.??proj'
+          feedsToUse:      'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
+
+    - ${{ if eq(parameters.isDotNetCore, false) }}:
+      - task: NuGetCommand@2  
+        env:
+          Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+        inputs:
+          restoreSolution:    '**/*.sln'
+          feedsToUse:      'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
 
 # --------------------------------------------------------------------------
 # PERFORM VERSION UPDATE, BUILD AND PACKAGING
@@ -126,6 +146,10 @@ stages:
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION BUILD
 # --------------------------------------------------------------------------
+    - ${{ if ne(parameters.prebuildPsScript, '') }}:
+      - powershell: |
+          $(Build.SourcesDirectory)\${{parameters.prebuildPsScript}}
+        displayName: 'Run Pre-Build Script'
     - ${{ if eq(parameters.isDotNetCore, true) }}:
       - task: DotNetCoreCLI@2
         displayName: 'Build'
@@ -159,14 +183,15 @@ stages:
           packDestination:  '$(Build.ArtifactStagingDirectory)/package'
 
 # --------------------------------------------------------------------------
-# CONTINUOUS INTEGRATION TEST
+# CONTINUOUS INTEGRATION: TEST
+# -- All the test projects should be placed inside 
+#    the respective folders e.g. src/Tests/UnitTests etc.
 # --------------------------------------------------------------------------
-    - task: DotNetCoreCLI@2
-      displayName: 'Run Tests'
-      inputs:
-        command:    'test'
-        projects:   '**/*Tests/*.??proj'
-        arguments:  '--configuration $(buildConfiguration) --no-restore'
+    - template: /templates/qa/tests/tests-ci-all.yml@CeBlueprints
+      parameters:
+        isDotNetCore:        ${{parameters.isDotNetCore}}
+        modeElite:           ${{parameters.modeElite}}
+
 
 # --------------------------------------------------------------------------
 # PUBLISH

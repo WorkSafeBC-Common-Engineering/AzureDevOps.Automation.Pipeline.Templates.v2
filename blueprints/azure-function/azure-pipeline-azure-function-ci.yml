@@ -35,7 +35,6 @@ stages:
   # Variables
   variables:
     buildConfiguration:   'Release'
-    vstsFeed:             '__TODO_INSERT_YOUR_NUGET_FEED_HER__' # WSBC_Cloud_NuGet feed
   
   jobs:
   - job: ContinuousIntegration
@@ -57,13 +56,6 @@ stages:
         version:        ${{parameters.netCoreVersion}}
         packageType:    sdk
 
-    - task: DotNetCoreCLI@2
-      displayName: Restore
-      inputs:
-        command:    restore
-        projects:   '**/*.csproj'
-        vstsFeed:   $(vstsFeed)
-
 # ==========================================================================
 # BOOTSTRAP VALIDATION, STAGE: CI_BOOTSTRAP_INIT
 # SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
@@ -81,6 +73,16 @@ stages:
 
 # ==========================================================================
 
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      env:
+        Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+      inputs:
+        command:    restore
+        projects:   '**/*.csproj'
+        feedsToUse:      'config'
+        nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
+
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION BUILD
 # --------------------------------------------------------------------------
@@ -92,15 +94,13 @@ stages:
         arguments:  '--configuration $(buildConfiguration) --no-restore'
 
 # --------------------------------------------------------------------------
-# CONTINUOUS INTEGRATION TEST
+# CONTINUOUS INTEGRATION: TEST
+# -- All the test projects should be placed inside 
+#    the respective folders e.g. src/Tests/UnitTests etc.
 # --------------------------------------------------------------------------
-    - task: DotNetCoreCLI@2
-      displayName: 'Run Tests'
-      inputs:
-        command:    'test'
-        projects:   '**/*Tests/*.csproj'
-        arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage"'
-        publishTestResults: true
+    - template: /templates/qa/tests/tests-ci-all.yml@CeBlueprints
+      parameters:
+        modeElite:    ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------
 # PUBLISH

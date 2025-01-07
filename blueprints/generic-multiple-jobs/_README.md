@@ -1,3 +1,1 @@
 Use this generic blueprint if there are no application-type blueprints that meet your requirements and you need to split bootstrap calls across multiple jobs. The generic-single-job generic blueprint is recommended.
-
-- READ: [Part 5: Pipelines - Blueprints to fuel consistency and enablement](https://wsbctechnicalblog.github.io/yaml-pipelines-part5.html) and [Part 6: Pipelines - Gotcha! The generic blueprint-based YAML pipeline simplicity](https://wsbctechnicalblog.github.io/yaml-pipelines-part6.html)

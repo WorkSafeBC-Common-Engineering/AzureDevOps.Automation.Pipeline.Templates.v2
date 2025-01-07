@@ -1,0 +1,33 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# 
+# Execute Tests Template
+# - this template is used to run unit tests and integration tests (future)
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     isDotNetCore
+  type:     boolean
+  default:  true
+# Mode Elite - if true we tolerate no errors!
+- name:     modeElite
+  type:     boolean
+  default:  true
+    
+steps:
+
+# --------------------------------------------------------------------------
+# Run Unit Tests
+# --------------------------------------------------------------------------
+  - template: /templates/qa/tests/tests-unit-run.yml
+    parameters:
+      isDotNetCore: ${{parameters.isDotNetCore}}
+      modeElite: ${{parameters.modeElite}}
+      
+# --------------------------------------------------------------------------      
+# Run Integration Tests (future)
+# --------------------------------------------------------------------------
+#
+#

@@ -15,9 +15,7 @@ parameters:
   type:     string
 - name:     cliSources
   type:     string
-- name:     buildingCodeMode
-  type:     string
-  default:  'Validate' # Validate | Enforce
+  default:  $(Build.SourcesDirectory)
 - name:     applicationBlueprint
   type:     string
   default:  'generic'
@@ -27,22 +25,15 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-- name:     modeAILog
-  type:     boolean
-  default:  true
   
 steps:
 - ${{ if eq( parameters.verbose, true ) }}: 
-  - script: echo BuildingCode parameters >> AT = ${{parameters.applicationType}}, PON = ${{parameters.portfolioName}}, PRN = ${{parameters.productName}}, BCM = ${{parameters.buildingCodeMode}}, ME = ${{parameters.modeElite}}, BC = ${{parameters.applicationBlueprint}}
+  - script: echo BuildingCode parameters >> AT = ${{parameters.applicationType}}, PON = ${{parameters.portfolioName}}, PRN = ${{parameters.productName}}, ME = ${{parameters.modeElite}}
     displayName: Bootstrap Building Code Verbose Logging
+  - bash: 'env | sort'
+    displayName: Bootstrap Dump env variables
 
 # ======================================================================
-# DEMO PLACEHOLDER 
+# VALIDATE THE PIPELINE QUALITY
 # ======================================================================
-- task: PowerShell@2
-  displayName: 'Bootstrap Building Code Placeholder Script'
-  inputs:
-    filePath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/building-code/building-code-placeholder.ps1'
-    failOnStderr:  true
-    pwsh:          true
-  continueOnError: true
+# __TDODO__

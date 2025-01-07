@@ -23,7 +23,13 @@ steps:
   - ${{ if eq( lower(parameters.applicationBlueprint), 'universal-artifact' ) }}:
     - script: echo deal with qa scan relevant to universal-artifact application type
 
-  - ${{ if and(ne(lower(parameters.applicationBlueprint),'universal-artifact'), ne(lower(parameters.applicationBlueprint),'nuget-package'), ne(lower(parameters.applicationBlueprint),'azure-function')) }}:
+  - ${{ if eq( lower(parameters.applicationBlueprint), 'reliable-web-app' ) }}:
+    - script: |
+              '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/robot-install.ps1'
+              robot --outputdir %BUILD_ARTIFACTSTAGINGDIRECTORY% --timestampoutputs --log mylog.html --report NONE -x RESULTSET-robottests.xml %BUILD_SOURCESDIRECTORY%\toolbox\quality-assurance\RobotScripts\HealthCheck.robot
+    
+
+  - ${{ if and(ne(lower(parameters.applicationBlueprint),'universal-artifact'), ne(lower(parameters.applicationBlueprint),'nuget-package'), ne(lower(parameters.applicationBlueprint),'reliable-web-app'), ne(lower(parameters.applicationBlueprint),'azure-function')) }}:
     - script: echo UNKNOWN application type
 
 # -----------------------------------------------------------------------------------------------------

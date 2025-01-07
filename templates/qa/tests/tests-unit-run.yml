@@ -1,0 +1,199 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# 
+# Execute Unit tests
+# - this template is used to run unit tests
+# -- when project is .NET , use DotNetCoreCLI task 
+#       which targets all the projects in Unit.Tests folder
+# -- when project is not .NET Framework, use VSTest task
+#       which targets all the dlls in the Unit.Tests folder
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     isDotNetCore
+  type:     boolean
+  default:  true  
+# Mode Elite - if true we tolerate no errors!
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+steps:
+
+# --------------------------------------------------------------------------
+# Checks if the "runsettings" file exists in the Tests/UnitTests directory
+# - check the runsettings file
+# - if found, set the RunSettingsFilePath variable
+# - if not found, create a default runsettings file
+# --------------------------------------------------------------------------
+- task: PowerShell@2
+  displayName: 'Determine the runsettings file'
+  inputs:
+    targetType: 'inline'
+    pwsh: true
+    script: |
+      $rootDir = "$(System.DefaultWorkingDirectory)"
+      
+      $runSettingsFile = Get-ChildItem -Path $rootDir -Recurse -Filter "*.runsettings" | Where-Object { 
+          $normalizedPath = $_.FullName -replace '\\', '/'
+          $normalizedPath -imatch '/Tests/UnitTests/.*\.runsettings$'
+      } | Select-Object -First 1
+
+      if ($runSettingsFile) 
+      {
+        # Set pipeline variable with the file path if found
+        Write-Host "##vso[task.setvariable variable=RunSettingsFilePath;]$($runSettingsFile.FullName)"
+        Write-Host "Found .runsettings file at $($runSettingsFile.FullName)"
+      } 
+      else 
+      {
+        $runSettings = "<RunSettings/>"
+        $outputPath = "$(System.DefaultWorkingDirectory)/pipeline_default.runsettings"
+        $runSettings | Out-File -FilePath $outputPath -Encoding utf8
+        Write-Host "##vso[task.setvariable variable=RunSettingsFilePath;]$outputPath"
+        Write-Host "Not Found. default runsettings pipeline_default.runsettings created"
+      }
+
+# --------------------------------------------------------------------------
+# Run Unit Tests
+# --------------------------------------------------------------------------
+- ${{ if eq(parameters.isDotNetCore, true) }}:
+  - ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests - dotnet.'
+      inputs:
+        command:    'test'
+        projects:   '**/Tests/UnitTests/**/*.??proj'
+        arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage" --settings "$(RunSettingsFilePath)"'
+        publishTestResults: true
+  - ${{ else }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests - dotnet..'
+      inputs:
+        command:    'test'
+        projects:   '**/Tests/UnitTests/**/*.??proj'
+        arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage" --settings "$(RunSettingsFilePath)"'
+        publishTestResults: true
+      continueOnError: true
+  
+- ${{ if eq(parameters.isDotNetCore, false) }}:
+  - ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+    - task: VSTest@3
+      displayName: 'Run Unit Tests - VSTest.'
+      inputs:
+        testSelector: 'testAssemblies'
+        testAssemblyVer2: '**\Tests\UnitTests\**\bin\**\*.dll'
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        runSettingsFile: '$(RunSettingsFilePath)'
+        resultsFolder: '$(Agent.TempDirectory)\TestResults'
+        diagnosticsEnabled: false #(default is false, change to true for debugging)
+        codeCoverageEnabled: true
+  - ${{ else }}:
+    - task: VSTest@3
+      displayName: 'Run Unit Tests - VSTest..'
+      inputs:
+        testSelector: 'testAssemblies'
+        testAssemblyVer2: '**\Tests\UnitTests\**\bin\**\*.dll'
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        runSettingsFile: '$(RunSettingsFilePath)'
+        resultsFolder: '$(Agent.TempDirectory)\TestResults'
+        diagnosticsEnabled: false #(default is false, change to true for debugging)
+        codeCoverageEnabled: true
+      continueOnError: true 
+
+# -----------------------------------------------------------------------
+# Unit test count from Azure DevOps API
+# - Toolbox contains the PowerShell script to get the unit test count
+# - For the Generic-Multiple-jobs pipeline, ToolBox is not checked out
+# - For all other cases, toolbox is checked out in the initial step
+# -----------------------------------------------------------------------
+- powershell: |
+    $toolboxDirectory = "$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/unit-tests/unit-test-count.ps1"
+    if (-Not (Test-Path -Path $toolboxDirectory)) {
+      Write-Host "Toolbox directory does not exist, performing git checkout..."
+      Write-Host "##vso[task.setvariable variable=ToolboxRepoExists;]false"
+    }
+    else {
+      Write-Host "Toolbox directory already exists. Skipping checkout."
+      Write-Host "##vso[task.setvariable variable=ToolboxRepoExists;]true"
+    }
+  displayName: 'Toolbox Repository Existence Check'
+  failOnStderr: true
+
+- checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
+  condition: and(succeeded(), eq(variables['ToolboxRepoExists'], 'false'))
+  displayName: 'Checkout Toolbox Repository'
+
+- task: AzureKeyVault@2
+  displayName: 'Azure Key Vault: AS-PR-AzDOMaintenance-KV'
+  inputs:
+    azureSubscription: 'CeS Bootstrap Service Endpoint'
+    KeyVaultName: 'AS-PR-AzDOMaintenance-KV'
+    SecretsFilter: PAT-Test-Management
+    RunAsPreJob: false
+    
+- task: PowerShell@2
+  name: unitTestResults
+  displayName: 'Getting Test Results'
+  inputs:
+    filePath:  '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/unit-tests/unit-test-count.ps1' 
+    arguments: -PAT "$(PAT-Test-Management)" 
+    failOnStderr: true
+    pwsh: true
+  continueOnError: true
+      
+# -----------------------------------------------------------------------
+# Analyze Unit Tests
+# - verify minimum number of unit tests and validate
+# -----------------------------------------------------------------------
+- ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+  - task: PowerShell@2
+    name: setUnitTestsValidity
+    displayName: 'Test Results Analysis'
+    inputs:
+      targetType: 'inline'
+      pwsh: true
+      script: |
+        
+        # Minimum required tests
+        $minTests = 1
+  
+        # Check if the number of tests is less than the minimum
+        if ($(unitTestResults.unitTestCount) -lt $minTests) 
+        {
+          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]failure"
+          Write-Host "Number of tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
+          exit 1
+        } 
+        else 
+        {
+          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]success"
+          Write-Host "Number of tests ($(unitTestResults.unitTestCount)) meets the minimum requirement."
+        }  
+- ${{ else }}:        
+  - task: PowerShell@2
+    name: setUnitTestsValidity
+    displayName: 'Test Results Analysis'
+    inputs:
+      targetType: 'inline'
+      pwsh: true
+      script: |
+        
+        # Minimum required tests
+        $minTests = 1
+  
+        # Check if the number of tests is less than the minimum
+        if ($(unitTestResults.unitTestCount) -lt $minTests) 
+        {
+          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]warning"
+          Write-Host "Number of tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
+          Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+          #exit 1
+        } 
+        else 
+        {
+          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]success"
+          Write-Host "Number of tests ($(unitTestResults.unitTestCount)) meets the minimum requirement."
+        }    
