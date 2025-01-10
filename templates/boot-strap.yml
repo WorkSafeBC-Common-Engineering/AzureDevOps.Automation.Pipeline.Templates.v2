@@ -76,7 +76,7 @@ steps:
     displayName: Bootstrap Key Vault
     inputs:
       azureSubscription: 'CeS Bootstrap Service Endpoint'
-      KeyVaultName:      'AS-PR-CeSPipelines-KV'
+      KeyVaultName:      '__TODO__INSERT_VAULT_NAME__'
       RunAsPreJob:       true
 
 # ===========================================================================
