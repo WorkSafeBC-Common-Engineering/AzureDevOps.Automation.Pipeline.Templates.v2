@@ -127,10 +127,10 @@ steps:
   displayName: 'Checkout Toolbox Repository'
 
 - task: AzureKeyVault@2
-  displayName: 'Azure Key Vault: AS-PR-AzDOMaintenance-KV'
+  displayName: 'Azure Key Vault: __TODO__INSERT_VAULT_NAME__'
   inputs:
     azureSubscription: 'CeS Bootstrap Service Endpoint'
-    KeyVaultName: 'AS-PR-AzDOMaintenance-KV'
+    KeyVaultName: '__TODO__INSERT_VAULT_NAME__'
     SecretsFilter: PAT-Test-Management
     RunAsPreJob: false
     
