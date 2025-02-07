@@ -25,6 +25,8 @@ trigger:
     - '/ReadMe.md'
     - '/README.md'
     - '/readme.md'
+    - '/deploy/**'
+    - '/pipelines/**'
 
 resources:
   repositories:
@@ -35,6 +37,7 @@ resources:
 extends:
   template: blueprints/azure-function/azure-pipeline-azure-function-control.yml@CeBlueprints
   parameters:
+    blueprintVersion:  '2.1.0'
     netCoreVersion:     '8.x'
     portfolioName:      '__TODO_PORTFOLIO__'
     productName:        '__TODO_PRODUCT__'

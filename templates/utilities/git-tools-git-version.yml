@@ -3,8 +3,6 @@
 # --------------------------------------------------------------------------
 # See https://aka.ms/yaml for Azure DevOps Pipeline documentation
 # 
-# Special template to enable YAML pipeline users to switch to WhiteSource
-# until they switch to the new blueprint-based templates
 # --------------------------------------------------------------------------
 # IMPORTANT !!! The GitVersion tasks must be the first to run in pipeline.
 # --------------------------------------------------------------------------

@@ -1,0 +1,89 @@
+# --------------------------------------------------------------------------
+# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# 
+# Execute Unit tests
+# - this template is used to detect unit tests count in azure devops
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     modeElite
+  type:     boolean
+  default:  false
+
+# -----------------------------------------------------------------------
+# Unit test count from Azure DevOps API
+# - Toolbox contains the PowerShell script to get the unit test count
+# -----------------------------------------------------------------------
+
+steps:
+
+- powershell: |
+    $toolboxDirectory = "$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/unit-tests/unit-test-count.ps1"
+    if (-Not (Test-Path -Path $toolboxDirectory)) {
+      Write-Host "Toolbox directory does not exist, performing git checkout..."
+      Write-Host "##vso[task.setvariable variable=ToolboxRepoExistsFinalStep;]false"
+    }
+    else {
+      Write-Host "Toolbox directory already exists. Skipping checkout."
+      Write-Host "##vso[task.setvariable variable=ToolboxRepoExistsFinalStep;]true"
+    }
+  displayName: 'Bootstrap QA - Toolbox Repository Existence Check'
+  failOnStderr: true
+
+- checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
+  condition: and(succeeded(), eq(variables['ToolboxRepoExistsFinalStep'], 'false'))
+  displayName: 'Bootstrap QA - Checkout Toolbox Repository'
+
+- task: AzureKeyVault@2
+  displayName: 'Bootstrap QA - Azure Key Vault: AS-PR-AzDOMaintenance-KV'
+  inputs:
+    azureSubscription: 'CeS Bootstrap Service Endpoint'
+    KeyVaultName: 'AS-PR-AzDOMaintenance-KV'
+    SecretsFilter: PAT-Test-Management
+    RunAsPreJob: false
+    
+- task: PowerShell@2
+  name: unitTestsApiCount
+  displayName: 'Bootstrap QA - Getting Test Count'
+  inputs:
+    filePath:  '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/unit-tests/unit-test-count.ps1' 
+    arguments: -PAT "$(PAT-Test-Management)" 
+    failOnStderr: true
+    pwsh: true
+  continueOnError: true
+
+- ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+  - task: PowerShell@2
+    displayName: 'Bootstrap QA - Unit Tests Compliance'
+    inputs:
+      targetType: 'inline'
+      pwsh: true
+      script: |
+        $minTests = 1
+        if ($(unitTestsApiCount.unitTestCount) -lt $minTests) {
+          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) is below the minimum required (1)."
+          exit 1
+        }
+        else
+        {
+          Write-Host "Unit Tests executed in the pipeline run."
+        }
+- ${{ else }}:
+  - task: PowerShell@2
+    displayName: 'Bootstrap QA - Unit Tests Compliance'
+    inputs:
+      targetType: 'inline'
+      pwsh: true
+      script: |
+        $minTests = 1
+        if ($(unitTestsApiCount.unitTestCount) -lt $minTests) {
+          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) is below the minimum required (1)."
+          Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+          #exit 1
+        }
+        else
+        {
+          Write-Host "Unit Tests executed in the pipeline run."
+        }

@@ -46,10 +46,11 @@ trigger:
     - '*'
   paths:
     exclude:
-    - pipelines
-    - ReadMe.md     # Excluding changes to the Readme.me file (case dependent?)
-    - README.md
-    - readme.md
+    - '/ReadMe.md'
+    - '/README.md'
+    - '/readme.md'
+    - '/deploy/**'
+    - '/pipelines/**'
 
 # Configure the default agent pool and image to use for your pipeline
 pool:

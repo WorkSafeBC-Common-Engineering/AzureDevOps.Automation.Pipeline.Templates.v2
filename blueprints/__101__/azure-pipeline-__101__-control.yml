@@ -1,4 +1,8 @@
 parameters:
+# Do NOT modify this baseline version. Use a higher version in the -start.yml template for newer features.
+- name:     blueprintVersion
+  type:     string
+  default:  2.0.0
 - name:     portfolioName
   type:     string
 - name:     productName
@@ -27,8 +31,11 @@ parameters:
 
 # VARIABLES
 variables:
-- ${{ if ne(parameters.suppressCD, true) }}:
+- ${{ if and( ne(parameters.suppressCD, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
+
+- ${{ if and( ne(parameters.suppressCD, true), ge(parameters.blueprintVersion, '2.1.0') ) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}-${{ lower(parameters.productName) }}-config.yml@self
 
 stages:
 
@@ -37,6 +44,7 @@ stages:
 # --------------------------------------------------------------------------
 - template: /blueprints/__101__/azure-pipeline-__101__-ci.yml@CeBlueprints
   parameters:
+    blueprintVersion:     ${{parameters.blueprintVersion}}
     portfolioName:        ${{parameters.portfolioName}}
     productName:          ${{parameters.productName}}
     applicationBlueprint: ${{parameters.applicationBlueprint}}
@@ -59,7 +67,8 @@ stages:
             nameEnv:                      ${{variables.developmentStageEnvName}}
             nameVM:                       ${{variables.developmentStageVmImage}}
             testData:                     ${{variables.developmentStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}                         
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}                       
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         systemTest:
@@ -68,7 +77,8 @@ stages:
             nameEnv:                      ${{variables.systemTestStageEnvName}}
             nameVM:                       ${{variables.systemTestStageVmImage}}
             testData:                     ${{variables.systemTestStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         staging:
@@ -77,7 +87,8 @@ stages:
             nameEnv:                      ${{variables.stagingStageEnvName}}
             nameVM:                       ${{variables.stagingStageVmImage}}
             testData:                     ${{variables.stagingStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         production:
@@ -86,22 +97,27 @@ stages:
             nameEnv:                      ${{variables.productionStageEnvName}}
             nameVM:                       ${{variables.productionStageVmImage}}
             testData:                     ${{variables.productionStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 # TODO pass your configuration variables here
         # Embedded non-negotiable stages ------------------------------------ 
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------

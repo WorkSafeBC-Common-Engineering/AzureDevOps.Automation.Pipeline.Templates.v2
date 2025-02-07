@@ -1,4 +1,6 @@
 parameters:
+- name:     blueprintVersion
+  type:     string
 - name:     netCoreVersion
   type:     string
 - name:     portfolioName
@@ -62,6 +64,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'init'
         applicationType:      'dotnet'
         applicationBlueprint: ${{parameters.applicationBlueprint}}
@@ -72,16 +75,27 @@ stages:
         modeElite:            ${{parameters.modeElite}}
 
 # ==========================================================================
+    - ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/release'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+      - task: DotNetCoreCLI@2
+        displayName: Restore - Lower Environments
+        env:
+          Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+        inputs:
+          command:    restore
+          projects:   '**/*.csproj'
+          feedsToUse:      'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget-lo-env.config'
 
-    - task: DotNetCoreCLI@2
-      displayName: Restore
-      env:
-        Telerik-NuGet-Key: $(Telerik-NuGet-Key)
-      inputs:
-        command:    restore
-        projects:   '**/*.csproj'
-        feedsToUse:      'config'
-        nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
+    - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
+      - task: DotNetCoreCLI@2
+        displayName: Restore - Higher Environments
+        env:
+          Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+        inputs:
+          command:    restore
+          projects:   '**/*.csproj'
+          feedsToUse:      'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
 
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION BUILD
@@ -126,6 +140,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'run'
         applicationType:      'dotnet'
         applicationBlueprint: ${{parameters.applicationBlueprint}}

@@ -6,6 +6,8 @@ parameters:
   type:     string
 - name:     applicationBlueprint
   type:     string
+- name:     blueprintVersion
+  type:     string
 - name:     modeElite
   type:     boolean
   default:  false

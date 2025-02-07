@@ -6,6 +6,8 @@
 # --------------------------------------------------------------------------
 
 parameters:
+- name:     blueprintVersion
+  type:     string
 # mandatory parameters
 - name:     modeElite
   type:     boolean
@@ -17,12 +19,13 @@ parameters:
 - name:     vGuid
   type:     string
   default:  '__TODO_ADD_UNIQUE_GUID__HERE__'
+'
 - name:     vVersion
   type:     string
-  default:  '2.0'
+  default:  '2.1.0'
   
 steps:
-    - script: echo "${{parameters.modeElite}}:${{parameters.applicationBlueprint}}:${{parameters.applicationType}}:${{parameters.vGuid}}:${{parameters.vVersion}}
+    - script: echo "${{parameters.modeElite}}:${{parameters.applicationBlueprint}}:${{parameters.applicationType}}:${{parameters.vGuid}}:${{parameters.blueprintVersion}}"
       name:         BootstrapInfo
       displayName:  Bootstrap Info
     - task: PowerShell@2
@@ -33,7 +36,7 @@ steps:
           Write-Host "##vso[task.setvariable variable=bootStrapBlueprint;isOutput=true]${{parameters.applicationBlueprint}}"
           Write-Host "##vso[task.setvariable variable=bootStrapType;isOutput=true]${{parameters.applicationType}}"
           Write-Host "##vso[task.setvariable variable=bootStrapGuid;isOutput=true]${{parameters.vGuid}}"
-          Write-Host "##vso[task.setvariable variable=bootStrapVersion;isOutput=true]${{parameters.vVersion}}"
+          Write-Host "##vso[task.setvariable variable=bootStrapVersion;isOutput=true]${{parameters.blueprintVersion}}"
         failOnStderr: true
         pwsh: true
       name:         BootstrapVars
@@ -53,7 +56,7 @@ steps:
               bootStrapBlueprint = "${{parameters.applicationBlueprint}}"
               bootStrapType = "${{parameters.applicationType}}"
               bootStrapGuid = "${{parameters.vGuid}}"
-              bootStrapVersion = "${{parameters.vVersion}}"
+              bootStrapVersion = "${{parameters.blueprintVersion}}"
           }
 
           $json = $variablesData | ConvertTo-Json

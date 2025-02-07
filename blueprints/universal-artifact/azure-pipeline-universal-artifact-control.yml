@@ -1,4 +1,8 @@
 parameters:
+# Do NOT modify this baseline version. Use a higher version in the -start.yml template for newer features.
+- name:     blueprintVersion
+  type:     string
+  default:  2.0.0
 - name:     portfolioName
   type:     string
 - name:     productName
@@ -26,8 +30,11 @@ parameters:
 
 # VARIABLES
 variables:
-- ${{ if ne(parameters.suppressCD, true) }}:
+- ${{ if and( ne(parameters.suppressCD, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
+
+- ${{ if and( ne(parameters.suppressCD, true), ge(parameters.blueprintVersion, '2.1.0') ) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}-${{ lower(parameters.productName) }}-config.yml@self
 
 stages:
 
@@ -36,6 +43,7 @@ stages:
 # --------------------------------------------------------------------------
 - template: /blueprints/universal-artifact/azure-pipeline-universal-artifact-ci.yml@CeBlueprints
   parameters:
+    blueprintVersion:     ${{parameters.blueprintVersion}}
     portfolioName:        ${{parameters.portfolioName}}
     productName:          ${{parameters.productName}}
     applicationBlueprint: ${{parameters.applicationBlueprint}}
@@ -61,7 +69,8 @@ stages:
             testData:                     ${{variables.developmentStageTestData}}
             feedPublish:                  ${{variables.developmentStageFeedPublish}}
             packagePublish:               ${{variables.developmentStagePackagePublish}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         systemTest:
           config:
@@ -71,7 +80,8 @@ stages:
             testData:                     ${{variables.systemTestStageTestData}}
             feedPublish:                  ${{variables.systemTestStageFeedPublish}}
             packagePublish:               ${{variables.systemTestStagePackagePublish}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         staging:
           config:
@@ -81,7 +91,8 @@ stages:
             testData:                     ${{variables.stagingStageTestData}}
             feedPublish:                  ${{variables.stagingStageFeedPublish}}
             packagePublish:               ${{variables.stagingStagePackagePublish}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         production:
           config:
@@ -91,20 +102,25 @@ stages:
             testData:                     ${{variables.productionStageTestData}}
             feedPublish:                  ${{variables.productionStageFeedPublish}}
             packagePublish:               ${{variables.productionStagePackagePublish}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------

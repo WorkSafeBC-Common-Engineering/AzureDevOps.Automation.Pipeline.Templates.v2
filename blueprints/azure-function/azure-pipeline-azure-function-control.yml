@@ -1,4 +1,8 @@
 parameters:
+# Do NOT modify this baseline version. Use a higher version in the -start.yml template for newer features.
+- name:     blueprintVersion
+  type:     string
+  default:  2.0.0
 - name:     netCoreVersion
   type:     string
 - name:     portfolioName
@@ -29,11 +33,14 @@ parameters:
 - name:     suppressCD
   type:     boolean
   default:  false
-
+  
 # VARIABLES
 variables:
-- ${{ if ne(parameters.suppressCD, true) }}:
+- ${{ if and( ne(parameters.suppressCD, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
+
+- ${{ if and( ne(parameters.suppressCD, true), ge(parameters.blueprintVersion, '2.1.0') ) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}-${{ lower(parameters.productName) }}-config.yml@self
 
 # -----------------------------------------------------------------------------------------------------
 # Azure Function App Settings
@@ -63,6 +70,7 @@ stages:
 # --------------------------------------------------------------------------
 - template: /blueprints/azure-function/azure-pipeline-azure-function-ci.yml@CeBlueprints
   parameters:
+    blueprintVersion:     ${{parameters.blueprintVersion}}
     netCoreVersion:       ${{parameters.netCoreVersion}}
     portfolioName:        ${{parameters.portfolioName}}
     productName:          ${{parameters.productName}}
@@ -95,7 +103,8 @@ stages:
             azureSubscription:            ${{variables.developmentStageAzRmWebDeployAzureSubscription}}
             azureResourceGroup:           ${{variables.developmentStageAzResourceGroup}}
             azureAppName:                 ${{variables.developmentStageAzRmWebDeployWebAppName}}
-            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}  
+            blueprintVersion:             ${{parameters.blueprintVersion}}     
             modeElite:                    ${{parameters.modeElite}}
 
         systemTest:
@@ -107,7 +116,8 @@ stages:
             azureSubscription:            ${{variables.systemTestStageAzRmWebDeployAzureSubscription}}
             azureResourceGroup:           ${{variables.systemTestStageAzResourceGroup}}
             azureAppName:                 ${{variables.systemTestStageAzRmWebDeployWebAppName}}
-            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}  
+            blueprintVersion:             ${{parameters.blueprintVersion}}     
             modeElite:                    ${{parameters.modeElite}}
 
         staging:
@@ -119,7 +129,8 @@ stages:
             azureSubscription:            ${{variables.stagingStageAzRmWebDeployAzureSubscription}}
             azureResourceGroup:           ${{variables.stagingStageAzResourceGroup}}
             azureAppName:                 ${{variables.stagingStageAzRmWebDeployWebAppName}}
-            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}  
+            blueprintVersion:             ${{parameters.blueprintVersion}}     
             modeElite:                    ${{parameters.modeElite}}
 
         production:
@@ -131,21 +142,26 @@ stages:
             azureSubscription:            ${{variables.productionStageAzRmWebDeployAzureSubscription}}
             azureResourceGroup:           ${{variables.productionStageAzResourceGroup}}
             azureAppName:                 ${{variables.productionStageAzRmWebDeployWebAppName}}
-            applicationBlueprint:         ${{parameters.applicationBlueprint}}
+            applicationBlueprint:         ${{parameters.applicationBlueprint}}  
+            blueprintVersion:             ${{parameters.blueprintVersion}}     
             modeElite:                    ${{parameters.modeElite}}
 
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------
