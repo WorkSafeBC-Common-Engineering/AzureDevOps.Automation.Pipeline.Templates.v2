@@ -1,4 +1,6 @@
 parameters:
+- name:     blueprintVersion
+  type:     string
 - name:     portfolioName
   type:     string
 - name:     productName
@@ -45,6 +47,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'init'
         applicationType:      'other' #TODO specify dotnet or other
         applicationBlueprint: ${{parameters.applicationBlueprint}}
@@ -113,6 +116,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'run'
         applicationType:      'other' #TODO specify dotnet or other
         applicationBlueprint: ${{parameters.applicationBlueprint}}

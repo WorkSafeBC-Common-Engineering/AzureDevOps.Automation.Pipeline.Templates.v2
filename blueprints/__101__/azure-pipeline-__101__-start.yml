@@ -24,9 +24,11 @@ trigger:
     # TODO: Replace __token__ and remove this comment
     - /__TODO_FOLDERNAME__ 
     exclude:
-    - ReadMe.md     # Excluding changes to the Readme.me file (case dependent?)
-    - README.md
-    - readme.md
+    - '/ReadMe.md'
+    - '/README.md'
+    - '/readme.md'
+    - '/deploy/**'
+    - '/pipelines/**'
     
 resources:
   repositories:
@@ -37,6 +39,7 @@ resources:
 extends:
   template: blueprints/__101__/azure-pipeline-__101__-control.yml@CeBlueprints
   parameters:
+    blueprintVersion:  '2.1.0'
     portfolioName:   '__TODO_PORTFOLIO__'
     productName:     '__TODO_PRODUCT__'
     publishFolder:   '__TODO_FOLDERNAME__'

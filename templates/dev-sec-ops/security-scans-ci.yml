@@ -7,6 +7,7 @@ parameters:
   type:     string
 - name:     cliSources
   type:     string
+  default:  $(Build.SourcesDirectory)
 - name:     verbose
   type:     boolean
   default:  false
@@ -14,10 +15,11 @@ parameters:
   type:     boolean
   default:  false
 
+
 steps:
 
-- ${{ if eq( parameters.verbose, true ) }}: 
-  - script: echo security-scans-ci parameters >> ${{parameters.applicationType}}, ${{parameters.portfolioName}}, ${{parameters.productName}}, ${{parameters.cliSources}}, ${{parameters.urlUnifiedAgent}}, ${{parameters.apiKeyAPI}}, ${{parameters.wsConfigFile}}
+-- ${{ if eq( parameters.verbose, true ) }}: 
+  - script: echo security-scans-ci parameters >> ${{parameters.applicationType}}, ${{parameters.portfolioName}}, ${{parameters.productName}}, ${{parameters.cliSources}}
     displayName: Bootstrap DevSecOps Verbose Logging
 
 # __TODO_REPLACE_CODE_HEREAFTER_WITH_STUFF_THAT_MUST_RUN_AFTER_THE_BUILD_STEP

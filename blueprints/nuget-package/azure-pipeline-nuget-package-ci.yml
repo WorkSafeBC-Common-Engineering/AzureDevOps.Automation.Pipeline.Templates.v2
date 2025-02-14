@@ -1,4 +1,6 @@
 parameters:
+- name:     blueprintVersion
+  type:     string
 - name:     isDotNetCore
   type:     boolean
   default:  true  
@@ -96,6 +98,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'init'
         applicationType:      'dotnet'
         applicationBlueprint: ${{parameters.applicationBlueprint}}
@@ -107,9 +110,20 @@ stages:
         runAzurite:           ${{parameters.runAzurite}}
 # ==========================================================================
 
-    - ${{ if eq(parameters.isDotNetCore, true) }}:
+    - ${{ if and(eq(parameters.isDotNetCore, true), ne(variables['Build.SourceBranch'], 'refs/heads/release'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
       - task: DotNetCoreCLI@2
-        displayName: Restore
+        displayName: Restore - Lower Environments
+        env:
+          Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+        inputs:
+          command:    restore
+          projects:   '**/*.csproj'
+          feedsToUse:      'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget-lo-env.config'
+
+    - ${{ if and(eq(parameters.isDotNetCore, true),  or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+      - task: DotNetCoreCLI@2
+        displayName: Restore - Higher Environments
         env:
           Telerik-NuGet-Key: $(Telerik-NuGet-Key)
         inputs:
@@ -118,7 +132,16 @@ stages:
           feedsToUse:      'config'
           nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
 
-    - ${{ if eq(parameters.isDotNetCore, false) }}:
+    - ${{ if and(eq(parameters.isDotNetCore, false), ne(variables['Build.SourceBranch'], 'refs/heads/release'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+      - task: NuGetCommand@2  
+        env:
+          Telerik-NuGet-Key: $(Telerik-NuGet-Key)
+        inputs:
+          restoreSolution:    '**/*.sln'
+          feedsToUse:      'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget-lo-env.config'
+
+    - ${{ if and( eq(parameters.isDotNetCore, false), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
       - task: NuGetCommand@2  
         env:
           Telerik-NuGet-Key: $(Telerik-NuGet-Key)
@@ -214,6 +237,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'run'
         applicationType:      'dotnet'
         applicationBlueprint: ${{parameters.applicationBlueprint}}

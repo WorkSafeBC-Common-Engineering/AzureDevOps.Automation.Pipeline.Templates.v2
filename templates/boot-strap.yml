@@ -13,6 +13,10 @@
 #---------------------------------------------------------------------------
 
 parameters:
+# Do NOT modify this baseline version. Use a higher version in the -start.yml template for newer features.
+- name:     blueprintVersion
+  type:     string
+  default:  2.0.0
 - name:     bootstrapMode
   type:     string
   default:  'invalid'
@@ -58,6 +62,7 @@ steps:
 - ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
   - template:    utilities/info-version.yml@CeBlueprints
     parameters:
+      blueprintVersion:     ${{parameters.blueprintVersion}}
       modeElite:            ${{parameters.modeElite}}
       applicationBlueprint: ${{parameters.applicationBlueprint}}
       applicationType:      ${{parameters.applicationType}}
@@ -88,8 +93,8 @@ steps:
     fetchDepth:  0
 # Production Toolbox
 - ${{ if or( eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
-  - checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
-
+  - checkout: git://Common-Engineering-System/AzureDevOps.Automation.Pipeline.Toolbox.v2
+  
 # ===========================================================================
 # BOOTSTRAP INITIALISATION STAGE
 # ===========================================================================
@@ -143,6 +148,7 @@ steps:
       portfolioName:          ${{parameters.portfolioName}}
       productName:            ${{parameters.productName}}
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
+      blueprintVersion:       ${{parameters.blueprintVersion}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
 
@@ -154,6 +160,7 @@ steps:
       portfolioName:          ${{parameters.portfolioName}}
       productName:            ${{parameters.productName}}
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
+      blueprintVersion:       ${{parameters.blueprintVersion}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
 
@@ -184,6 +191,7 @@ steps:
       productName:            ${{parameters.productName}}
       cliSources:             ${{parameters.sourcesDirectory}}
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
+      blueprintVersion:       ${{parameters.blueprintVersion}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}
 
@@ -196,5 +204,6 @@ steps:
       productName:            ${{parameters.productName}}
       cliSources:             ${{parameters.sourcesDirectory}}
       applicationBlueprint:   ${{parameters.applicationBlueprint}}
+      blueprintVersion:       ${{parameters.blueprintVersion}}
       verbose:                ${{parameters.verbose}}
       modeElite:              ${{parameters.modeElite}}

@@ -24,9 +24,11 @@ trigger:
     # TODO: Replace __token__ and remove this comment
     - /__TODO_FOLDERNAME__ 
     exclude:
-    - ReadMe.md     # Excluding changes to the Readme.me file (case dependent?)
-    - README.md
-    - readme.md
+    - '/ReadMe.md'
+    - '/README.md'
+    - '/readme.md'
+    - '/deploy/**'
+    - '/pipelines/**'
 
 resources:
   repositories:
@@ -40,6 +42,7 @@ resources:
 extends:
   template: blueprints/nuget-package/azure-pipeline-nuget-package-control.yml@CeBlueprints
   parameters:
+    blueprintVersion:  '2.1.0'
     isDotNetCore:           '__TODO_BOOL_ISCORE__'
     netCoreVersion:         '__TODO_CORE_VERSION__'             # required only if isDotNetCore = true
     portfolioName:          '__TODO_PORTFOLIO__'

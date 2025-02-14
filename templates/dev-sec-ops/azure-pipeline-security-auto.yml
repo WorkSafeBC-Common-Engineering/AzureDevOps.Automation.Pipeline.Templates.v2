@@ -4,6 +4,8 @@ parameters:
   default:  []
 - name:     applicationBlueprint
   type:     string
+- name:     blueprintVersion
+  type:     string
 - name:     modeElite
   type:     boolean
   default:  false
@@ -31,4 +33,5 @@ stages:
     - template:   /templates/dev-sec-ops/security-scans-auto.yml@CeBlueprints
       parameters:
         applicationBlueprint: ${{parameters.applicationBlueprint}}
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         modeElite:            ${{parameters.modeElite}}

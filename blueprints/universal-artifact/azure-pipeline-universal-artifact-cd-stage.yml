@@ -25,7 +25,7 @@ stages:
   variables:
       currentVersion: $[ stageDependencies.ContinuousIntegration.ContinuousIntegration.outputs['setSemVersion.semVersion'] ]
   pool:
-    vmImage:     ${{parameters.config.vmImage}}
+    vmImage:     ${{parameters.config.nameVM}}
   jobs:
   - deployment:  ${{parameters.name}}
     environment: ${{parameters.config.nameEnv}}

@@ -1,4 +1,6 @@
 parameters:
+- name:     blueprintVersion
+  type:     string
 - name:     portfolioName
   type:     string
 - name:     productName
@@ -47,6 +49,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'init'
         applicationType:      'other'
         applicationBlueprint: ${{parameters.applicationBlueprint}}
@@ -79,6 +82,7 @@ stages:
 # ==========================================================================
     - template: /templates/boot-strap.yml@CeBlueprints
       parameters:
+        blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'run'
         applicationType:      'other'
         applicationBlueprint: ${{parameters.applicationBlueprint}}

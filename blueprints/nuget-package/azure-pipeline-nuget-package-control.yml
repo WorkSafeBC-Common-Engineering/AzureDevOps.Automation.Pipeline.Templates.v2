@@ -1,4 +1,8 @@
 parameters:
+# Do NOT modify this baseline version. Use a higher version in the -start.yml template for newer features.
+- name:     blueprintVersion
+  type:     string
+  default:  2.0.0
 - name:     isDotNetCore
   type:     boolean
   default:  true
@@ -56,14 +60,19 @@ parameters:
 
 # VARIABLES
 variables:
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, true) ) }}:
+# blueprintVersion = 2.0.0
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/default.config/nuget-package-config.yml@CeConfiguration
 
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, true) ) }}:
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}/nuget-package-config.yml@CeConfiguration
 
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false) ) }}:
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
+
+# blueprintVersion = 2.1.0
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false), ge(parameters.blueprintVersion, '2.1.0') ) }}:
+  - template: /deploy/${{ lower(parameters.portfolioName) }}-${{ lower(parameters.productName) }}-config.yml@self
 
 stages:
 
@@ -72,6 +81,7 @@ stages:
 # --------------------------------------------------------------------------
 - template: /blueprints/nuget-package/azure-pipeline-nuget-package-ci.yml@CeBlueprints
   parameters:
+    blueprintVersion:     ${{parameters.blueprintVersion}}
     isDotNetCore:           ${{parameters.isDotNetCore}}
     netCoreVersion:         ${{parameters.netCoreVersion}}
     portfolioName:          ${{parameters.portfolioName}}
@@ -103,7 +113,8 @@ stages:
             nameEnv:                      ${{variables.developmentStageEnvName}}
             nameVM:                       ${{variables.developmentStageVmImage}}
             targetFeed:                   ${{variables.developmentTargetFeed}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         systemTest:
           config:                       
@@ -111,7 +122,8 @@ stages:
             nameEnv:                      ${{variables.systemTestStageEnvName}}
             nameVM:                       ${{variables.systemTestStageVmImage}}
             targetFeed:                   ${{variables.systemTestTargetFeed}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         staging:
           config:                       
@@ -119,7 +131,8 @@ stages:
             nameEnv:                      ${{variables.stagingStageEnvName}}
             nameVM:                       ${{variables.stagingStageVmImage}}
             targetFeed:                   ${{variables.stagingTargetFeed}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         production:
           config:                       
@@ -127,20 +140,25 @@ stages:
             nameEnv:                      ${{variables.productionStageEnvName}}
             nameVM:                       ${{variables.productionStageVmImage}}
             targetFeed:                   ${{variables.productionTargetFeed}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         securityReview:
           envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+          blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------
