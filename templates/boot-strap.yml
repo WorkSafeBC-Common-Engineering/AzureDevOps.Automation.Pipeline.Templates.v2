@@ -59,6 +59,14 @@ steps:
   - script: echo boot-strap template >> BM=${{parameters.bootstrapMode}}, PO=${{parameters.portfolioName}}, PR=${{parameters.productName}}, AB=${{parameters.applicationBlueprint}}, AT=${{parameters.applicationType}}, AB=${{parameters.applicationBlueprint}}, FC=${{parameters.forceCheck}}, ME=${{parameters.modeElite}}
     displayName: Bootstrap Verbose Logging
 
+# ===========================================================================
+# VALIDATE PORTFOLIO NAME
+# ===========================================================================
+- ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
+  - template:    utilities/validate-portfolio.yml@CeBlueprints
+    parameters:
+      portfolioName: ${{parameters.portfolioName}}
+
 - ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
   - template:    utilities/info-version.yml@CeBlueprints
     parameters:

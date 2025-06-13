@@ -1,0 +1,31 @@
+# --------------------------------------------------------------------------
+# validate-portfolio Template
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     portfolioName
+  type:     string
+
+steps:
+- task: PowerShell@2
+  displayName: Validate Portfolio Name
+  inputs:
+    targetType: inline
+    script: |
+      # Define the known list of portfolio names
+      $knownPortfolios = @("appeals", "assessments", "business-intelligence", "claims", "common-engineering", "corporate", "crm", "cross-cutting", "data-warehouse", "demo", "eao", "enterprise", "express", "finance", "innovation", "integration", "internal-audit", "law-and-policy", "learning", "people-culture", "prevention", "review-division", "semc", "sre", "ux-ui", "wao")
+
+      # Check if the portfolioName is in the list
+      if ($knownPortfolios -contains $env:PORTFOLIO_NAME) {
+          Write-Host "Portfolio name '$env:PORTFOLIO_NAME' is valid."
+      } else {
+          Write-Host "Error: Portfolio name '$env:PORTFOLIO_NAME' is not valid."
+          Write-Host "Valid portfolio names are: $($knownPortfolios -join ', ')"
+          exit 1
+      }
+    failOnStderr: false
+  env:
+    PORTFOLIO_NAME: ${{ parameters.portfolioName }}
+  continueOnError: true
