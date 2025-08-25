@@ -139,3 +139,49 @@ stages:
       - ${{ if eq(parameters.stage.staging.config.active, true) }}:
         - Staging
       - PreProdAutomation
+
+# -----------------------------------------------------------------------------------------------------
+# PRODUCTION-CENTRAL STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if and( ne(parameters.suppressCD, true), ge(config.production.blueprintVersion, '2.2.0') ) }}:
+  - ${{ if and(eq(parameters.stage.production-central.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+    - template: /blueprints/webapp/azure-pipeline-webapp-cd-stage.yml@CeBlueprints
+      parameters:
+        name:                         'Production-Central'
+        displayName:                  'Production-Central (PR-C)'
+        config:                       ${{parameters.stage.production-central.config}}
+        dependsOn:
+        - ContinuousIntegration
+        - ${{ if eq(parameters.stage.development.config.active, true) }}:
+          - Development
+        - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
+          - SystemTest
+        - QAScans
+        - SecurityAutomation
+        - SecurityReview
+        - ${{ if eq(parameters.stage.staging.config.active, true) }}:
+          - Staging
+        - PreProdAutomation
+
+# -----------------------------------------------------------------------------------------------------
+# PRODUCTION-EAST STAGE
+# -----------------------------------------------------------------------------------------------------
+- ${{ if and( ne(parameters.suppressCD, true), ge(config.production.blueprintVersion, '2.2.0') ) }}:
+  - ${{ if and(eq(parameters.stage.production-east.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+    - template: /blueprints/webapp/azure-pipeline-webapp-cd-stage.yml@CeBlueprints
+      parameters:
+        name:                         'Production-East'
+        displayName:                  'Production-East (PR-E)'
+        config:                       ${{parameters.stage.production-east.config}}
+        dependsOn:
+        - ContinuousIntegration
+        - ${{ if eq(parameters.stage.development.config.active, true) }}:
+          - Development
+        - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
+          - SystemTest
+        - QAScans
+        - SecurityAutomation
+        - SecurityReview
+        - ${{ if eq(parameters.stage.staging.config.active, true) }}:
+          - Staging
+        - PreProdAutomation

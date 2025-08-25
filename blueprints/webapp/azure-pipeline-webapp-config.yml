@@ -49,7 +49,7 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # Staging Stage
 - name:  stagingStageActive
-  value: true
+  value: false
 - name:  stagingStageEnvName
   value: '<tbd>'
 - name:  stagingStageVmImage
@@ -64,9 +64,9 @@ variables:
   value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
-# Production Stage-
+# Production Stage
 - name:  productionStageActive
-  value: true
+  value: false
 - name:  productionStageEnvName
   value: '<tbd>'
 - name:  productionStageVmImage
@@ -78,4 +78,38 @@ variables:
 - name:  productionAppType
   value: '<tbd>'
 - name:  productionAppName
+  value: '<tbd>'
+
+ -----------------------------------------------------------------------------------------------------
+# Production-Central Stage
+- name:  productionCentralStageActive
+  value: false
+- name:  productionCentralStageEnvName
+  value: '<tbd>'
+- name:  productionCentralStageVmImage
+  value: '<tbd>'
+- name:  productionCentralStageTestData
+  value: 'Production-Central Stage Test Data'
+- name:  productionCentralAzureSubscription
+  value: '<tbd>'
+- name:  productionCentralAppType
+  value: '<tbd>'
+- name:  productionCentralAppName
+  value: '<tbd>'
+
+ -----------------------------------------------------------------------------------------------------
+# Production-East Stage
+- name:  productionEastStageActive
+  value: false
+- name:  productionEastStageEnvName
+  value: '<tbd>'
+- name:  productionEastStageVmImage
+  value: '<tbd>'
+- name:  productionEastStageTestData
+  value: 'Production East Stage Test Data'
+- name:  productionEastAzureSubscription
+  value: '<tbd>'
+- name:  productionEastAppType
+  value: '<tbd>'
+- name:  productionEastAppName
   value: '<tbd>'

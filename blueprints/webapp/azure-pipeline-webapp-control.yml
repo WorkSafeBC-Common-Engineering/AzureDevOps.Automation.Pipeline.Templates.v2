@@ -145,7 +145,33 @@ stages:
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
           blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
-
+        - ${{ if and( ne(parameters.suppressCD, true), ge(parameters.blueprintVersion, '2.2.0') ) }}:
+          # TODO pass your configuration variables here
+          production-central:
+            config:                       
+              active:                       ${{variables.productionCentralStageActive}}
+              nameEnv:                      ${{variables.productionCentralStageEnvName}}
+              nameVM:                       ${{variables.productionCentralStageVmImage}}
+              testData:                     ${{variables.productionCentralStageTestData}}
+              azureSubscription:            ${{variables.productionCentralAzureSubscription}}
+              appType:                      ${{variables.productionCentralAppType}}
+              appName:                      ${{variables.productionCentralAppName}}
+            applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+            blueprintVersion:               ${{parameters.blueprintVersion}}     
+            modeElite:                      ${{parameters.modeElite}}
+          # TODO pass your configuration variables here
+          production-east:
+            config:                       
+              active:                       ${{variables.productionEastStageActive}}
+              nameEnv:                      ${{variables.productionEastStageEnvName}}
+              nameVM:                       ${{variables.productionEastStageVmImage}}
+              testData:                     ${{variables.productionEastStageTestData}}
+              azureSubscription:            ${{variables.productionEastAzureSubscription}}
+              appType:                      ${{variables.productionEastAppType}}
+              appName:                      ${{variables.productionEastAppName}}
+            applicationBlueprint:           ${{parameters.applicationBlueprint}}  
+            blueprintVersion:               ${{parameters.blueprintVersion}}     
+            modeElite:                      ${{parameters.modeElite}}
 # --------------------------------------------------------------------------
 # END OF PIPELINE
 # --------------------------------------------------------------------------
