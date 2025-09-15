@@ -1,10 +1,20 @@
 variables:
 
 # -----------------------------------------------------------------------------------------------------
-# Blueprint:    __101__
-# AzDO Project: <TODO Azure DevOps project name housing the associated Azure Pipeline>
 #
 # If you are not going to use all stages, as below, you can suppress them by setting active to false.
+#
+# Need help with the configuration?
+#
+# -VARIABLE ---------- VALUE ------
+# *Active              true or false. To disable or hide a stage, set value to false.
+# *EnvName             See https://dev.azure.com/wcbbc/IT-App-Delivery/_environments
+#                      Format: <portfolio>-<stage-name>-<stage-name-acronym>, for example
+#                      assessments-development-dv
+# *VmImage             ubuntu-latest, windows-latest, 
+#                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
+# *TestData            Sample configuration - replace with your own.
+#
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
@@ -21,7 +31,7 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # System Test Stage
 - name:  systemTestStageActive
-  value: true
+  value: false
 - name:  systemTestStageEnvName
   value: '<tbd>'
 - name:  systemTestStageVmImage
@@ -30,14 +40,9 @@ variables:
   value: 'System Test Stage Test Data'
 
 # -----------------------------------------------------------------------------------------------------
-# Security Review Stage
-- name:  securityReviewStageEnvName
-  value: '<tbd>'
-
-# -----------------------------------------------------------------------------------------------------
 # Staging Stage
 - name:  stagingStageActive
-  value: true
+  value: false
 - name:  stagingStageEnvName
   value: '<tbd>'
 - name:  stagingStageVmImage
@@ -48,10 +53,50 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # Production Stage-
 - name:  productionStageActive
-  value: true
+  value: false
 - name:  productionStageEnvName
   value: '<tbd>'
 - name:  productionStageVmImage
   value: '<tbd>'
 - name:  productionStageTestData
   value: 'Production Stage Test Data'
+
+# -----------------------------------------------------------------------------------------------------
+# Production Central Stage
+# Introduced with version blueprintVersion 2.1.1
+- name:  productionCanadaCentralStageActive
+  value: false
+- name:  productionCanadaCentralStageEnvName
+  value: '<tbd>'
+- name:  productionCanadaCentralStageVmImage
+  value: '<tbd>'
+- name:  productionCanadaCentralStageTestData
+  value: 'Production Canada Central Stage Test Data'
+
+# -----------------------------------------------------------------------------------------------------
+# Production East Stage
+# Introduced with version blueprintVersion 2.1.1
+- name:  productionCanadaEastStageActive
+  value: false
+- name:  productionCanadaEastStageEnvName
+  value: '<tbd>'
+- name:  productionCanadaEastStageVmImage
+  value: '<tbd>'
+- name:  productionCanadaEastStageTestData
+  value: 'Production Canada East Stage Test Data'
+
+# -----------------------------------------------------------------------------------------------------
+# @@START: SKULL-AND-CROSS BONES AREA
+# Introduced with version blueprintVersion 2.1.1
+# Be very, very careful when making changes to the configuration below!
+# -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Security Review Stage
+- name:  securityReviewStageEnvName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# @@END: SKULL-AND-CROSS BONES AREA
+# Introduced with version blueprintVersion 2.1.1
+# -----------------------------------------------------------------------------------------------------

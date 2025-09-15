@@ -19,7 +19,6 @@ parameters:
 - name:     vGuid
   type:     string
   default:  '__TODO_ADD_UNIQUE_GUID__HERE__'
-'
 - name:     vVersion
   type:     string
   default:  '2.1.0'
@@ -52,11 +51,11 @@ steps:
         pwsh: true
         script: |
           $variablesData = [PSCustomObject]@{
-              bootStrapModeElite = "${{parameters.modeElite}}"
-              bootStrapBlueprint = "${{parameters.applicationBlueprint}}"
-              bootStrapType = "${{parameters.applicationType}}"
-              bootStrapGuid = "${{parameters.vGuid}}"
-              bootStrapVersion = "${{parameters.blueprintVersion}}"
+              bootStrapModeElite  = "${{parameters.modeElite}}"
+              bootStrapBlueprint  = "${{parameters.applicationBlueprint}}"
+              bootStrapType       = "${{parameters.applicationType}}"
+              bootStrapGuid       = "${{parameters.vGuid}}"
+              bootStrapVersion    = "${{parameters.blueprintVersion}}"
           }
 
           $json = $variablesData | ConvertTo-Json

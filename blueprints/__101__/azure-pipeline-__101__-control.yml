@@ -52,7 +52,6 @@ stages:
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
 
-
 # --------------------------------------------------------------------------
 # DEPLOYMENT
 # 2021.10.04 WS Suppress CD on "merge" so that we can use PR validation builds
@@ -61,63 +60,92 @@ stages:
   - template: /blueprints/__101__/azure-pipeline-__101__-cd.yml@CeBlueprints
     parameters:
       stage:
+        # TODO pass your configuration variables here
         development:
           config:
             active:                       ${{variables.developmentStageActive}}
-            nameEnv:                      ${{variables.developmentStageEnvName}}
+            envName:                      ${{variables.developmentStageEnvName}}
             nameVM:                       ${{variables.developmentStageVmImage}}
             testData:                     ${{variables.developmentStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}                       
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
+        # TODO pass your configuration variables here
         systemTest:
-          config:                       
+          config:
             active:                       ${{variables.systemTestStageActive}}
-            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            envName:                      ${{variables.systemTestStageEnvName}}
             nameVM:                       ${{variables.systemTestStageVmImage}}
             testData:                     ${{variables.systemTestStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
+        # TODO pass your configuration variables here
         staging:
-          config:                       
+          config:
             active:                       ${{variables.stagingStageActive}}
-            nameEnv:                      ${{variables.stagingStageEnvName}}
+            envName:                      ${{variables.stagingStageEnvName}}
             nameVM:                       ${{variables.stagingStageVmImage}}
             testData:                     ${{variables.stagingStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
+        # TODO pass your configuration variables here
         production:
-          config:                       
+          config:
             active:                       ${{variables.productionStageActive}}
-            nameEnv:                      ${{variables.productionStageEnvName}}
+            envName:                      ${{variables.productionStageEnvName}}
             nameVM:                       ${{variables.productionStageVmImage}}
             testData:                     ${{variables.productionStageTestData}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
-        # Embedded non-negotiable stages ------------------------------------ 
+        # TODO pass your configuration variables here
+        productionCanadaCentral:
+          config:
+            active:                       ${{variables.productionCanadaCentralStageActive}}
+            envName:                      ${{variables.productionCanadaCentralStageEnvName}}
+            nameVM:                       ${{variables.productionCanadaCentralStageVmImage}}
+            testData:                     ${{variables.productionCanadaCentralStageTestData}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
+          modeElite:                      ${{parameters.modeElite}}
+        # TODO pass your configuration variables here
+        productionCanadaEast:
+          config:
+            active:                       ${{variables.productionCanadaEastStageActive}}
+            envName:                      ${{variables.productionCanadaEastStageEnvName}}
+            nameVM:                       ${{variables.productionCanadaEastStageVmImage}}
+            testData:                     ${{variables.productionCanadaEastStageTestData}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
+          modeElite:                      ${{parameters.modeElite}}
+
+        # Embedded non-negotiable stages ------------------------------------
         securityReview:
-          envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            envName:                      ${{variables.securityReviewStageEnvName}}
+            nameVM:                       ${{ coalesce(variables.securityReviewStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            nameVM:                       ${{ coalesce(variables.securityAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-        qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+        qaAutomation:
+          config:
+            nameVM:                       ${{ coalesce(variables.qaAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            nameVM:                       ${{ coalesce(variables.preProdAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------

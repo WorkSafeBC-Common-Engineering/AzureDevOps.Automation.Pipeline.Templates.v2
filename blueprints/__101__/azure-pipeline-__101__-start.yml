@@ -39,7 +39,7 @@ resources:
 extends:
   template: blueprints/__101__/azure-pipeline-__101__-control.yml@CeBlueprints
   parameters:
-    blueprintVersion:  '2.1.0'
+    blueprintVersion:  '2.1.1'
     portfolioName:   '__TODO_PORTFOLIO__'
     productName:     '__TODO_PRODUCT__'
     publishFolder:   '__TODO_FOLDERNAME__'

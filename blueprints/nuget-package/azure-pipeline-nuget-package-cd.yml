@@ -35,9 +35,12 @@ stages:
 # -----------------------------------------------------------------------------------------------------
 - template: /templates/dev-sec-ops/azure-pipeline-security-auto.yml@CeBlueprints
   parameters:
-    applicationBlueprint: ${{parameters.stage.securityAutomation.applicationBlueprint}}
-    blueprintVersion:     ${{parameters.stage.securityAutomation.blueprintVersion}}
-    modeElite:            ${{parameters.stage.securityAutomation.modeElite}}
+    name:                  'SecurityAutomation'
+    displayName:           'Security Automation (SA)'
+    config:                ${{parameters.stage.securityAutomation.config}}
+    applicationBlueprint:  ${{parameters.stage.securityAutomation.applicationBlueprint}}
+    blueprintVersion:      ${{parameters.stage.securityAutomation.blueprintVersion}}
+    modeElite:             ${{parameters.stage.securityAutomation.modeElite}}
     dependsOn:
     - ContinuousIntegration
     - ${{ if eq(parameters.stage.development.config.active, true) }}:
@@ -46,19 +49,23 @@ stages:
       - SystemTest
 
 # -----------------------------------------------------------------------------------------------------
-# QA SCANS STAGE
+# QA AUTOMATION STAGE
 # -----------------------------------------------------------------------------------------------------
 - template: /templates/qa/azure-pipeline-qa-scans.yml@CeBlueprints
   parameters:
-    applicationBlueprint: ${{parameters.stage.qaScans.applicationBlueprint}}
-    blueprintVersion:     ${{parameters.stage.qaScans.blueprintVersion}}
-    modeElite:            ${{parameters.stage.qaScans.modeElite}}
+    name:                 'QAAutomation'
+    displayName:          'QA Automation (QAA)'
+    config:               ${{parameters.stage.qaAutomation.config}}
+    applicationBlueprint: ${{parameters.stage.qaAutomation.applicationBlueprint}}
+    blueprintVersion:     ${{parameters.stage.qaAutomation.blueprintVersion}}
+    modeElite:            ${{parameters.stage.qaAutomation.modeElite}}
     dependsOn:
     - ContinuousIntegration
     - ${{ if eq(parameters.stage.development.config.active, true) }}:
       - Development
     - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
       - SystemTest
+
 
 # -----------------------------------------------------------------------------------------------------
 # SECURITY REVIEW STAGE
@@ -66,9 +73,12 @@ stages:
 - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
   - template: /templates/dev-sec-ops/azure-pipeline-security-review.yml@CeBlueprints
     parameters:
+      name:                 'SecurityReview'
+      displayName:          'Security Review (SR)'
+      config:               ${{parameters.stage.securityReview.config}}
       applicationBlueprint: ${{parameters.stage.securityReview.applicationBlueprint}}
       blueprintVersion:     ${{parameters.stage.securityReview.blueprintVersion}}
-      stageEnvName:         ${{parameters.stage.securityReview.envName}}
+      modeElite:            ${{parameters.stage.securityReview.modeElite}}
       dependsOn:
       - ContinuousIntegration
       - ${{ if eq(parameters.stage.development.config.active, true) }}:
@@ -80,7 +90,7 @@ stages:
 # -----------------------------------------------------------------------------------------------------
 # STAGING STAGE
 # -----------------------------------------------------------------------------------------------------
-- ${{ if and(eq(parameters.stage.staging.name, 'Staging'), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+- ${{ if and(eq(parameters.stage.staging.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
   - template: /blueprints/nuget-package/azure-pipeline-nuget-package-cd-stage.yml@CeBlueprints
     parameters:
       name:                         'Staging'
@@ -92,30 +102,33 @@ stages:
         - Development
       - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
         - SystemTest
-      - QAScans
+      - QAAutomation
       - SecurityAutomation
       - SecurityReview
 
 # -----------------------------------------------------------------------------------------------------
 # PRE-PROD AUTOMATION SCANS STAGE
 # -----------------------------------------------------------------------------------------------------
-- ${{ if and(eq(parameters.stage.production.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+- ${{ if and( or(eq(parameters.stage.production.config.active, true), eq(parameters.stage.productionCanadaCentral.config.active, true), eq(parameters.stage.productionCanadaEast.config.active, true)), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
   - template: /templates/pre-prod/azure-pipeline-pre-prod-automation.yml@CeBlueprints
     parameters:
+      name:                 'PreProdAutomation'
+      displayName:          'Pre-Prod Automation (PPA)'
+      config:               ${{parameters.stage.preProdAutomation.config}}
       applicationBlueprint: ${{parameters.stage.preProdAutomation.applicationBlueprint}}
       blueprintVersion:     ${{parameters.stage.preProdAutomation.blueprintVersion}}
       modeElite:            ${{parameters.stage.preProdAutomation.modeElite}}
       dependsOn:
-        - ContinuousIntegration
-        - ${{ if eq(parameters.stage.development.config.active, true) }}:
-          - Development
-        - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
-          - SystemTest
-        - QAScans
-        - SecurityAutomation
-        - SecurityReview
-        - ${{ if eq(parameters.stage.staging.config.active, true) }}:
-          - Staging
+      - ContinuousIntegration
+      - ${{ if eq(parameters.stage.development.config.active, true) }}:
+        - Development
+      - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
+        - SystemTest
+      - QAAutomation
+      - SecurityAutomation
+      - SecurityReview
+      - ${{ if eq(parameters.stage.staging.config.active, true) }}:
+        - Staging
 
 # -----------------------------------------------------------------------------------------------------
 # PRODUCTION STAGE
@@ -132,7 +145,45 @@ stages:
         - Development
       - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
         - SystemTest
-      - QAScans
+      - QAAutomation
+      - SecurityAutomation
+      - SecurityReview
+      - ${{ if eq(parameters.stage.staging.config.active, true) }}:
+        - Staging
+      - PreProdAutomation
+
+- ${{ if and(eq(parameters.stage.productionCanadaCentral.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - template: /blueprints/nuget-package/azure-pipeline-nuget-package-cd-stage.yml@CeBlueprints
+    parameters:
+      name:                         'ProductionCanadaCentral'
+      displayName:                  'Prod Canada Central (CC-PR)'
+      config:                       ${{parameters.stage.productionCanadaCentral.config}}
+      dependsOn:
+      - ContinuousIntegration
+      - ${{ if eq(parameters.stage.development.config.active, true) }}:
+        - Development
+      - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
+        - SystemTest
+      - QAAutomation
+      - SecurityAutomation
+      - SecurityReview
+      - ${{ if eq(parameters.stage.staging.config.active, true) }}:
+        - Staging
+      - PreProdAutomation
+
+- ${{ if and(eq(parameters.stage.productionCanadaEast.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - template: /blueprints/nuget-package/azure-pipeline-nuget-package-cd-stage.yml@CeBlueprints
+    parameters:
+      name:                         'ProductionCanadaEast'
+      displayName:                  'Prod Canada East (CE-PR)'
+      config:                       ${{parameters.stage.productionCanadaEast.config}}
+      dependsOn:
+      - ContinuousIntegration
+      - ${{ if eq(parameters.stage.development.config.active, true) }}:
+        - Development
+      - ${{ if eq(parameters.stage.systemTest.config.active, true) }}:
+        - SystemTest
+      - QAAutomation
       - SecurityAutomation
       - SecurityReview
       - ${{ if eq(parameters.stage.staging.config.active, true) }}:

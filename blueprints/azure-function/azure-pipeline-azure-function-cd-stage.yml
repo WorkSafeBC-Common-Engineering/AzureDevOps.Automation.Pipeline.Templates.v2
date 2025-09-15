@@ -36,7 +36,7 @@ stages:
     vmImage:     ${{parameters.config.nameVM}}
   jobs:
   - deployment:  ${{parameters.name}}
-    environment: ${{parameters.config.nameEnv}}
+    environment: ${{parameters.config.envName}}
     strategy:
       runOnce:
         deploy:

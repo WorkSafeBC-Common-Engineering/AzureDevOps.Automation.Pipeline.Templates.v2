@@ -15,6 +15,12 @@ parameters:
 - name:     isDotNetCore
   type:     boolean
   default:  true  
+- name:     solutionFile
+  type:     string
+- name:     platform
+  type:     string
+- name:     buildConfiguration
+  type:     string
 # Mode Elite - if true we tolerate no errors!
 - name:     modeElite
   type:     boolean
@@ -80,6 +86,14 @@ steps:
       continueOnError: true
   
 - ${{ if eq(parameters.isDotNetCore, false) }}:
+  - ${{ if not(endsWith(parameters.solutionFile, '.sln')) }}:
+    - task: VSBuild@1
+      displayName: 'Build Unit Tests'
+      inputs:
+        solution: '$(Build.SourcesDirectory)/**/Tests/UnitTests/**/*.??proj'
+        platform: '${{parameters.platform}}'
+        configuration: ${{parameters.buildConfiguration}}
+
   - ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
     - task: VSTest@3
       displayName: 'QA Run Unit Tests - VSTest.'
@@ -166,7 +180,9 @@ steps:
         if ($(unitTestResults.unitTestCount) -lt $minTests) 
         {
           Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]failure"
-          Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests).""
+          Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
+          Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
+          Write-Host "Related information can be found here: https://worksafebc.stackenterprise.co/questions/268 "
           #exit 1
         } 
         else 
@@ -192,6 +208,8 @@ steps:
           Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]warning"
           Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
           Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+          Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
+          Write-Host "Related information can be found here: https://worksafebc.stackenterprise.co/questions/268 "
           #exit 1
         } 
         else 

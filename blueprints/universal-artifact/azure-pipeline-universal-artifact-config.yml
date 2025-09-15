@@ -8,6 +8,19 @@ variables:
 #
 # suppressDV - Defaults to false, which does NOT suppress the Development stage deployment
 # suppressPR - Defaults to false, which does NOT suppress the Production stage deployment
+#
+# Need help with the configuration?
+#
+# -VARIABLE ---------- VALUE ------
+# *Active              true or false. To disable or hide a stage, set value to false.
+# *EnvName             See https://dev.azure.com/wcbbc/IT-App-Delivery/_environments
+#                      Format: <portfolio>-<stage-name>-<stage-name-acronym>, for example
+#                      assessments-development-dv
+# *VmImage             ubuntu-latest, windows-latest, 
+#                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
+# *other*              Contact your Delivery CSE.
+#
+# -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
 # DEVelopment Stage
@@ -27,7 +40,7 @@ variables:
 # System Test Stage
 # -----------------------------------------------------------------------------------------------------
 - name:  systemTestStageActive
-  value: true
+  value: false
 - name:  systemTestStageEnvName
   value: '<TBD>'
 - name:  systemTestStageVmImage
@@ -38,16 +51,10 @@ variables:
   value: '<TBD>'
 
 # -----------------------------------------------------------------------------------------------------
-# Security Review Stage
-# -----------------------------------------------------------------------------------------------------
-- name:  securityReviewStageEnvName
-  value: '<TBD>'
-
-# -----------------------------------------------------------------------------------------------------
 # Staging Stage
 # -----------------------------------------------------------------------------------------------------
 - name:  stagingStageActive
-  value: true
+  value: false
 - name:  stagingStageEnvName
   value: '<TBD>'
 - name:  stagingStageVmImage
@@ -61,7 +68,7 @@ variables:
 # PRODuction Test Stage
 # -----------------------------------------------------------------------------------------------------
 - name:  productionStageActive
-  value: true
+  value: false
 - name:  productionStageEnvName
   value: '<TBD>'
 - name:  productionStageVmImage
@@ -70,3 +77,47 @@ variables:
   value: '<TBD>'
 - name:  productionStagePackagePublish
   value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# Production Central Stage
+# Introduced with version blueprintVersion 2.1.1
+- name:  productionCanadaCentralStageActive
+  value: false
+- name:  productionCanadaCentralStageEnvName
+  value: '<tbd>'
+- name:  productionCanadaCentralStageVmImage
+  value: '<tbd>'
+- name:  productionCanadaCentralStageFeedPublish
+  value: '<TBD>'
+- name:  productionCanadaCentralStagePackagePublish
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# Production East Stage
+# Introduced with version blueprintVersion 2.1.1
+- name:  productionCanadaEastStageActive
+  value: false
+- name:  productionCanadaEastStageEnvName
+  value: '<tbd>'
+- name:  productionCanadaEastStageVmImage
+  value: '<tbd>'
+- name:  productionCanadaEastStageFeedPublish
+  value: '<TBD>'
+- name:  productionCanadaEastStagePackagePublish
+  value: '<TBD>'
+
+# -----------------------------------------------------------------------------------------------------
+# @@START: SKULL-AND-CROSS BONES AREA
+# Introduced with version blueprintVersion 2.1.1
+# Be very, very careful when making changes to the configuration below!
+# -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Security Review Stage
+- name:  securityReviewStageEnvName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# @@END: SKULL-AND-CROSS BONES AREA
+# Introduced with version blueprintVersion 2.1.1
+# -----------------------------------------------------------------------------------------------------

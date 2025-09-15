@@ -64,63 +64,94 @@ stages:
         development:
           config:
             active:                       ${{variables.developmentStageActive}}
-            nameEnv:                      ${{variables.developmentStageEnvName}}
+            envName:                      ${{variables.developmentStageEnvName}}
             nameVM:                       ${{variables.developmentStageVmImage}}
-            testData:                     ${{variables.developmentStageTestData}}
             feedPublish:                  ${{variables.developmentStageFeedPublish}}
             packagePublish:               ${{variables.developmentStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
           blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
+
         systemTest:
           config:
             active:                       ${{variables.systemTestStageActive}}
-            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            envName:                      ${{variables.systemTestStageEnvName}}
             nameVM:                       ${{variables.systemTestStageVmImage}}
-            testData:                     ${{variables.systemTestStageTestData}}
             feedPublish:                  ${{variables.systemTestStageFeedPublish}}
             packagePublish:               ${{variables.systemTestStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
           blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
+
         staging:
           config:
             active:                       ${{variables.stagingStageActive}}
-            nameEnv:                      ${{variables.stagingStageEnvName}}
+            envName:                      ${{variables.stagingStageEnvName}}
             nameVM:                       ${{variables.stagingStageVmImage}}
-            testData:                     ${{variables.stagingStageTestData}}
             feedPublish:                  ${{variables.stagingStageFeedPublish}}
             packagePublish:               ${{variables.stagingStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
           blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
+
         production:
           config:
             active:                       ${{variables.productionStageActive}}
-            nameEnv:                      ${{variables.productionStageEnvName}}
+            envName:                      ${{variables.productionStageEnvName}}
             nameVM:                       ${{variables.productionStageVmImage}}
-            testData:                     ${{variables.productionStageTestData}}
             feedPublish:                  ${{variables.productionStageFeedPublish}}
             packagePublish:               ${{variables.productionStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
           blueprintVersion:               ${{parameters.blueprintVersion}}     
           modeElite:                      ${{parameters.modeElite}}
+
+        productionCanadaCentral:
+          config:
+            active:                       ${{variables.productionCanadaCentralStageActive}}
+            envName:                      ${{variables.productionCanadaCentralStageEnvName}}
+            nameVM:                       ${{variables.productionCanadaCentralStageVmImage}}
+            feedPublish:                  ${{variables.productionCanadaCentralStageFeedPublish}}
+            packagePublish:               ${{variables.productionCanadaCentralStagePackagePublish}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
+          modeElite:                      ${{parameters.modeElite}}
+
+        productionCanadaEast:
+          config:
+            active:                       ${{variables.productionCanadaEastStageActive}}
+            envName:                      ${{variables.productionCanadaEastStageEnvName}}
+            nameVM:                       ${{variables.productionCanadaEastStageVmImage}}
+            feedPublish:                  ${{variables.productionCanadaEastStageFeedPublish}}
+            packagePublish:               ${{variables.productionCanadaEastStagePackagePublish}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
+          modeElite:                      ${{parameters.modeElite}}
+
+        # Embedded non-negotiable stages ------------------------------------
         securityReview:
-          envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            envName:                      ${{variables.securityReviewStageEnvName}}
+            nameVM:                       ${{ coalesce(variables.securityReviewStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            nameVM:                       ${{ coalesce(variables.securityAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-        qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+        qaAutomation:
+          config:
+            nameVM:                       ${{ coalesce(variables.qaAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            nameVM:                       ${{ coalesce(variables.preProdAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------

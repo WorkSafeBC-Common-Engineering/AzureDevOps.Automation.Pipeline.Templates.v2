@@ -38,6 +38,12 @@ parameters:
 - name:     sourcesDirectory
   type:     string
   default:  '$(Build.SourcesDirectory)'
+- name:     isDotNetCore
+  type:     boolean
+  default:  false
+- name:     netCoreVersion
+  type:     string
+  default:  '8.x'
 - name:     verbose
   type:     boolean
   default:  false
@@ -50,6 +56,7 @@ parameters:
 - name:     runAzurite
   type:     boolean
   default:  false
+
 
 steps:
 # ===========================================================================
@@ -67,6 +74,14 @@ steps:
     parameters:
       portfolioName: ${{parameters.portfolioName}}
 
+# ===========================================================================
+# VALIDATE .NET CORE VERSION (NOT EOL)
+# ===========================================================================
+- ${{ if and(eq(parameters.isDotNetCore, true), or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' ))) }}:
+  - template:    utilities/validate-dotnet-version.yml@CeBlueprints
+    parameters:
+      netCoreVersion: ${{parameters.netCoreVersion}}
+
 - ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
   - template:    utilities/info-version.yml@CeBlueprints
     parameters:
@@ -82,7 +97,7 @@ steps:
 # ===========================================================================
 # BOOTSTRAP KEY VAULT
 # LOADS:
-# - __TODO_LIST_YOUR_SECRET_VARIABLES_THAT_WILL_BE_LOADED_HERE
+# - __TODO_LIST_YOUR_SECRET_VARIABLES_THAT_WILL_BE_LOADED_HERE__
 # ===========================================================================
 - ${{ if or(eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
   - task: AzureKeyVault@2
@@ -101,7 +116,7 @@ steps:
     fetchDepth:  0
 # Production Toolbox
 - ${{ if or( eq( lower(parameters.bootstrapMode), 'init' ), eq( lower(parameters.bootstrapMode), 'runbuildingcodeonly' )) }}:
-  - checkout: git://Common-Engineering-System/AzureDevOps.Automation.Pipeline.Toolbox.v2
+  - checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
   
 # ===========================================================================
 # BOOTSTRAP INITIALISATION STAGE

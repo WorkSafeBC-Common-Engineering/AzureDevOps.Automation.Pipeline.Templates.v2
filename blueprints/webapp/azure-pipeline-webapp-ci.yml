@@ -74,6 +74,8 @@ stages:
         blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'init'
         applicationType:      'dotnet'
+        isDotNetCore:         ${{parameters.isDotNetCore}}
+        netCoreVersion:       ${{parameters.netCoreVersion}}
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         portfolioName:        ${{parameters.portfolioName}}
         productName:          ${{parameters.productName}}
@@ -154,7 +156,9 @@ stages:
     - template: /templates/qa/tests/tests-ci-all.yml@CeBlueprints
       parameters:
         isDotNetCore:       ${{parameters.isDotNetCore}}
-        modeElite:            ${{parameters.modeElite}}
+        buildConfiguration: $(buildConfiguration)
+        solutionFile:       ${{parameters.solutionFile}}
+        modeElite:          ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------
 # PUBLISH
@@ -182,6 +186,8 @@ stages:
         blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'run'
         applicationType:      'dotnet'
+        isDotNetCore:         ${{parameters.isDotNetCore}}
+        netCoreVersion:       ${{parameters.netCoreVersion}}
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         portfolioName:        ${{parameters.portfolioName}}
         productName:          ${{parameters.productName}}
