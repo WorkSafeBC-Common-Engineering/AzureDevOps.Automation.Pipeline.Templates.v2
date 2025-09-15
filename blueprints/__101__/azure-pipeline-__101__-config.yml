@@ -8,7 +8,7 @@ variables:
 #
 # -VARIABLE ---------- VALUE ------
 # *Active              true or false. To disable or hide a stage, set value to false.
-# *EnvName             See https://dev.azure.com/wcbbc/IT-App-Delivery/_environments
+# *EnvName             See https://dev.azure.com/<__AzDO_ORG__>/<__AzDO_PROJECT__>/_environments
 #                      Format: <portfolio>-<stage-name>-<stage-name-acronym>, for example
 #                      assessments-development-dv
 # *VmImage             ubuntu-latest, windows-latest, 

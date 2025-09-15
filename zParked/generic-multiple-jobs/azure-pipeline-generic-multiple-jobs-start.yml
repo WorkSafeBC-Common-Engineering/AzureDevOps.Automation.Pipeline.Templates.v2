@@ -159,8 +159,6 @@ stages:
       fetchDepth: 0
 
     # Restore test projects as per requirements before executing tests 
-    # for more information please visit Implementing Unit Tests in CI CD blueprint document at
-    #   https://wcbbc.sharepoint.com/sites/AzureDevOpsIAWorkgroups/EDO%20Guardrails/Forms/AllItems.aspx
     # Uncomment the below task if you need to restore the test projects
     #- task: DotNetCoreCLI@2
     #  displayName: 'Restore Test Projects'

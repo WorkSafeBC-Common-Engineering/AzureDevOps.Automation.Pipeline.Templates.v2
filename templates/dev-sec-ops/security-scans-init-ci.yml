@@ -14,78 +14,17 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-- name:     sonarQubeProjectKey
-  type:     string
-  default:  ''
-- name:     sonarExclusion
-  type:     string
-  default:  ''
-- name:     skipSonar
-  type:     boolean
-  default:  false
 
 steps:
 
 - ${{ if eq( parameters.verbose, true ) }}: 
-  - script: echo security-scans-init-ci parameters >> ${{parameters.applicationType}}, ${{parameters.portfolioName}}, ${{parameters.productName}}, ${{parameters.cliSources}}, ${{parameters.sonarQubeProjectKey}}
+  - script: echo security-scans-init-ci parameters >> ${{parameters.applicationType}}, ${{parameters.portfolioName}}, ${{parameters.productName}}, ${{parameters.cliSources}}
     displayName: Bootstrap DevSecOpsInit Verbose Logging
   - bash: 'env | sort'
     displayName: Bootstrap Dump env variables
 
-- ${{ if ne( parameters.sonarQubeProjectKey, '') }}:
-  - task: PowerShell@2
-    displayName: 'Assign Provided SonarQube Key'
-    inputs:
-      targetType: 'inline'
-      script: |
-        Write-Host "Setting sonarQubeProjectKey from parameter"
-        Write-Host "##vso[task.setvariable variable=sonarQubeProjectKey]${{ parameters.sonarQubeProjectKey }}"
-      pwsh: true
-    continueOnError: true
-
-# --------------------------------------------------------------------------
-# GET sonarQubeProjectKey 
-# --------------------------------------------------------------------------
-- ${{ if eq( parameters.skipSonar, false ) }}:
-  - ${{ if eq( parameters.sonarQubeProjectKey, '')}}:
-    - task: AzureKeyVault@2
-      displayName: 'Azure Key Vault: as-pr-devsecops-kv'
-      inputs:
-        azureSubscription: 'CeS Bootstrap Service Endpoint'
-        KeyVaultName: 'as-pr-devsecops-kv'
-        RunAsPreJob: true
-        SecretsFilter: '*'
-
-    - task: PowerShell@2
-      displayName: 'Bootstrap SonarQube Key Prepare'
-      inputs:
-        targetType: filePath
-        filePath:   '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/dev-sec-ops/sonar-scripts/get-sonar-project-key.ps1'
-        arguments:  '-SonarToken "$(SonarToken)" -repoName "$(Build.Repository.Name)" -definitionName "$(Build.DefinitionName)" -projectName "$(System.TeamProject)"'
-        showWarnings: true
-        pwsh: true
-      continueOnError: true
-# --------------------------------------------------------------------------
-# SONARQUBE
-# --------------------------------------------------------------------------
-
-- ${{ if eq( parameters.skipSonar, false ) }}:
-  - ${{ if eq( lower(parameters.applicationType), 'dotnet' ) }}: 
-    - task: SonarQubePrepare@7
-      displayName: 'Bootstrap SonarQube Prepare - dotnet'
-      inputs:
-        SonarQube:     'SonarQube Production'
-        scannerMode:   'dotnet'
-        projectKey:    $(sonarQubeProjectKey)
-      continueOnError: true
-
-  - ${{ if ne( lower(parameters.applicationType), 'dotnet' ) }}:
-    - task: SonarQubePrepare@7
-      displayName: 'Bootstrap SonarQube Prepare - CLI'
-      inputs:
-        SonarQube:       'SonarQube Production'
-        scannerMode:     'CLI'
-        configMode:      'manual'
-        cliProjectKey:   $(sonarQubeProjectKey)
-        cliSources:      ${{parameters.cliSources}}
-      continueOnError:  true
+# __TODO_REPLACE_CODE_HEREAFTER_WITH_STUFF_THAT_MUST_RUN_AFTER_THE_BUILD_STEP
+- script: echo 'Security CI pre-Build Scans Placeholder ****************************************'
+- script: echo modeElite = ${{parameters.modeElite}}
+- bash:   'env | sort'
+  displayName: "Dump env variables"
