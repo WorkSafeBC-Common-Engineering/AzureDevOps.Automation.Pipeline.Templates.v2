@@ -182,7 +182,7 @@ steps:
           Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]failure"
           Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
           Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
-          Write-Host "Related information can be found here: https://worksafebc.stackenterprise.co/questions/268 "
+
           #exit 1
         } 
         else 
@@ -209,7 +209,6 @@ steps:
           Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
           Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
           Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
-          Write-Host "Related information can be found here: https://worksafebc.stackenterprise.co/questions/268 "
           #exit 1
         } 
         else 
