@@ -20,9 +20,11 @@ steps:
 - ${{ if eq( parameters.verbose, true ) }}: 
   - script: echo security-scans-init-ci parameters >> ${{parameters.applicationType}}, ${{parameters.portfolioName}}, ${{parameters.productName}}, ${{parameters.cliSources}}
     displayName: Bootstrap DevSecOpsInit Verbose Logging
+  - bash: 'env | sort'
+    displayName: Bootstrap Dump env variables
 
-# __TODO_REPLACE_CODE_HEREAFTER_WITH_STUFF_THAT_MUST_RUN_BEFORE_THE_BUILD_STEP
-- script: echo 'Security CI pre-Build Initialization Scans Placeholder ****************************************'
+# __TODO_REPLACE_CODE_HEREAFTER_WITH_STUFF_THAT_MUST_RUN_AFTER_THE_BUILD_STEP
+- script: echo 'Security CI pre-Build Scans Placeholder ****************************************'
 - script: echo modeElite = ${{parameters.modeElite}}
 - bash:   'env | sort'
   displayName: "Dump env variables"

@@ -50,6 +50,8 @@ stages:
         blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'init'
         applicationType:      'other' #TODO specify dotnet or other
+        isDotNetCore:         false   #TODO - specify true for .Net Core builds, false otherwise
+        netCoreVersion:       ''      #TODO - specify the .Net Core version used if isDotNetCore is true
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         portfolioName:        ${{parameters.portfolioName}}
         productName:          ${{parameters.productName}}
@@ -72,7 +74,9 @@ stages:
 #   - template: templates/qa/tests/tests-ci-all.yml@CeBlueprints
 #     parameters:
 #       isDotNetCore: true  # true for .net core, false for .net framework
-#
+#       buildConfiguration: $(buildConfiguration)
+#       platform:           ${{parameters.platform}}
+#       solutionFile:       ${{parameters.solutionFile}}
 # OR 
 #
 # Write your own tests and follow the steps for test results in the template
@@ -119,6 +123,8 @@ stages:
         blueprintVersion:     ${{parameters.blueprintVersion}}
         bootstrapMode:        'run'
         applicationType:      'other' #TODO specify dotnet or other
+        isDotNetCore:         false   #TODO - specify true for .Net Core builds, false otherwise
+        netCoreVersion:       ''      #TODO - specify the .Net Core version used if isDotNetCore is true
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         portfolioName:        ${{parameters.portfolioName}}
         productName:          ${{parameters.productName}}

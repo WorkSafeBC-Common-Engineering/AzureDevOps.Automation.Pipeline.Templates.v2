@@ -78,72 +78,100 @@ stages:
         development:
           config:
             active:                       ${{variables.developmentStageActive}}
-            nameEnv:                      ${{variables.developmentStageEnvName}}
+            envName:                      ${{variables.developmentStageEnvName}}
             nameVM:                       ${{variables.developmentStageVmImage}}
-            testData:                     ${{variables.developmentStageTestData}}
             azureSubscription:            ${{variables.developmentAzureSubscription}}
             appType:                      ${{variables.developmentAppType}}
             appName:                      ${{variables.developmentAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}   
-          blueprintVersion:               ${{parameters.blueprintVersion}}                             
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
+
         systemTest:
-          config:                       
+          config:
             active:                       ${{variables.systemTestStageActive}}
-            nameEnv:                      ${{variables.systemTestStageEnvName}}
+            envName:                      ${{variables.systemTestStageEnvName}}
             nameVM:                       ${{variables.systemTestStageVmImage}}
-            testData:                     ${{variables.systemTestStageTestData}}
             azureSubscription:            ${{variables.systemTestAzureSubscription}}
             appType:                      ${{variables.systemTestAppType}}
             appName:                      ${{variables.systemTestAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
+
         staging:
-          config:                       
+          config:
             active:                       ${{variables.stagingStageActive}}
-            nameEnv:                      ${{variables.stagingStageEnvName}}
+            envName:                      ${{variables.stagingStageEnvName}}
             nameVM:                       ${{variables.stagingStageVmImage}}
-            testData:                     ${{variables.stagingStageTestData}}
             azureSubscription:            ${{variables.stagingAzureSubscription}}
             appType:                      ${{variables.stagingAppType}}
             appName:                      ${{variables.stagingAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
+
         production:
-          config:                       
+          config:
             active:                       ${{variables.productionStageActive}}
-            nameEnv:                      ${{variables.productionStageEnvName}}
+            envName:                      ${{variables.productionStageEnvName}}
             nameVM:                       ${{variables.productionStageVmImage}}
-            testData:                     ${{variables.productionStageTestData}}
             azureSubscription:            ${{variables.productionAzureSubscription}}
             appType:                      ${{variables.productionAppType}}
             appName:                      ${{variables.productionAppName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-# TODO pass your configuration variables here
-        # Embedded non-negotiable stages ------------------------------------ 
+
+        productionCanadaCentral:
+          config:
+            active:                       ${{variables.productionCanadaCentralStageActive}}
+            envName:                      ${{variables.productionCanadaCentralStageEnvName}}
+            nameVM:                       ${{variables.productionCanadaCentralStageVmImage}}
+            azureSubscription:            ${{variables.productionCanadaCentralAzureSubscription}}
+            appType:                      ${{variables.productionCanadaCentralAppType}}
+            appName:                      ${{variables.productionCanadaCentralAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
+          modeElite:                      ${{parameters.modeElite}}
+
+        productionCanadaEast:
+          config:
+            active:                       ${{variables.productionCanadaEastStageActive}}
+            envName:                      ${{variables.productionCanadaEastStageEnvName}}
+            nameVM:                       ${{variables.productionCanadaEastStageVmImage}}
+            azureSubscription:            ${{variables.productionCanadaEastAzureSubscription}}
+            appType:                      ${{variables.productionCanadaEastAppType}}
+            appName:                      ${{variables.productionCanadaEastAppName}}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
+          modeElite:                      ${{parameters.modeElite}}
+
+        # Embedded non-negotiable stages ------------------------------------
         securityReview:
-          envName:                        ${{variables.securityReviewStageEnvName}}
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            envName:                      ${{variables.securityReviewStageEnvName}}
+            nameVM:                       ${{ coalesce(variables.securityReviewStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            nameVM:                       ${{ coalesce(variables.securityAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
-        qaScans:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+        qaAutomation:
+          config:
+            nameVM:                       ${{ coalesce(variables.qaAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
-          applicationBlueprint:           ${{parameters.applicationBlueprint}}  
-          blueprintVersion:               ${{parameters.blueprintVersion}}     
+          config:
+            nameVM:                       ${{ coalesce(variables.preProdAutomationStageVmImage, 'ubuntu-latest') }}
+          applicationBlueprint:           ${{parameters.applicationBlueprint}}
+          blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
 
 # --------------------------------------------------------------------------

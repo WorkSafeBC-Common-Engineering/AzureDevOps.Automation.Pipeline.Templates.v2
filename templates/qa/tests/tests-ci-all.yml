@@ -11,6 +11,15 @@ parameters:
 - name:     isDotNetCore
   type:     boolean
   default:  true
+- name:     solutionFile
+  type:     string
+  default:  '**/*.sln'
+- name:     platform
+  type:     string
+  default:  'Any CPU' # Alternate values: x86, x64
+- name:     buildConfiguration
+  type:     string
+  default:  'Release'
 # Mode Elite - if true we tolerate no errors!
 - name:     modeElite
   type:     boolean
@@ -23,8 +32,11 @@ steps:
 # --------------------------------------------------------------------------
   - template: /templates/qa/tests/tests-unit-run.yml
     parameters:
-      isDotNetCore: ${{parameters.isDotNetCore}}
-      modeElite: ${{parameters.modeElite}}
+      isDotNetCore:         ${{parameters.isDotNetCore}}
+      platform:             ${{parameters.platform}}
+      buildConfiguration:   ${{parameters.buildConfiguration}}
+      solutionFile:         ${{parameters.solutionFile}}
+      modeElite:            ${{parameters.modeElite}}
       
 # --------------------------------------------------------------------------      
 # Run Integration Tests (future)

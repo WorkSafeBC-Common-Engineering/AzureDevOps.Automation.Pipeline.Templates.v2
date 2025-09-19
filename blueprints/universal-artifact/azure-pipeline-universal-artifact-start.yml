@@ -38,9 +38,8 @@ resources:
 extends:
   template: blueprints/universal-artifact/azure-pipeline-universal-artifact-control.yml@CeBlueprints
   parameters:
-    blueprintVersion:  '2.1.0'
-    portfolioName:   '__TODO_PORTFOLIO__'
-    productName:     '__TODO_PRODUCT__'
-    publishFolder:   '__TODO_FOLDERNAME__'
-    suppressCD:      true # Allow engineering to do an immediate CI/build while CD is being configured
-    
+    blueprintVersion: '2.1.1'
+    portfolioName:    '__TODO_PORTFOLIO__'
+    productName:      '__TODO_PRODUCT__'
+    publishFolder:    '__TODO_FOLDERNAME__'
+    suppressCD:       true # Allow engineering to do an immediate CI/build while CD is being configured

@@ -1,0 +1,34 @@
+# --------------------------------------------------------------------------
+# validate-portfolio Template
+# --------------------------------------------------------------------------
+# See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+# --------------------------------------------------------------------------
+
+parameters:
+- name:     netCoreVersion
+  type:     string
+
+steps:
+- task: PowerShell@2
+  displayName: 'Validate .NET Core Version'
+  inputs:
+    targetType: inline
+    script: |
+      # Define the known list of acceptable .Net Versions, major numbers.
+      $validDotNetVersions = @("8")
+
+      # Extract the first character of the netCoreVersion parameter
+      $majorVersion = $env:DOTNET_VERSION.Substring(0, 1)
+
+      # Check if the .NET Core version is in the list
+      if ($validDotNetVersions -contains $majorVersion) {
+          Write-Host "Valid .NET Core version: $env:DOTNET_VERSION"
+      } else {
+          Write-Host "Error: Unsupported .NET Core version '$env:DOTNET_VERSION'."
+          Write-Host "Valid .Net Core major versions are: $($validDotNetVersions -join ', ')"
+          exit 1
+      }
+    failOnStderr: false
+  env:
+    DOTNET_VERSION: ${{ parameters.netCoreVersion }}
+  continueOnError: true

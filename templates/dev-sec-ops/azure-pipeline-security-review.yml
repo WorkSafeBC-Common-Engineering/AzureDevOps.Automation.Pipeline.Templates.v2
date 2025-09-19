@@ -1,9 +1,14 @@
 parameters:
+- name:     name
+  type:     string
+- name:     displayName
+  type:     string
+- name:     config
+  type:     object
+  default:  []
 - name:     dependsOn
   type:     object
   default:  []
-- name:     stageEnvName
-  type:     string
 - name:     applicationBlueprint
   type:     string
 - name:     blueprintVersion
@@ -11,26 +16,25 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-
 stages:
 
 # -----------------------------------------------------------------------------------------------------
 # SECURITY REVIEW STAGE
 # -----------------------------------------------------------------------------------------------------
-- stage:         'SecurityReview'
-  displayName:   'Security Review (SR)'
+- stage:         ${{parameters.name}}
+  displayName:   ${{parameters.displayName}}
   ${{ if ne(length(parameters.dependsOn), 0) }}:
     dependsOn:
       - ${{ each stage in parameters.dependsOn }}:
         - ${{stage}}
   pool:
-    vmImage:      'ubuntu-latest'
+    vmImage:      ${{parameters.config.nameVM}}
   jobs:
   - deployment:   'SecurityReview'
-    environment:  ${{parameters.stageEnvName}}
+    environment:  ${{parameters.config.envName}}
     strategy:
       runOnce:
         deploy:
           steps:
-          - script: echo Welcome to the Security Review stage running in the ${{parameters.stageEnvName}} environment
           - script: echo modeElite = ${{parameters.modeElite}}
+          - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}

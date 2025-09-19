@@ -21,8 +21,9 @@ steps:
 # SECURITY AUTOMATION FOR HIGHER (PROD) ENVIRONMENTS STAGE
 # -----------------------------------------------------------------------------------------------------
 - ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-  - script: echo 'Security CD Higher Environment Automation Placeholder ****************************************'
+  - script: echo 'Security CD Higher Environment Automation'
   - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
+  - script: echo blueprintVersion = ${{parameters.blueprintVersion}}
   - script: echo modeElite = ${{parameters.modeElite}}
 
 # -----------------------------------------------------------------------------------------------------

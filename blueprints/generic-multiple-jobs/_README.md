@@ -1,1 +1,0 @@
-Use this generic blueprint if there are no application-type blueprints that meet your requirements and you need to split bootstrap calls across multiple jobs. The generic-single-job generic blueprint is recommended.

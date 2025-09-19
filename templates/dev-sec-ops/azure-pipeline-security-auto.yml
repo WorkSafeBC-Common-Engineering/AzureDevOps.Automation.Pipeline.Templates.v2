@@ -1,5 +1,9 @@
 parameters:
-- name:     dependsOn
+- name:     name
+  type:     string
+- name:     displayName
+  type:     string
+- name:     config
   type:     object
   default:  []
 - name:     applicationBlueprint
@@ -9,19 +13,22 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-
+- name:     dependsOn
+  type:     object
+  default:  []
+  
 stages:
 
 # -----------------------------------------------------------------------------------------------------
 # SECURITY AUTOMATION STAGE
 # -----------------------------------------------------------------------------------------------------
-- stage:         'SecurityAutomation'
-  displayName:   'Security Automation (SA)'
+- stage:         ${{parameters.name}}
+  displayName:   ${{parameters.displayName}}
   dependsOn:
   - ${{ each stage in parameters.dependsOn }}:
     - ${{stage}}
   pool:
-    vmImage:      'ubuntu-latest'
+    vmImage:      ${{parameters.config.nameVM}}
   jobs:
   - job:          'SecurityAutomation'
     steps:

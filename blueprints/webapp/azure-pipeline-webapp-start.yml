@@ -39,9 +39,9 @@ resources:
 extends:
   template: blueprints/webapp/azure-pipeline-webapp-control.yml@CeBlueprints
   parameters:
-    blueprintVersion:  '2.1.0'
-    portfolioName:   '__TODO_PORTFOLIO__'
-    productName:     '__TODO_PRODUCT__'
-    publishFolder:   '__TODO_PUBLISH_FOLDER__'  # path to project (if multiple projects in repo)
+    blueprintVersion: '2.1.1'
+    portfolioName:    '__TODO_PORTFOLIO__'
+    productName:      '__TODO_PRODUCT__'
+    publishFolder:    '__TODO_PUBLISH_FOLDER__'  # path to project (if multiple projects in repo)
     # solutionFile:    '__TODO_SOLUTION__'      # path to project or solution file to be built. Defaults to '*.sln' Set to your specific project or solution if necessary.
-    suppressCD:      true                       # Allow engineering to do an immediate CI/build while CD is being configured
+    suppressCD:       true                       # Allow engineering to do an immediate CI/build while CD is being configured

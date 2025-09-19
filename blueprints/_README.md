@@ -1,6 +1,6 @@
 #  Checklist to select the correct pipeline to use:
 
-- Is there an application-type CI/CD blueprint that meets your requirements?
+- Is there an application-type CICD blueprint that meets your requirements?
   - YES: Use it!
   - NO
     - Is there an application-type CI-only blueprint that meets your requirements?

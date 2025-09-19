@@ -6,10 +6,12 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
-  
+
 steps:
 
 # -----------------------------------------------------------------------------------------------------
 # PRE-PRODUCTION AUTOMATION STAGE
 # -----------------------------------------------------------------------------------------------------
-- script: echo 'Pre-Production Automation Placeholder ***********************************'
+- script: echo 'Security CD Pre-Prod Environment Automation'
+- script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
+- script: echo modeElite = ${{parameters.modeElite}}

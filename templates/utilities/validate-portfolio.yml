@@ -15,7 +15,7 @@ steps:
     targetType: inline
     script: |
       # Define the known list of portfolio names
-      $knownPortfolios = @("appeals", "assessments", "business-intelligence", "claims", "common-engineering", "corporate", "crm", "cross-cutting", "data-warehouse", "demo", "eao", "enterprise", "express", "finance", "innovation", "integration", "internal-audit", "law-and-policy", "learning", "people-culture", "prevention", "review-division", "semc", "sre", "ux-ui", "wao")
+      $knownPortfolios = @("tbd", "tbd", "tbd")  # <-- TODO: Update this list with actual portfolio names
 
       # Check if the portfolioName is in the list
       if ($knownPortfolios -contains $env:PORTFOLIO_NAME) {

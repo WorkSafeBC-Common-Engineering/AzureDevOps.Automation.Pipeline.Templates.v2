@@ -5,6 +5,18 @@ variables:
 # AzDO Project: <TODO Azure DevOps project name housing the associated Azure Pipeline>
 #
 # If you are not going to use all stages, as below, you can suppress them by setting active to false.
+#
+# Need help with the configuration?
+#
+# -VARIABLE ---------- VALUE ------
+# *Active              true or false. To disable or hide a stage, set value to false.
+# *EnvName             See https://dev.azure.com/<__AzDO_ORG__>/<__AzDO_PROJECT__>/_environments
+#                      Format: <portfolio>-<stage-name>-<stage-name-acronym>, for example
+#                      assessments-development-dv
+# *VmImage             ubuntu-latest, windows-latest, 
+#                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
+# *other*              Contact your Delivery CSE.
+#
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
@@ -15,9 +27,7 @@ variables:
   value: '<tbd>'
 - name:  developmentStageVmImage
   value: '<tbd>'
-- name:  developmentStageTestData
-  value: 'Development Stage Test Data'
-- name:  developmentAzureSubscription
+ name:  developmentAzureSubscription
   value: '<tbd>'
 - name:  developmentAppType
   value: '<tbd>'
@@ -27,13 +37,11 @@ variables:
 # -----------------------------------------------------------------------------------------------------
 # System Test Stage
 - name:  systemTestStageActive
-  value: true
+  value: false
 - name:  systemTestStageEnvName
   value: '<tbd>'
 - name:  systemTestStageVmImage
   value: '<tbd>'
-- name:  systemTestStageTestData
-  value: 'System Test Stage Test Data'
 - name:  systemTestAzureSubscription
   value: '<tbd>'
 - name:  systemTestAppType
@@ -42,20 +50,13 @@ variables:
   value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
-# Security Review Stage
-- name:  securityReviewStageEnvName
-  value: '<tbd>'
-
-# -----------------------------------------------------------------------------------------------------
 # Staging Stage
 - name:  stagingStageActive
-  value: true
+  value: false
 - name:  stagingStageEnvName
   value: '<tbd>'
 - name:  stagingStageVmImage
   value: '<tbd>'
-- name:  stagingStageTestData
-  value: 'Staging Stage Test Data'
 - name:  stagingAzureSubscription
   value: '<tbd>'
 - name:  stagingAppType
@@ -64,18 +65,64 @@ variables:
   value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
-# Production Stage-
+# Production Stage
 - name:  productionStageActive
-  value: true
+  value: false
 - name:  productionStageEnvName
   value: '<tbd>'
 - name:  productionStageVmImage
   value: '<tbd>'
-- name:  productionStageTestData
-  value: 'Production Stage Test Data'
 - name:  productionAzureSubscription
   value: '<tbd>'
 - name:  productionAppType
   value: '<tbd>'
 - name:  productionAppName
   value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# Production Central Stage
+# Introduced with version blueprintVersion 2.1.1
+- name:  productionCanadaCentralStageActive
+  value: false
+- name:  productionCanadaCentralStageEnvName
+  value: '<tbd>'
+- name:  productionCanadaCentralStageVmImage
+  value: '<tbd>'
+ name:  productionCanadaCentralAzureSubscription
+  value: '<tbd>'
+- name:  productionCanadaCentralAppType
+  value: '<tbd>'
+- name:  productionCanadaCentralAppName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# Production East Stage
+# Introduced with version blueprintVersion 2.1.1
+- name:  productionCanadaEastStageActive
+  value: false
+- name:  productionCanadaEastStageEnvName
+  value: '<tbd>'
+- name:  productionCanadaEastStageVmImage
+  value: '<tbd>'
+- name:  productionCanadaEastAzureSubscription
+  value: '<tbd>'
+- name:  productionCanadaEastAppType
+  value: '<tbd>'
+- name:  productionCanadaEastAppName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# @@START: SKULL-AND-CROSS BONES AREA
+# Introduced with version blueprintVersion 2.1.1
+# Be very, very careful when making changes to the configuration below!
+# -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Security Review Stage
+- name:  securityReviewStageEnvName
+  value: '<tbd>'
+
+# -----------------------------------------------------------------------------------------------------
+# @@END: SKULL-AND-CROSS BONES AREA
+# Introduced with version blueprintVersion 2.1.1
+# -----------------------------------------------------------------------------------------------------
