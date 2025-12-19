@@ -38,7 +38,7 @@ resources:
 extends:
   template: blueprints/universal-artifact/azure-pipeline-universal-artifact-control.yml@CeBlueprints
   parameters:
-    blueprintVersion: '2.1.1'
+    blueprintVersion:  '2.2.0' #910188 
     portfolioName:    '__TODO_PORTFOLIO__'
     productName:      '__TODO_PRODUCT__'
     publishFolder:    '__TODO_FOLDERNAME__'

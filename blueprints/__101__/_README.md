@@ -2,6 +2,7 @@ Use this app-type blueprint template to create a new blueprint
 
 Proceed as follows:
 1. READ: [Part 7: Pipelines - There is more! Simplicity and enablement, courtesy of the app-type blueprint-based YAML pipelines](https://wsbctechnicalblog.github.io/yaml-pipelines-part7.html) and [Part 8: Pipelines - From CI to CD and beyond in one pipeline](https://wsbctechnicalblog.github.io/yaml-pipelines-part8.html)
+2. READ: **GETTING STARTED** WIKI: [How to use the multi-stage application-type pipeline blueprints](https://dev.azure.com/wcbbc/__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/_wiki/wikis/Common-Engineering-System.wiki/7543/How-to-use-the-multi-stage-application-type-pipeline-blueprints)
 3. Create a new folder under **\blueprints** with the name of your blueprint, for example **star-ship**.
 4. Copy all files from **__101__** folder to your new folder.
 5. Rename all files to change **__101__** to your blueprint name, for example **starship**.

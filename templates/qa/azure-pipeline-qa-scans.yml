@@ -26,8 +26,13 @@ stages:
   dependsOn:
   - ${{ each stage in parameters.dependsOn }}:
     - ${{stage}}
-  pool:
-    vmImage:      ${{parameters.config.nameVM}}
+  ${{ if ne(coalesce(parameters.config.nameVM, ''), '') }}: #910188 
+    pool:
+      name:      ${{coalesce(parameters.config.poolName, 'Azure Pipelines')}}
+      vmImage:   ${{parameters.config.nameVM}}
+  ${{ else }}:
+    pool:
+      name:      ${{parameters.config.namePool}}
   jobs:
   - job:          'QAAutomation'
     steps:
