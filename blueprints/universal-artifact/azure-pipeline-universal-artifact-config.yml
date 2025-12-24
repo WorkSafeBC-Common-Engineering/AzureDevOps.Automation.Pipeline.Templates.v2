@@ -13,14 +13,23 @@ variables:
 #
 # -VARIABLE ---------- VALUE ------
 # *Active              true or false. To disable or hide a stage, set value to false.
-# *EnvName             See https://dev.azure.com/<__AzDO_ORG__>/<__AzDO_PROJECT__>/_environments
+# *EnvName             Contact Common Engineering 
+#                      or see https://dev.azure.com/wcbbc/IT-App-Delivery/_environments
 #                      Format: <portfolio>-<stage-name>-<stage-name-acronym>, for example
 #                      assessments-development-dv
 # *VmImage             ubuntu-latest, windows-latest, 
 #                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
 # *other*              Contact your Delivery CSE.
+# <portfolio>          Replace with your Azure DevOps portfolio name, matching ServiceNow.
 #
 # -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Continuous Integration #910188
+- name:  ciStagePool
+  value: 'Azure Pipelines'
+- name:  ciStageVmImage
+  value: 'ubuntu-latest'
 
 # -----------------------------------------------------------------------------------------------------
 # DEVelopment Stage
@@ -28,7 +37,9 @@ variables:
 - name:  developmentStageActive
   value: true
 - name:  developmentStageEnvName
-  value: '<TBD>'
+  value: '<portfolio>-development-dv'
+- name:  developmentStagePool
+  value: 'Azure Pipelines'
 - name:  developmentStageVmImage
   value: '<TBD>'
 - name:  developmentStageFeedPublish
@@ -42,7 +53,9 @@ variables:
 - name:  systemTestStageActive
   value: false
 - name:  systemTestStageEnvName
-  value: '<TBD>'
+  value: '<portfolio>-system-test-sy'
+- name:  systemTestStagePool
+  value: 'Azure Pipelines'
 - name:  systemTestStageVmImage
   value: '<TBD>'
 - name:  systemTestStageFeedPublish
@@ -56,7 +69,9 @@ variables:
 - name:  stagingStageActive
   value: false
 - name:  stagingStageEnvName
-  value: '<TBD>'
+  value: '<portfolio>-staging-st'
+- name:  stagingStagePool
+  value: 'Azure Pipelines'
 - name:  stagingStageVmImage
   value: '<TBD>'
 - name:  stagingStageFeedPublish
@@ -70,7 +85,9 @@ variables:
 - name:  productionStageActive
   value: false
 - name:  productionStageEnvName
-  value: '<TBD>'
+  value: '<portfolio>-production-pr'
+- name:  productionStagePool
+  value: 'Azure Pipelines'
 - name:  productionStageVmImage
   value: '<TBD>'
 - name:  productionStageFeedPublish
@@ -84,7 +101,9 @@ variables:
 - name:  productionCanadaCentralStageActive
   value: false
 - name:  productionCanadaCentralStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
+- name:  productionCanadaCentralStagePool
+  value: 'Azure Pipelines'
 - name:  productionCanadaCentralStageVmImage
   value: '<tbd>'
 - name:  productionCanadaCentralStageFeedPublish
@@ -98,7 +117,9 @@ variables:
 - name:  productionCanadaEastStageActive
   value: false
 - name:  productionCanadaEastStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
+- name:  productionCanadaEastStagePool
+  value: 'Azure Pipelines'
 - name:  productionCanadaEastStageVmImage
   value: '<tbd>'
 - name:  productionCanadaEastStageFeedPublish
@@ -110,12 +131,40 @@ variables:
 # @@START: SKULL-AND-CROSS BONES AREA
 # Introduced with version blueprintVersion 2.1.1
 # Be very, very careful when making changes to the configuration below!
+#
+# Replace <portfolio> with your pipelines portfolioName setting
+#
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
 - name:  securityReviewStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-security-review-sr'
+- name:  securityReviewStagePool
+  value: 'Azure Pipelines'
+- name:  securityReviewStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Security Automation Stage #910188
+- name:  securityAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  securityAutomationStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Quality Automation Stage #910188
+- name:  qaAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  qaAutomationStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Pre-Prod Automation Stage #910188
+- name:  preProdAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  preProdAutomationStageVmImage
+  value: 'ubuntu-latest'
 
 # -----------------------------------------------------------------------------------------------------
 # @@END: SKULL-AND-CROSS BONES AREA

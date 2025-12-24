@@ -28,10 +28,14 @@ stages:
 - stage: ContinuousIntegration
   displayName: Continuous Integration (CI)
 
-  # Configure the default agent pool and image to use for the pipeline
-  pool:
-    name:     'Azure Pipelines'
-    vmImage:  'Windows-latest'
+  # Configure agent pool; omit vmImage for self-hosted (unknown image) #910188
+  ${{ if ne(parameters.vmImage, '') }}:
+    pool:
+      name:     ${{ parameters.jobPool }}
+      vmImage:  ${{ parameters.vmImage }}
+  ${{ else }}:
+    pool:
+      name:     ${{ parameters.jobPool }}
   
   jobs:
   - job: ContinuousIntegration

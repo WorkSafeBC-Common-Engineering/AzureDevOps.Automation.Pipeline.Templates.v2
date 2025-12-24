@@ -51,6 +51,8 @@ stages:
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
+    jobPool:              ${{coalesce(variables.ciStagePool, 'Azure Pipelines')}}
+    vmImage:              ${{coalesce(variables.ciStageVmImage, 'ubuntu-latest')}}
 
 
 # --------------------------------------------------------------------------
@@ -65,7 +67,8 @@ stages:
           config:
             active:                       ${{variables.developmentStageActive}}
             envName:                      ${{variables.developmentStageEnvName}}
-            nameVM:                       ${{variables.developmentStageVmImage}}
+            namePool:                     ${{coalesce(variables.developmentStagePool, 'Azure Pipelines')}}
+            nameVM:                       ${{coalesce(variables.developmentStageVmImage, 'ubuntu-latest')}}
             feedPublish:                  ${{variables.developmentStageFeedPublish}}
             packagePublish:               ${{variables.developmentStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
@@ -76,7 +79,8 @@ stages:
           config:
             active:                       ${{variables.systemTestStageActive}}
             envName:                      ${{variables.systemTestStageEnvName}}
-            nameVM:                       ${{variables.systemTestStageVmImage}}
+            namePool:                     ${{coalesce(variables.systemTestStagePool, 'Azure Pipelines')}}
+            nameVM:                       ${{coalesce(variables.systemTestStageVmImage, 'ubuntu-latest')}}
             feedPublish:                  ${{variables.systemTestStageFeedPublish}}
             packagePublish:               ${{variables.systemTestStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
@@ -87,7 +91,8 @@ stages:
           config:
             active:                       ${{variables.stagingStageActive}}
             envName:                      ${{variables.stagingStageEnvName}}
-            nameVM:                       ${{variables.stagingStageVmImage}}
+            namePool:                     ${{coalesce(variables.stagingStagePool, 'Azure Pipelines')}}
+            nameVM:                       ${{coalesce(variables.stagingStageVmImage, 'ubuntu-latest')}}
             feedPublish:                  ${{variables.stagingStageFeedPublish}}
             packagePublish:               ${{variables.stagingStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
@@ -98,7 +103,8 @@ stages:
           config:
             active:                       ${{variables.productionStageActive}}
             envName:                      ${{variables.productionStageEnvName}}
-            nameVM:                       ${{variables.productionStageVmImage}}
+            namePool:                     ${{coalesce(variables.productionStagePool, 'Azure Pipelines')}}
+            nameVM:                       ${{coalesce(variables.productionStageVmImage, 'ubuntu-latest')}}
             feedPublish:                  ${{variables.productionStageFeedPublish}}
             packagePublish:               ${{variables.productionStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}  
@@ -109,7 +115,8 @@ stages:
           config:
             active:                       ${{variables.productionCanadaCentralStageActive}}
             envName:                      ${{variables.productionCanadaCentralStageEnvName}}
-            nameVM:                       ${{variables.productionCanadaCentralStageVmImage}}
+            namePool:                     ${{coalesce(variables.productionCanadaCentralStagePool, 'Azure Pipelines')}}
+            nameVM:                       ${{coalesce(variables.productionCanadaCentralStageVmImage, 'ubuntu-latest')}}
             feedPublish:                  ${{variables.productionCanadaCentralStageFeedPublish}}
             packagePublish:               ${{variables.productionCanadaCentralStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
@@ -120,7 +127,8 @@ stages:
           config:
             active:                       ${{variables.productionCanadaEastStageActive}}
             envName:                      ${{variables.productionCanadaEastStageEnvName}}
-            nameVM:                       ${{variables.productionCanadaEastStageVmImage}}
+            namePool:                     ${{coalesce(variables.productionCanadaEastStagePool, 'Azure Pipelines')}}
+            nameVM:                       ${{coalesce(variables.productionCanadaEastStageVmImage, 'ubuntu-latest')}}
             feedPublish:                  ${{variables.productionCanadaEastStageFeedPublish}}
             packagePublish:               ${{variables.productionCanadaEastStagePackagePublish}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
@@ -131,24 +139,28 @@ stages:
         securityReview:
           config:
             envName:                      ${{variables.securityReviewStageEnvName}}
+            namePool:                     ${{coalesce(variables.securityReviewStagePool, 'Azure Pipelines')}}
             nameVM:                       ${{ coalesce(variables.securityReviewStageVmImage, 'ubuntu-latest') }}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         securityAutomation:
           config:
+            namePool:                     ${{coalesce(variables.securityAutomationStagePool, 'Azure Pipelines')}}
             nameVM:                       ${{ coalesce(variables.securityAutomationStageVmImage, 'ubuntu-latest') }}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         qaAutomation:
           config:
+            namePool:                     ${{coalesce(variables.qaAutomationStagePool, 'Azure Pipelines')}}
             nameVM:                       ${{ coalesce(variables.qaAutomationStageVmImage, 'ubuntu-latest') }}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
         preProdAutomation:
           config:
+            namePool:                     ${{coalesce(variables.preProdAutomationStagePool, 'Azure Pipelines')}}
             nameVM:                       ${{ coalesce(variables.preProdAutomationStageVmImage, 'ubuntu-latest') }}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
