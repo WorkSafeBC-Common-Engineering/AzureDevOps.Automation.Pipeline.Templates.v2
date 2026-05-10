@@ -42,5 +42,4 @@ extends:
     blueprintVersion:  '2.2.0' #910188 
     portfolioName:   '__TODO_PORTFOLIO__'
     productName:     '__TODO_PRODUCT__'
-    publishFolder:   '__TODO_FOLDERNAME__'
     suppressCD:      true # Allow engineering to do an immediate CI/build while CD is being configured

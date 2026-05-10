@@ -66,24 +66,14 @@ steps:
 # Run Unit Tests
 # --------------------------------------------------------------------------
 - ${{ if eq(parameters.isDotNetCore, true) }}:
-  - ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-    - task: DotNetCoreCLI@2
-      displayName: 'QA Run Unit Tests - dotnet.'
-      inputs:
-        command:    'test'
-        projects:   '**/Tests/UnitTests/**/*.??proj'
-        arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage" --settings "$(RunSettingsFilePath)"'
-        publishTestResults: true
-      continueOnError: true
-  - ${{ else }}:
-    - task: DotNetCoreCLI@2
-      displayName: 'QA Run Unit Tests - dotnet..'
-      inputs:
-        command:    'test'
-        projects:   '**/Tests/UnitTests/**/*.??proj'
-        arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage" --settings "$(RunSettingsFilePath)"'
-        publishTestResults: true
-      continueOnError: true
+  - task: DotNetCoreCLI@2
+    displayName: 'QA Run Unit Tests - dotnet'
+    inputs:
+      command:    'test'
+      projects:   '**/Tests/UnitTests/**/*.??proj'
+      arguments:  '--configuration $(buildConfiguration) --no-restore --collect="code coverage" --settings "$(RunSettingsFilePath)"'
+      publishTestResults: true
+    continueOnError: true
   
 - ${{ if eq(parameters.isDotNetCore, false) }}:
   - ${{ if not(endsWith(parameters.solutionFile, '.sln')) }}:
@@ -94,125 +84,14 @@ steps:
         platform: '${{parameters.platform}}'
         configuration: ${{parameters.buildConfiguration}}
 
-  - ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-    - task: VSTest@3
-      displayName: 'QA Run Unit Tests - VSTest.'
-      inputs:
-        testSelector: 'testAssemblies'
-        testAssemblyVer2: '**\Tests\UnitTests\**\bin\**\*.dll'
-        searchFolder: '$(System.DefaultWorkingDirectory)'
-        runSettingsFile: '$(RunSettingsFilePath)'
-        resultsFolder: '$(Agent.TempDirectory)\TestResults'
-        diagnosticsEnabled: false #(default is false, change to true for debugging)
-        codeCoverageEnabled: true
-      continueOnError: true
-  - ${{ else }}:
-    - task: VSTest@3
-      displayName: 'QA Run Unit Tests - VSTest..'
-      inputs:
-        testSelector: 'testAssemblies'
-        testAssemblyVer2: '**\Tests\UnitTests\**\bin\**\*.dll'
-        searchFolder: '$(System.DefaultWorkingDirectory)'
-        runSettingsFile: '$(RunSettingsFilePath)'
-        resultsFolder: '$(Agent.TempDirectory)\TestResults'
-        diagnosticsEnabled: false #(default is false, change to true for debugging)
-        codeCoverageEnabled: true
-      continueOnError: true 
-
-# -----------------------------------------------------------------------
-# Unit test count from Azure DevOps API
-# - Toolbox contains the PowerShell script to get the unit test count
-# - For the Generic-Multiple-jobs pipeline, ToolBox is not checked out
-# - For all other cases, toolbox is checked out in the initial step
-# -----------------------------------------------------------------------
-- powershell: |
-    $toolboxDirectory = "$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/unit-tests/unit-test-count.ps1"
-    if (-Not (Test-Path -Path $toolboxDirectory)) {
-      Write-Host "Toolbox directory does not exist, performing git checkout..."
-      Write-Host "##vso[task.setvariable variable=ToolboxRepoExists;]false"
-    }
-    else {
-      Write-Host "Toolbox directory already exists. Skipping checkout."
-      Write-Host "##vso[task.setvariable variable=ToolboxRepoExists;]true"
-    }
-  displayName: 'QA Toolbox Repository Existence Check'
-  failOnStderr: true
-
-- checkout: git://__TODO_INSERT_AZURE_DEVOPS_NAME_HERE__/AzureDevOps.Automation.Pipeline.Toolbox.v2
-  condition: and(succeeded(), eq(variables['ToolboxRepoExists'], 'false'))
-  displayName: 'QA Checkout Toolbox Repository'
-
-- task: AzureKeyVault@2
-  displayName: 'QA Azure Key Vault: AS-PR-AzDOMaintenance-KV'
-  inputs:
-    azureSubscription: 'CeS Bootstrap Service Endpoint'
-    KeyVaultName: 'AS-PR-AzDOMaintenance-KV'
-    SecretsFilter: PAT-Test-Management
-    RunAsPreJob: false
-    
-- task: PowerShell@2
-  name: unitTestResults
-  displayName: 'QA Getting Test Results'
-  inputs:
-    filePath:  '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/scripts/quality-assurance/unit-tests/unit-test-count.ps1' 
-    arguments: -PAT "$(PAT-Test-Management)" 
-    failOnStderr: true
-    pwsh: true
-  continueOnError: true
-      
-# -----------------------------------------------------------------------
-# Analyze Unit Tests
-# - verify minimum number of unit tests and validate
-# -----------------------------------------------------------------------
-- ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
-  - task: PowerShell@2
-    name: setUnitTestsValidity
-    displayName: 'QA Test Results Analysis'
+  - task: VSTest@3
+    displayName: 'QA Run Unit Tests - VSTest'
     inputs:
-      targetType: 'inline'
-      pwsh: true
-      script: |
-        
-        # Minimum required tests
-        $minTests = 1
-  
-        # Check if the number of tests is less than the minimum
-        if ($(unitTestResults.unitTestCount) -lt $minTests) 
-        {
-          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]failure"
-          Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
-          Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
-
-          #exit 1
-        } 
-        else 
-        {
-          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]success"
-          Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) meets the minimum requirement."
-        }  
-- ${{ else }}:        
-  - task: PowerShell@2
-    name: setUnitTestsValidity
-    displayName: 'QA Test Results Analysis'
-    inputs:
-      targetType: 'inline'
-      pwsh: true
-      script: |
-        
-        # Minimum required tests
-        $minTests = 1
-  
-        # Check if the number of tests is less than the minimum
-        if ($(unitTestResults.unitTestCount) -lt $minTests) 
-        {
-          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]warning"
-          Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) is below the minimum required ($minTests)."
-          Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
-          Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
-          #exit 1
-        } 
-        else 
-        {
-          Write-Host "##vso[task.setvariable variable=unitTestsValid;isOutput=true]success"
-          Write-Host "Number of Tests ($(unitTestResults.unitTestCount)) meets the minimum requirement."
-        }    
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\Tests\UnitTests\**\bin\**\*.dll'
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      runSettingsFile: '$(RunSettingsFilePath)'
+      resultsFolder: '$(Agent.TempDirectory)\TestResults'
+      diagnosticsEnabled: false #(default is false, change to true for debugging)
+      codeCoverageEnabled: true
+    continueOnError: true 

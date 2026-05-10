@@ -16,18 +16,24 @@ variables:
 # *VmImage             ubuntu-latest, windows-latest, 
 #                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
 # *other*              Contact your Delivery CSE.
+# <portfolio>          Replace with your Azure DevOps portfolio name, matching ServiceNow.
 #
 # -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Continuous Integration (CI) Stage 
+- name:  ciVmImage
+  value: 'windows-latest'            # windows-latest, ubuntu-latest Default: windows-latest
 
 # -----------------------------------------------------------------------------------------------------
 # Development Stage
 - name:  developmentStageActive
   value: true
 - name:  developmentStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-development-dv'
 - name:  developmentStageVmImage
   value: '<tbd>'
- name:  developmentAzureSubscription
+- name:  developmentAzureSubscription
   value: '<tbd>'
 - name:  developmentAppType
   value: '<tbd>'
@@ -39,7 +45,7 @@ variables:
 - name:  systemTestStageActive
   value: false
 - name:  systemTestStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-system-test-sy'
 - name:  systemTestStageVmImage
   value: '<tbd>'
 - name:  systemTestAzureSubscription
@@ -54,7 +60,7 @@ variables:
 - name:  stagingStageActive
   value: false
 - name:  stagingStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-staging-st'
 - name:  stagingStageVmImage
   value: '<tbd>'
 - name:  stagingAzureSubscription
@@ -69,7 +75,7 @@ variables:
 - name:  productionStageActive
   value: false
 - name:  productionStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
 - name:  productionStageVmImage
   value: '<tbd>'
 - name:  productionAzureSubscription
@@ -85,10 +91,10 @@ variables:
 - name:  productionCanadaCentralStageActive
   value: false
 - name:  productionCanadaCentralStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
 - name:  productionCanadaCentralStageVmImage
   value: '<tbd>'
- name:  productionCanadaCentralAzureSubscription
+- name:  productionCanadaCentralAzureSubscription
   value: '<tbd>'
 - name:  productionCanadaCentralAppType
   value: '<tbd>'
@@ -101,7 +107,7 @@ variables:
 - name:  productionCanadaEastStageActive
   value: false
 - name:  productionCanadaEastStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
 - name:  productionCanadaEastStageVmImage
   value: '<tbd>'
 - name:  productionCanadaEastAzureSubscription
@@ -112,15 +118,23 @@ variables:
   value: '<tbd>'
 
 # -----------------------------------------------------------------------------------------------------
+# Quality Assurance Automation Stage
+- name:  requiresUiTests
+  value: false                       # true or false Default: false
+  
+# -----------------------------------------------------------------------------------------------------
 # @@START: SKULL-AND-CROSS BONES AREA
 # Introduced with version blueprintVersion 2.1.1
 # Be very, very careful when making changes to the configuration below!
+#
+# Replace <portfolio> with your pipelines portfolioName setting
+#
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
 - name:  securityReviewStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-security-review-sr'
 
 # -----------------------------------------------------------------------------------------------------
 # @@END: SKULL-AND-CROSS BONES AREA

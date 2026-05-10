@@ -28,7 +28,7 @@ stages:
     - ${{stage}}
   ${{ if ne(coalesce(parameters.config.nameVM, ''), '') }}: #910188 
     pool:
-      name:      ${{coalesce(parameters.config.poolName, 'Azure Pipelines')}}
+      name:      ${{coalesce(parameters.config.namePool, 'Azure Pipelines')}}
       vmImage:   ${{parameters.config.nameVM}}
   ${{ else }}:
     pool:

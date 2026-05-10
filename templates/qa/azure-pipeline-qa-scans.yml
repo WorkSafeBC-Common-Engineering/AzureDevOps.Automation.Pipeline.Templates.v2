@@ -16,7 +16,10 @@ parameters:
 - name:     dependsOn
   type:     object
   default:  []
-  
+- name:     requiresUiTests
+  type:     boolean
+  default:  false  
+
 stages:
 # -----------------------------------------------------------------------------------------------------
 # QUALITY ASSURANCE SCANS STAGE
@@ -28,7 +31,7 @@ stages:
     - ${{stage}}
   ${{ if ne(coalesce(parameters.config.nameVM, ''), '') }}: #910188 
     pool:
-      name:      ${{coalesce(parameters.config.poolName, 'Azure Pipelines')}}
+      name:      ${{coalesce(parameters.config.namePool, 'Azure Pipelines')}}
       vmImage:   ${{parameters.config.nameVM}}
   ${{ else }}:
     pool:
@@ -46,3 +49,4 @@ stages:
         applicationBlueprint: ${{parameters.applicationBlueprint}}
         blueprintVersion:     ${{parameters.blueprintVersion}}
         modeElite:            ${{parameters.modeElite}}
+        requiresUiTests:      ${{parameters.requiresUiTests}}
