@@ -3,7 +3,7 @@ parameters:
   type:     string
 - name:     isDotNetCore
   type:     boolean
-  default:  true  
+  default:  true
 - name:     netCoreVersion
   type:     string
 - name:     portfolioName
@@ -38,7 +38,7 @@ parameters:
   type:     boolean
   default:  false
 # Path of pre-build powershell script
-- name:     prebuildPsScript  
+- name:     prebuildPsScript
   type:     string
   default:  ''
 # nodeJs version for the build
@@ -61,8 +61,11 @@ stages:
   # Variables
   variables:
     buildConfiguration: 'Release'
-    solutionFile:       '*.sln'
-  
+    ${{ if ge(split(parameters.netCoreVersion, '.')[0], 10) }}:
+      solutionFile: '*.slnx'
+    ${{ else }}:
+      solutionFile: '*.sln'
+
   jobs:
   - job: ContinuousIntegration
     steps:
@@ -79,7 +82,7 @@ stages:
 # PREREQUISITES
 # --------------------------------------------------------------------------
     - ${{ if eq(parameters.isDotNetCore, true) }}:
-      - task: UseDotNet@2 
+      - task: UseDotNet@2
         displayName:      'Use .NET Core ${{parameters.netCoreVersion}}'
         inputs:
           version:        ${{parameters.netCoreVersion}}
@@ -89,9 +92,9 @@ stages:
         - task: NuGetToolInstaller@1
 
     - ${{ if ne(parameters.nodeToolVersion, '') }}:
-      - task: NodeTool@0
+      - task: UseNode@1
         inputs:
-          versionSpec:  ${{parameters.nodeToolVersion}}   
+          version:  ${{parameters.nodeToolVersion}}
 
 # ==========================================================================
 # BOOTSTRAP VALIDATION, STAGE: CI_BOOTSTRAP_INIT
@@ -136,7 +139,7 @@ stages:
           nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget.config'
 
     - ${{ if and(eq(parameters.isDotNetCore, false), ne(variables['Build.SourceBranch'], 'refs/heads/release'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
-      - task: NuGetCommand@2  
+      - task: NuGetCommand@2
         env:
           Telerik-NuGet-Key: $(Telerik-NuGet-Key)
         inputs:
@@ -145,7 +148,7 @@ stages:
           nugetConfigPath: '$(Build.SourcesDirectory)/AzureDevOps.Automation.Pipeline.Toolbox.v2/toolbox/config/nuget/nuget-lo-env.config'
 
     - ${{ if and( eq(parameters.isDotNetCore, false), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
-      - task: NuGetCommand@2  
+      - task: NuGetCommand@2
         env:
           Telerik-NuGet-Key: $(Telerik-NuGet-Key)
         inputs:
@@ -210,7 +213,7 @@ stages:
 
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION: TEST
-# -- All the test projects should be placed inside 
+# -- All the test projects should be placed inside
 #    the respective folders e.g. src/Tests/UnitTests etc.
 # --------------------------------------------------------------------------
     - template: /templates/qa/tests/tests-ci-all.yml@CeBlueprints
@@ -260,5 +263,5 @@ stages:
 # END OF BUILD and TEST STAGE
 # --------------------------------------------------------------------------
     - ${{ if eq(lower(variables['Build.SourceBranchName']), 'merge') }}:
-      - script: echo CD part of the pipeline is suppressed for pull request validation builds! 
+      - script: echo CD part of the pipeline is suppressed for pull request validation builds!
         displayName: PR Validation CD Suppression Alert

@@ -12,6 +12,9 @@ stages:
     parameters:
       name:                         'Development'
       displayName:                  'Development (DV)'
+      blueprintVersion:             ${{parameters.stage.development.blueprintVersion}}
+      netCoreVersion:               ${{parameters.stage.development.netCoreVersion}}
+      vmImage:                      ${{parameters.stage.development.vmImage}}
       config:                       ${{parameters.stage.development.config}}
       dependsOn:
       - ContinuousIntegration
@@ -24,6 +27,9 @@ stages:
     parameters:
       name:                         'SystemTest'
       displayName:                  'System Test (SY)'
+      blueprintVersion:             ${{parameters.stage.systemTest.blueprintVersion}}
+      netCoreVersion:               ${{parameters.stage.systemTest.netCoreVersion}}
+      vmImage:                      ${{parameters.stage.systemTest.vmImage}}
       config:                       ${{parameters.stage.systemTest.config}}
       dependsOn:
       - ContinuousIntegration
@@ -59,6 +65,7 @@ stages:
     applicationBlueprint: ${{parameters.stage.qaAutomation.applicationBlueprint}}
     blueprintVersion:     ${{parameters.stage.qaAutomation.blueprintVersion}}
     modeElite:            ${{parameters.stage.qaAutomation.modeElite}}
+    requiresUiTests:      ${{parameters.stage.qaAutomation.requiresUiTests}}
     dependsOn:
     - ContinuousIntegration
     - ${{ if eq(parameters.stage.development.config.active, true) }}:
@@ -94,6 +101,9 @@ stages:
     parameters:
       name:                         'Staging'
       displayName:                  'Staging (ST)'
+      blueprintVersion:             ${{parameters.stage.staging.blueprintVersion}}
+      netCoreVersion:               ${{parameters.stage.staging.netCoreVersion}}
+      vmImage:                      ${{parameters.stage.staging.vmImage}}
       config:                       ${{parameters.stage.staging.config}}
       dependsOn:
       - ContinuousIntegration
@@ -137,6 +147,9 @@ stages:
     parameters:
       name:                         'Production'
       displayName:                  'Production (PR)'
+      blueprintVersion:             ${{parameters.stage.production.blueprintVersion}}
+      netCoreVersion:               ${{parameters.stage.production.netCoreVersion}}
+      vmImage:                      ${{parameters.stage.production.vmImage}}
       config:                       ${{parameters.stage.production.config}}
       dependsOn:
       - ContinuousIntegration
@@ -156,6 +169,9 @@ stages:
     parameters:
       name:                         'ProductionCanadaCentral'
       displayName:                  'Prod Canada Central (CC-PR)'
+      blueprintVersion:             ${{parameters.stage.productionCanadaCentral.blueprintVersion}}
+      netCoreVersion:               ${{parameters.stage.productionCanadaCentral.netCoreVersion}}
+      vmImage:                      ${{parameters.stage.productionCanadaCentral.vmImage}}
       config:                       ${{parameters.stage.productionCanadaCentral.config}}
       dependsOn:
       - ContinuousIntegration
@@ -175,6 +191,9 @@ stages:
     parameters:
       name:                         'ProductionCanadaEast'
       displayName:                  'Prod Canada East (CE-PR)'
+      blueprintVersion:             ${{parameters.stage.productionCanadaEast.blueprintVersion}}
+      netCoreVersion:               ${{parameters.stage.productionCanadaEast.netCoreVersion}}
+      vmImage:                      ${{parameters.stage.productionCanadaEast.vmImage}}
       config:                       ${{parameters.stage.productionCanadaEast.config}}
       dependsOn:
       - ContinuousIntegration

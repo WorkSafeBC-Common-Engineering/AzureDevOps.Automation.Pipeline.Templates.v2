@@ -56,34 +56,37 @@ steps:
 
 - ${{ if and( eq( lower(parameters.modeElite), true), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')) }}:
   - task: PowerShell@2
-    displayName: 'Bootstrap QA - Unit Tests Compliance'
+    displayName: 'Bootstrap QA - Unit Tests Compliance - Release branch'
     inputs:
       targetType: 'inline'
       pwsh: true
       script: |
         $minTests = 1
         if ($(unitTestsApiCount.unitTestCount) -lt $minTests) {
-          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) is below the minimum required (1)."
-          exit 1
+          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) is below the minimum required ($minTests)."
+          Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+          Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
+            exit 1
         }
         else
         {
-          Write-Host "Unit Tests executed in the pipeline run."
+          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) meets the minimum requirement."
         }
 - ${{ else }}:
   - task: PowerShell@2
-    displayName: 'Bootstrap QA - Unit Tests Compliance'
+    displayName: 'Bootstrap QA - Unit Tests Compliance - Feature branch'
     inputs:
       targetType: 'inline'
       pwsh: true
       script: |
         $minTests = 1
         if ($(unitTestsApiCount.unitTestCount) -lt $minTests) {
-          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) is below the minimum required (1)."
+          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) is below the minimum required ($minTests)."
           Write-Host "##vso[task.complete result=SucceededWithIssues;]Task completed with issues"
+          Write-Host "Project may not have Tests in the expected folder and/or missing required unit tests template."
           #exit 1
         }
         else
         {
-          Write-Host "Unit Tests executed in the pipeline run."
+          Write-Host "Number of Tests ($(unitTestsApiCount.unitTestCount)) meets the minimum requirement."
         }

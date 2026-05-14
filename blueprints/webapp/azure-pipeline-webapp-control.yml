@@ -42,11 +42,21 @@ parameters:
 
 # VARIABLES
 variables:
-- ${{ if and( ne(parameters.suppressCD, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
+- ${{ if eq(parameters.blueprintVersion, '2.0.0') }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
 
-- ${{ if and( ne(parameters.suppressCD, true), ge(parameters.blueprintVersion, '2.1.0') ) }}:
+- ${{ if ge(parameters.blueprintVersion, '2.1.0') }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}-${{ lower(parameters.productName) }}-config.yml@self
+
+# Determine effective netCoreVersion based on blueprintVersion
+- name: effectiveNetCoreVersion
+  ${{ if ge(parameters.blueprintVersion, '2.3.0') }}:
+    value: ${{ coalesce(parameters.netCoreVersion, '10.x') }}
+  ${{ else }}:
+    value: ${{ parameters.netCoreVersion }}
+
+- name: vmImage
+  value: ${{ coalesce(variables.ciVmImage, 'windows-latest') }}
 
 stages:
 
@@ -59,13 +69,14 @@ stages:
     portfolioName:        ${{parameters.portfolioName}}
     productName:          ${{parameters.productName}}
     applicationBlueprint: ${{parameters.applicationBlueprint}}
-    netCoreVersion:       ${{parameters.netCoreVersion}}
+    netCoreVersion:       ${{variables.effectiveNetCoreVersion}}
     publishFolder:        ${{parameters.publishFolder}}
     solutionFile:         ${{parameters.solutionFile}}
     verbose:              ${{parameters.verbose}}
     modeElite:            ${{parameters.modeElite}}
     versionSpec:          ${{parameters.versionSpec}}
     isDotNetCore:         ${{parameters.isDotNetCore}}    
+    ciVmImage:            ${{variables.vmImage}}
 
 # --------------------------------------------------------------------------
 # DEPLOYMENT
@@ -85,6 +96,8 @@ stages:
             appName:                      ${{variables.developmentAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
+          netCoreVersion:                 ${{variables.effectiveNetCoreVersion}}
+          vmImage:                        ${{variables.vmImage}}
           modeElite:                      ${{parameters.modeElite}}
 
         systemTest:
@@ -97,6 +110,8 @@ stages:
             appName:                      ${{variables.systemTestAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
+          netCoreVersion:                 ${{variables.effectiveNetCoreVersion}}
+          vmImage:                        ${{variables.vmImage}}
           modeElite:                      ${{parameters.modeElite}}
 
         staging:
@@ -109,6 +124,8 @@ stages:
             appName:                      ${{variables.stagingAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
+          netCoreVersion:                 ${{variables.effectiveNetCoreVersion}}
+          vmImage:                        ${{variables.vmImage}}
           modeElite:                      ${{parameters.modeElite}}
 
         production:
@@ -121,6 +138,8 @@ stages:
             appName:                      ${{variables.productionAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
+          netCoreVersion:                 ${{variables.effectiveNetCoreVersion}}
+          vmImage:                        ${{variables.vmImage}}
           modeElite:                      ${{parameters.modeElite}}
 
         productionCanadaCentral:
@@ -133,6 +152,8 @@ stages:
             appName:                      ${{variables.productionCanadaCentralAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
+          netCoreVersion:                 ${{variables.effectiveNetCoreVersion}}
+          vmImage:                        ${{variables.vmImage}}
           modeElite:                      ${{parameters.modeElite}}
 
         productionCanadaEast:
@@ -145,6 +166,8 @@ stages:
             appName:                      ${{variables.productionCanadaEastAppName}}
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
+          netCoreVersion:                 ${{variables.effectiveNetCoreVersion}}
+          vmImage:                        ${{variables.vmImage}}
           modeElite:                      ${{parameters.modeElite}}
 
         # Embedded non-negotiable stages ------------------------------------
@@ -167,6 +190,7 @@ stages:
           applicationBlueprint:           ${{parameters.applicationBlueprint}}
           blueprintVersion:               ${{parameters.blueprintVersion}}
           modeElite:                      ${{parameters.modeElite}}
+          requiresUiTests:                ${{ coalesce(variables.requiresUiTests, false) }}
         preProdAutomation:
           config:
             nameVM:                       ${{ coalesce(variables.preProdAutomationStageVmImage, 'ubuntu-latest') }}

@@ -33,7 +33,8 @@ stages:
       - ${{ each stage in parameters.dependsOn }}:
         - ${{stage}}
   pool:
-    vmImage:     ${{parameters.config.nameVM}}
+    name:      ${{parameters.config.namePool}}
+    vmImage:   ${{parameters.config.nameVM}}  
   jobs:
   - deployment:  ${{parameters.name}}
     environment: ${{parameters.config.envName}}

@@ -37,8 +37,8 @@ resources:
 extends:
   template: blueprints/azure-function/azure-pipeline-azure-function-control.yml@CeBlueprints
   parameters:
-    blueprintVersion:   '2.1.1'
-    netCoreVersion:     '8.x'
+    blueprintVersion:   '2.2.0'
+    netCoreVersion:     '10.x'
     portfolioName:      '__TODO_PORTFOLIO__'
     productName:        '__TODO_PRODUCT__'
     azFuncProjectName:  '__TODO_AZURE_FUNCTION_PROJECT_NAME__' # e.g. CeS.Sample.AzureFunction

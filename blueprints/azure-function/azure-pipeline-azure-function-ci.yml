@@ -21,6 +21,12 @@ parameters:
 - name:     verbose
   type:     boolean
   default:  false
+# Job Pool 
+- name:     jobPool
+  type:     string
+# VM Image  
+- name:     vmImage
+  type:     string
 
 # --------------------------------------------------------------------------
 # START OF BUILD and TEST STAGE
@@ -31,8 +37,8 @@ stages:
 
   # Configure the default agent pool and image to use for the pipeline
   pool:
-    name:     'Azure Pipelines'
-    vmImage:  'ubuntu-latest'
+    name:     ${{parameters.jobPool}}
+    vmImage:  ${{parameters.vmImage}}
 
   # Variables
   variables:

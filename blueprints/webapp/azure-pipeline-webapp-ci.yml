@@ -29,6 +29,10 @@ parameters:
 - name:     isDotNetCore
   type:     boolean  
   default:  true
+# vmImage for CI
+- name:     ciVmImage
+  type:     string
+  default:  'windows-latest'            # windows-latest, ubuntu-latest, macos-latest Default: windows-latest  
 
 # --------------------------------------------------------------------------
 # START OF BUILD and TEST STAGE
@@ -40,7 +44,7 @@ stages:
   # Configure the default agent pool and image to use for the pipeline
   pool:
     name:     'Azure Pipelines'
-    vmImage:  'Windows-latest'
+    vmImage:  ${{parameters.ciVmImage}}
   
   # Variables
   variables:
@@ -141,12 +145,14 @@ stages:
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION BUILD
 # --------------------------------------------------------------------------
+    - template: /templates/utilities/telerik-license.yml@CeBlueprints
+
     - task: DotNetCoreCLI@2
       displayName: 'Build'
       inputs:
         command:          'build'
         projects:         '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/**/${{parameters.solutionFile}}'
-        arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion)"
+        arguments:        "--configuration $(buildConfiguration) --no-restore /p:Version=$(setSemVersion.semVersion) /p:TelerikLicenseFile=$(Build.SourcesDirectory)/telerik-license.txt"
 
 # --------------------------------------------------------------------------
 # CONTINUOUS INTEGRATION: TEST
@@ -169,7 +175,7 @@ stages:
         command:           'publish'
         publishWebProjects: false
         projects:           '$(Build.SourcesDirectory)/**/${{parameters.publishFolder}}/**/${{parameters.solutionFile}}'
-        arguments:          '-o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) -v diag'
+        arguments:          '-o $(Build.ArtifactStagingDirectory) -c $(buildConfiguration) /p:TelerikLicenseFile=$(Build.SourcesDirectory)/telerik-license.txt'
         zipAfterPublish:    true
 
     - task: PublishBuildArtifacts@1

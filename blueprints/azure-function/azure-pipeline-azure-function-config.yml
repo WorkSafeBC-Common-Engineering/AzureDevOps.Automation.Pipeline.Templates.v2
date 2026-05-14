@@ -11,20 +11,30 @@ variables:
 # *EnvName             See https://dev.azure.com/<__AzDO_ORG__>/<__AzDO_PROJECT__>/_environments
 #                      Format: <portfolio>-<stage-name>-<stage-name-acronym>, for example
 #                      assessments-development-dv
-# *VmImage            ubuntu-latest, windows-latest, 
+# *VmImage             ubuntu-latest, windows-latest, 
 #                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
 # *other*              Contact your Delivery CSE.
+# <portfolio>          Replace with your Azure DevOps portfolio name, matching ServiceNow.
 #
 # -----------------------------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------
+# Continuous Integration Stage
+#- name:  ciStagePool
+#  value: '<TBD>'   # e.g. "Azure Pipeline" or other agent pool name (default is "Azure Pipeline")
+#- name:  ciStageVmImage
+#  value: '<TBD>'   # e.g. "ubuntu-latest" or "windows-latest" (default is "ubuntu-latest")
 
 # -----------------------------------------------------------------------------------------------------
 # Development Stage
 - name:  developmentStageActive
   value: true
 - name:  developmentStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-development-dv'
+- name:  developmentStagePool
+  value: '<TBD>'      # e.g. "Azure Pipeline" or other agent pool name
 - name:  developmentStageVmImage
-  value: '<tbd>'
+  value: '<TBD>'      # e.g. "ubuntu-latest" or "windows-latest"
 - name:  developmentStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  developmentStageAzResourceGroup
@@ -37,9 +47,11 @@ variables:
 - name:  systemTestStageActive
   value: false
 - name:  systemTestStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-system-test-sy'
+- name:  systemTestStagePool
+  value: '<TBD>'       # e.g. "Azure Pipeline" or other agent pool name
 - name:  systemTestStageVmImage
-  value: '<tbd>'
+  value: '<TBD>'      # e.g. "ubuntu-latest" or "windows-latest"
 - name:  systemTestStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  systemTestStageAzResourceGroup
@@ -49,14 +61,14 @@ variables:
 
 # -----------------------------------------------------------------------------------------------------
 # Staging Stage
-# -----------------------------------------------------------------------------------------------------
-# Staging Stage
 - name:  stagingStageActive
   value: false
 - name:  stagingStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-staging-st'
+- name:  stagingStagePool
+  value: '<TBD>'      # e.g. "Azure Pipeline" or other agent pool name
 - name:  stagingStageVmImage
-  value: '<tbd>'
+  value: '<TBD>'      # e.g. "ubuntu-latest" or "windows-latest"
 - name:  stagingStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  stagingStageAzResourceGroup
@@ -65,13 +77,15 @@ variables:
   value: '<TBD>'
 
 # -----------------------------------------------------------------------------------------------------
-# Production Stage-
+# Production Stage
 - name:  productionStageActive
   value: false
 - name:  productionStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
+- name:  productionStagePool
+  value: '<TBD>'    # e.g. "Azure Pipeline" or other agent pool name
 - name:  productionStageVmImage
-  value: '<tbd>'
+  value: '<TBD>'    # e.g. "ubuntu-latest" or "windows-latest"
 - name:  productionStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  productionStageAzResourceGroup
@@ -85,9 +99,11 @@ variables:
 - name:  productionCanadaCentralStageActive
   value: false
 - name:  productionCanadaCentralStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
+- name:  productionCanadaCentralStagePool
+  value: '<TBD>'    # e.g. "Azure Pipeline" or other agent pool name
 - name:  productionCanadaCentralStageVmImage
-  value: '<tbd>'
+  value: '<TBD>'    # e.g. "ubuntu-latest" or "windows-latest"
 - name:  productionCanadaCentralStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  productionCanadaCentralStageAzResourceGroup
@@ -101,9 +117,11 @@ variables:
 - name:  productionCanadaEastStageActive
   value: false
 - name:  productionCanadaEastStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
+- name:  productionCanadaEastStagePool
+  value: '<TBD>'    # e.g. "Azure Pipeline" or other agent pool name
 - name:  productionCanadaEastStageVmImage
-  value: '<tbd>'
+  value: '<TBD>'    # e.g. "ubuntu-latest" or "windows-latest"
 - name:  productionCanadaEastStageAzRmWebDeployAzureSubscription
   value: '<TBD>'
 - name:  productionCanadaEastStageAzResourceGroup
@@ -115,12 +133,40 @@ variables:
 # @@START: SKULL-AND-CROSS BONES AREA
 # Introduced with version blueprintVersion 2.1.1
 # Be very, very careful when making changes to the configuration below!
+#
+# Replace <portfolio> with your pipelines portfolioName setting
+#
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
 - name:  securityReviewStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-security-review-sr'
+- name:  securityReviewStagePool
+  value: 'Azure Pipelines'
+- name:  securityReviewStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Security Automation Stage
+- name:  securityAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  securityAutomationStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Quality Automation Stage
+- name:  qaAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  qaAutomationStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Pre-Production Automation Stage
+- name:  preProdAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  preProdAutomationStageVmImage
+  value: 'ubuntu-latest'
 
 # -----------------------------------------------------------------------------------------------------
 # @@END: SKULL-AND-CROSS BONES AREA

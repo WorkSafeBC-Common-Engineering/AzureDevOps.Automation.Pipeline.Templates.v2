@@ -6,7 +6,10 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
- 
+- name:     requiresUiTests
+  type:     boolean
+  default:  false
+
 steps:
 # -----------------------------------------------------------------------------------------------------
 # QA AUTOMATION FOR LOWER (NON-PROD) ENVIRONMENTS STAGE
@@ -15,6 +18,7 @@ steps:
   - script: echo 'QA CD Lower Environment Automation Placeholder ****************************************'
   - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
   - script: echo modeElite = ${{parameters.modeElite}}
+  - script: echo requiresUiTests = ${{parameters.requiresUiTests}}
 
   - ${{ if eq( lower(parameters.applicationBlueprint), 'azure-function' ) }}:
     - script: echo deal with qa scan relevant to azure-function application type
@@ -40,6 +44,7 @@ steps:
   - script: echo 'QA CD Higher Environment Automation Placeholder ****************************************'
   - script: echo applicationBlueprint = ${{parameters.applicationBlueprint}}
   - script: echo modeElite = ${{parameters.modeElite}}
+  - script: echo requiresUiTests = ${{parameters.requiresUiTests}}
 
   - ${{ if eq( lower(parameters.applicationBlueprint), 'azure-function' ) }}:
     - script: echo deal with qa scan relevant to azure-function application type

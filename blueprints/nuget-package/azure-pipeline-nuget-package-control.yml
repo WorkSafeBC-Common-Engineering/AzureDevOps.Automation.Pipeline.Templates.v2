@@ -36,12 +36,6 @@ parameters:
 - name:     versionSpec
   type:     string
   default:  '5.11.x' # switch from 5.6.3 to 5.11.x as default
-- name:     useDefaultConfig
-  type:     boolean
-  default:  false
-- name:     usePortfolioConfig
-  type:     boolean
-  default:  false
 - name:     runAzurite
   type:     boolean
   default:  false
@@ -61,17 +55,11 @@ parameters:
 # VARIABLES
 variables:
 # blueprintVersion = 2.0.0
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
-  - template: /deploy/default.config/nuget-package-config.yml@CeConfiguration
-
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, true), eq(parameters.blueprintVersion, '2.0.0') ) }}:
-  - template: /deploy/${{ lower(parameters.portfolioName) }}/nuget-package-config.yml@CeConfiguration
-
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false), eq(parameters.blueprintVersion, '2.0.0') ) }}:
+- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.blueprintVersion, '2.0.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}.${{ lower(parameters.productName) }}-config.yml@self
 
 # blueprintVersion = 2.1.0
-- ${{ if and( eq(parameters.suppressCD, false), eq(parameters.useDefaultConfig, false), eq(parameters.usePortfolioConfig, false), ge(parameters.blueprintVersion, '2.1.0') ) }}:
+- ${{ if and( eq(parameters.suppressCD, false), ge(parameters.blueprintVersion, '2.1.0') ) }}:
   - template: /deploy/${{ lower(parameters.portfolioName) }}-${{ lower(parameters.productName) }}-config.yml@self
 
 stages:

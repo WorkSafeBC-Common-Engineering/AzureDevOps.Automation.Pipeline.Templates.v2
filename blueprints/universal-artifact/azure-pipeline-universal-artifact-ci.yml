@@ -20,6 +20,11 @@ parameters:
 - name:     modeElite
   type:     boolean
   default:  false
+# Job Pool and VM Image
+- name:     jobPool
+  type:     string
+- name:     vmImage
+  type:     string
 
 # --------------------------------------------------------------------------
 # START OF BUILD and TEST STAGE

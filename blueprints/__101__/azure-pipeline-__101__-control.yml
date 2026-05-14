@@ -7,8 +7,6 @@ parameters:
   type:     string
 - name:     productName
   type:     string
-- name:     publishFolder
-  type:     string
 - name:     applicationBlueprint
   type:     string
   default:  '__101__'

@@ -1,7 +1,16 @@
 # --------------------------------------------------------------------------
-# WorkSafeBC Multi-Stage Blueprint-Based Pipeline Design Practice
+# WorkSafeBC Single-Job Continuous Integration (CI) Azure Pipeline
 # --------------------------------------------------------------------------
 # See https://aka.ms/yaml for Azure DevOps Pipeline documentation
+#
+# This generic template is not a v2 blueprint!
+#
+# It functions as a temporary interim solution for application types that
+# are not yet supported by the v2 blueprint catalogue and therefore relies
+# on classic Azure Release Pipelines to enable deployment.
+#
+# Do not change or remove sections marked with the following line:
+# SKULL & CROSS-BONES - DO NOT COMMENT OUT, OR REMOVE THIS SECTION
 #
 # --------------------------------------------------------------------------
 # FLOW
@@ -115,7 +124,7 @@ stages:
       displayName: Build - .Net Core
       inputs:
         command: 'build'
-        projects: '**\*.sln'
+        projects: '**\*.slnx'
         arguments: '--configuration $(BuildConfiguration)'
 
 # --------------------------------------------------------------------------

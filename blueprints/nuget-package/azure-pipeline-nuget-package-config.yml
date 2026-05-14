@@ -14,6 +14,7 @@ variables:
 # *VmImage             ubuntu-latest, windows-latest, 
 #                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
 # *other*              Contact your Delivery CSE.
+# <portfolio>          Replace with your Azure DevOps portfolio name, matching ServiceNow.
 #
 # -----------------------------------------------------------------------------------------------------
 
@@ -24,7 +25,7 @@ variables:
 - name:  systemTestStageActive
   value: true
 - name:  systemTestStageEnvName
-  value: '<TBD>'
+  value: '<portfolio>-system-test-sy'
 - name:  systemTestStageVmImage
   value: '<TBD>'
 - name:  systemTestTargetFeed
@@ -36,7 +37,7 @@ variables:
 - name:  productionStageActive
   value: false
 - name:  productionStageEnvName
-  value: '<TBD>'
+  value: '<portfolio>-production-pr'
 - name:  productionStageVmImage
   value: '<TBD>'
 - name:  productionTargetFeed
@@ -48,7 +49,7 @@ variables:
 - name:  productionCanadaCentralStageActive
   value: false
 - name:  productionCanadaCentralStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
 - name:  productionCanadaCentralStageVmImage
   value: '<tbd>'
 - name:  productionCanadaCentralStageTargetFeed
@@ -60,7 +61,7 @@ variables:
 - name:  productionCanadaEastStageActive
   value: false
 - name:  productionCanadaEastStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-production-pr'
 - name:  productionCanadaEastStageVmImage
   value: '<tbd>'
 - name:  productionCanadaEastStageTargetFeed
@@ -70,12 +71,15 @@ variables:
 # @@START: SKULL-AND-CROSS BONES AREA
 # Introduced with version blueprintVersion 2.1.1
 # Be very, very careful when making changes to the configuration below!
+#
+# Replace <portfolio> with your pipelines portfolioName setting
+#
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
 # Security Review Stage
 - name:  securityReviewStageEnvName
-  value: '<tbd>'
+  value: '<portfolio>-security-review-sr'
 
 # -----------------------------------------------------------------------------------------------------
 # @@END: SKULL-AND-CROSS BONES AREA
