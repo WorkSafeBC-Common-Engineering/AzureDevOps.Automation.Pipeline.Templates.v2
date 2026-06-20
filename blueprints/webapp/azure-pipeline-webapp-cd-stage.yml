@@ -43,8 +43,14 @@ stages:
         linuxFxVersion: 'DOTNETCORE|8.0'
         windowsFxVersion: 'v8.0'
 
-  pool:
-    vmImage:     ${{parameters.config.nameVM}}
+  ${{ if ne(parameters.config.nameVM, '') }}: #910188
+    pool:
+      name:      ${{parameters.config.namePool}}
+      vmImage:   ${{parameters.config.nameVM}}
+  ${{ else }}:
+    pool:
+      name:      ${{parameters.config.namePool}}
+      
   jobs:
   - deployment:  ${{parameters.name}}
     environment: ${{parameters.config.envName}}

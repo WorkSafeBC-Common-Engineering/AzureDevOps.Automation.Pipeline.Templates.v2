@@ -32,9 +32,13 @@ stages:
     dependsOn:
       - ${{ each stage in parameters.dependsOn }}:
         - ${{stage}}
-  pool:
-    name:      ${{parameters.config.namePool}}
-    vmImage:   ${{parameters.config.nameVM}}  
+  ${{ if ne(parameters.config.nameVM, '') }}: #910188
+    pool:
+      name:      ${{parameters.config.namePool}}
+      vmImage:   ${{parameters.config.nameVM}}
+  ${{ else }}:
+    pool:
+      name:      ${{parameters.config.namePool}}
   jobs:
   - deployment:  ${{parameters.name}}
     environment: ${{parameters.config.envName}}
