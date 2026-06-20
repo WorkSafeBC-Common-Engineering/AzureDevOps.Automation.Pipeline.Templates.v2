@@ -133,7 +133,7 @@ stages:
 # -----------------------------------------------------------------------------------------------------
 # PRODUCTION STAGE
 # -----------------------------------------------------------------------------------------------------
-- ${{ if and(eq(parameters.stage.production.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+- ${{ if and(eq(parameters.stage.production.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')), endsWith(parameters.stage.production.config.envName, '-production-pr')) }}:
   - template: /blueprints/nuget-package/azure-pipeline-nuget-package-cd-stage.yml@CeBlueprints
     parameters:
       name:                         'Production'
@@ -152,7 +152,7 @@ stages:
         - Staging
       - PreProdAutomation
 
-- ${{ if and(eq(parameters.stage.productionCanadaCentral.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+- ${{ if and(eq(parameters.stage.productionCanadaCentral.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')), endsWith(parameters.stage.productionCanadaCentral.config.envName, '-production-pr')) }}:
   - template: /blueprints/nuget-package/azure-pipeline-nuget-package-cd-stage.yml@CeBlueprints
     parameters:
       name:                         'ProductionCanadaCentral'
@@ -171,7 +171,7 @@ stages:
         - Staging
       - PreProdAutomation
 
-- ${{ if and(eq(parameters.stage.productionCanadaEast.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+- ${{ if and(eq(parameters.stage.productionCanadaEast.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')), endsWith(parameters.stage.productionCanadaEast.config.envName, '-production-pr')) }}:
   - template: /blueprints/nuget-package/azure-pipeline-nuget-package-cd-stage.yml@CeBlueprints
     parameters:
       name:                         'ProductionCanadaEast'

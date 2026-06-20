@@ -15,15 +15,19 @@ variables:
 #                      assessments-development-dv
 # *VmImage             ubuntu-latest, windows-latest, 
 #                      or see https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted
+#                      Leave empty for self-hosted agents
+#                      https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pool?view=azure-pipelines
 # *other*              Contact your Delivery CSE.
 # <portfolio>          Replace with your Azure DevOps portfolio name, matching ServiceNow.
 #
 # -----------------------------------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------------------------------
-# Continuous Integration (CI) Stage 
-- name:  ciVmImage
-  value: 'windows-latest'            # windows-latest, ubuntu-latest Default: windows-latest
+# Continuous Integration (CI) Stage  #910188
+- name:  ciStagePool
+  value: 'Azure Pipelines'
+- name:  ciStageVmImage
+  value: 'windows-latest'  # windows-latest, ubuntu-latest Default: ubuntu-latest
 
 # -----------------------------------------------------------------------------------------------------
 # Development Stage
@@ -31,6 +35,8 @@ variables:
   value: true
 - name:  developmentStageEnvName
   value: '<portfolio>-development-dv'
+- name:  developmentStagePool
+  value: 'Azure Pipelines'
 - name:  developmentStageVmImage
   value: '<tbd>'
 - name:  developmentAzureSubscription
@@ -46,6 +52,8 @@ variables:
   value: false
 - name:  systemTestStageEnvName
   value: '<portfolio>-system-test-sy'
+- name:  systemTestStagePool
+  value: 'Azure Pipelines'
 - name:  systemTestStageVmImage
   value: '<tbd>'
 - name:  systemTestAzureSubscription
@@ -61,6 +69,8 @@ variables:
   value: false
 - name:  stagingStageEnvName
   value: '<portfolio>-staging-st'
+- name:  stagingStagePool
+  value: 'Azure Pipelines'
 - name:  stagingStageVmImage
   value: '<tbd>'
 - name:  stagingAzureSubscription
@@ -76,6 +86,8 @@ variables:
   value: false
 - name:  productionStageEnvName
   value: '<portfolio>-production-pr'
+- name:  productionStagePool
+  value: 'Azure Pipelines'
 - name:  productionStageVmImage
   value: '<tbd>'
 - name:  productionAzureSubscription
@@ -92,6 +104,8 @@ variables:
   value: false
 - name:  productionCanadaCentralStageEnvName
   value: '<portfolio>-production-pr'
+- name:  productionCanadaCentralStagePool
+  value: 'Azure Pipelines'  
 - name:  productionCanadaCentralStageVmImage
   value: '<tbd>'
 - name:  productionCanadaCentralAzureSubscription
@@ -108,6 +122,8 @@ variables:
   value: false
 - name:  productionCanadaEastStageEnvName
   value: '<portfolio>-production-pr'
+- name:  productionCanadaEastStagePool
+  value: 'Azure Pipelines'  
 - name:  productionCanadaEastStageVmImage
   value: '<tbd>'
 - name:  productionCanadaEastAzureSubscription
@@ -135,6 +151,31 @@ variables:
 # Security Review Stage
 - name:  securityReviewStageEnvName
   value: '<portfolio>-security-review-sr'
+- name:  securityReviewStagePool
+  value: 'Azure Pipelines'
+- name:  securityReviewStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Security Automation Stage #910188
+- name:  securityAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  securityAutomationStageVmImage
+  value: 'ubuntu-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Quality Automation Stage #910188
+- name:  qaAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  qaAutomationStageVmImage
+  value: 'windows-latest'
+
+# -----------------------------------------------------------------------------------------------------
+# Quality Automation Stage #910188
+- name:  preProdAutomationStagePool
+  value: 'Azure Pipelines'
+- name:  preProdAutomationStageVmImage
+  value: 'ubuntu-latest'
 
 # -----------------------------------------------------------------------------------------------------
 # @@END: SKULL-AND-CROSS BONES AREA

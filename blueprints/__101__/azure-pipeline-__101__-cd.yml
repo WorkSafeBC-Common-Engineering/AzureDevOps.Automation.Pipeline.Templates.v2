@@ -174,7 +174,7 @@ stages:
 
 # Canada East production stage
 - ${{ if and(eq(parameters.stage.productionCanadaEast.config.active, true), or(eq(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')), endsWith(parameters.stage.productionCanadaEast.config.envName, '-production-pr')) }}:
-  - template: /blueprints/__101__/azure-pipeline-__101__-cd-stage.yml
+  - template: /blueprints/__101__/azure-pipeline-__101__-cd-stage.yml@CeBlueprints
     parameters:
       name:                         'ProductionCanadaEast'
       displayName:                  'Prod Canada East (CE-PR)'
